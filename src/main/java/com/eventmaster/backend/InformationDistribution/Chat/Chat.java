@@ -14,4 +14,30 @@ public class Chat {
     private Event event;
     //---------------------------------------------------------------------------
     String message;
+
+    //---------------------------------------------------------------------------
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }

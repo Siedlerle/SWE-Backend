@@ -1,4 +1,6 @@
 package com.eventmaster.backend.SurveyManagement.Answer;
 
-public interface AnswerRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface AnswerRepository extends JpaRepository<Answer,Long> {
 }

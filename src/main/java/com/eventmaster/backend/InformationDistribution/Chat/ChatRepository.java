@@ -1,4 +1,7 @@
 package com.eventmaster.backend.InformationDistribution.Chat;
 
-public interface ChatRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ChatRepository extends JpaRepository<Chat, Long> {
 }
+
