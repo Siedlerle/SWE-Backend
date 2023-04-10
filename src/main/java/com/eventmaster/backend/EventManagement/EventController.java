@@ -78,8 +78,8 @@ public class EventController {
      * @param event Event Object with all the changes
      * @return HTTP response with a body including a boolean as status for succes
      */
-    @PostMapping("/get-participants/{eventId}")
-    public ResponseEntity<Boolean> getParticipants(@PathVariable Long eventId, @RequestBody Event event){
+    @PostMapping("/update/{eventId}")
+    public ResponseEntity<Boolean> updateEvent(@PathVariable Long eventId, @RequestBody Event event){
         boolean eventUpdated = eventService.updateEvent(eventId, event);
         return ResponseEntity.ok(eventUpdated);
     }
