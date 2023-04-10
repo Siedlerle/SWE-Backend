@@ -61,13 +61,12 @@ public class EventController {
     /**
      * Gets an id of an event to update it.
      *
-     * @param eventId ID of the event which will be searched in the database to get updated.
      * @param event Event Object with all the changes
      * @return HTTP response with a body including a boolean as status for succes
      */
-    @PostMapping("/update/{eventId}")
-    public ResponseEntity<Boolean> updateEvent(@PathVariable Long eventId, @RequestBody Event event){
-        return ResponseEntity.ok(eventService.updateEvent(eventId, event));
+    @PostMapping("/update")
+    public ResponseEntity<Boolean> updateEvent(@RequestBody Event event){
+        return ResponseEntity.ok(eventService.createEvent(event));
     }
 
     /**
