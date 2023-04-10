@@ -24,6 +24,7 @@ public class EventController {
         this.eventService = eventService;
     }
 
+
     /**
      * Gets a single id of an event which will be searched in the database and returned.
      *
@@ -43,8 +44,7 @@ public class EventController {
      */
     @PostMapping("/add")
     public ResponseEntity<Boolean> addEvent(@RequestBody Event event) {
-        boolean eventAdded = eventService.createEvent(event);
-        return ResponseEntity.ok(eventAdded);
+        return ResponseEntity.ok(eventService.createEvent(event));
     }
 
     /**
@@ -55,8 +55,7 @@ public class EventController {
      */
     @PostMapping("/delete")
     public ResponseEntity<Boolean> deleteEvent(@PathVariable Long eventId){
-        boolean eventDeleted = eventService.deleteEvent(eventId);
-        return ResponseEntity.ok(eventDeleted);
+        return ResponseEntity.ok(eventService.deleteEvent(eventId));
     }
 
     /**
@@ -68,8 +67,7 @@ public class EventController {
      */
     @PostMapping("/update/{eventId}")
     public ResponseEntity<Boolean> updateEvent(@PathVariable Long eventId, @RequestBody Event event){
-        boolean eventUpdated = eventService.updateEvent(eventId, event);
-        return ResponseEntity.ok(eventUpdated);
+        return ResponseEntity.ok(eventService.updateEvent(eventId, event));
     }
 
     /**
@@ -80,8 +78,7 @@ public class EventController {
      */
     @PostMapping("/get-participants/{eventId}")
     public ResponseEntity<List<User>> getParticipants(@PathVariable Long eventId){
-        List<User> participants = eventService.getParticipants(eventId);
-        return ResponseEntity.ok(participants);
+        return ResponseEntity.ok(eventService.getParticipants(eventId));
     }
 
 
