@@ -1,8 +1,15 @@
 package com.eventmaster.backend.EventManagement;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+
+/**
+ * A class which receive and process the requests of the controller
+ *
+ * @author Fabian Eilber
+ */
 
 @Service
 public class EventService {
@@ -28,6 +35,35 @@ public class EventService {
      */
     public Event getEventById(Long eventId) {
         return eventRepository.findById(eventId).orElse(null);
+    }
+
+    /**
+     * An event is added to the databse
+     * @param event Event which is being added
+     * @return Boolen as status for succes
+     */
+    public boolean createEvent(Event event) {
+        try {
+            eventRepository.save(event);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * An event corresponding to teh eventId is being deleted
+     * @param eventId ID of the event which will be deleted.
+     */
+    public boolean deleteEvent(Long eventId){
+        try {
+            eventRepository.deleteById(eventId);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }
