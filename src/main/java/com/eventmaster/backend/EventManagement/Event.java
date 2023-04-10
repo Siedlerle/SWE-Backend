@@ -1,111 +1,48 @@
 package com.eventmaster.backend.EventManagement;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.eventmaster.backend.InformationDistribution.Chat.Chat;
+import com.eventmaster.backend.InformationDistribution.Document.Document;
+import com.eventmaster.backend.OrganizationManagement.Organization;
+import com.eventmaster.backend.RoleManagement.UserEventRole.EventUserRole;
+import com.eventmaster.backend.SurveyManagement.Question.Question;
+import jakarta.persistence.*;
 
-import java.sql.Time;
-import java.util.Date;
+import java.io.File;
+import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
-/**
- * This class serves as an entity to save events with their attributes in the database.
- * The entity has a 1:N relationship to the entity EventUser.
- *
- * @author Fabian Eilber
- */
-
+@Entity
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    private String name;
-    private String type;
-    private String description;
-    private String image; //Platzhalter für Image
-    private String place;
-    private Date startDate;
-    private Time starTime;
-    private Date endDate;
-    private Date endTime;
 
+    @ManyToOne
+    @JoinColumn(name = "organizationId",referencedColumnName = "id")
+    private Organization organization;
 
-    public long getId() {
-        return id;
-    }
+    @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<Chat> chats = new HashSet<>();
 
-    public void setId(long id) {
-        this.id = id;
-    }
+    @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<Document> documents = new HashSet<>();
 
-    public String getName() {
-        return name;
-    }
+    @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<Question> questions = new HashSet<>();
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<EventUserRole> eventUserRoles = new HashSet<>();
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public String getPlace() {
-        return place;
-    }
-
-    public void setPlace(String place) {
-        this.place = place;
-    }
-
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public Time getStarTime() {
-        return starTime;
-    }
-
-    public void setStarTime(Time starTime) {
-        this.starTime = starTime;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
-
-    public Date getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
-    }
+    //---------------------------------------------------------------------------
+    String name;
+    String type;
+    String description;
+    File image;
+    //@TODO brauchen wir hier eine Adress Tabelle oder wollen wir location als String speichern? (Falls ja, kann man auch jeder Organiazion Adresse(n) zuweisen)
+    String location;
+    //@TODO Hier entscheiden welches Date man importieren will, verschiedene Dates verhalten sich unterschiedlich
+    //Wenn man Timestamp verwendet hat man 2 Einträge die in ms angegeben sind, oder man spaltet Zeit von Datum
+    Timestamp startTime;
+    Timestamp endTime;
 }
