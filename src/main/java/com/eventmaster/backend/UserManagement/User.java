@@ -1,4 +1,4 @@
 package com.eventmaster.backend.UserManagement;
 
-public interface UserRepository {
+public class User {
 }

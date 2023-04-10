@@ -1,4 +1,4 @@
 package com.eventmaster.backend.RoleManagement;
 
-public class RoleRepository {
+public interface RoleRepository {
 }
