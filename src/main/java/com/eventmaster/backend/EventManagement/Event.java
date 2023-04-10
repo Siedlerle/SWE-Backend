@@ -8,7 +8,8 @@ import com.eventmaster.backend.SurveyManagement.Question.Question;
 import jakarta.persistence.*;
 
 import java.io.File;
-import java.sql.Timestamp;
+import java.sql.Date;
+import java.sql.Time;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -41,8 +42,8 @@ public class Event {
     File image;
     //@TODO brauchen wir hier eine Adress Tabelle oder wollen wir location als String speichern? (Falls ja, kann man auch jeder Organiazion Adresse(n) zuweisen)
     String location;
-    //@TODO Hier entscheiden welches Date man importieren will, verschiedene Dates verhalten sich unterschiedlich
-    //Wenn man Timestamp verwendet hat man 2 Einträge die in ms angegeben sind, oder man spaltet Zeit von Datum
-    Timestamp startTime;
-    Timestamp endTime;
+    Date startDate;
+    Date endDate;
+    Time startTime;
+    Time endTime;
 }

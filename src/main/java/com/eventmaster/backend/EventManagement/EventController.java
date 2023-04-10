@@ -79,6 +79,4 @@ public class EventController {
     public ResponseEntity<List<User>> getParticipants(@PathVariable Long eventId){
         return ResponseEntity.ok(eventService.getParticipants(eventId));
     }
-
-
 }
