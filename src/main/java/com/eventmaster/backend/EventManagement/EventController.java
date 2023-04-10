@@ -25,17 +25,6 @@ public class EventController {
     }
 
     /**
-     * All events in the Database will be returned
-     *
-     * @return HTTP response with a body of type Event
-     */
-    @PostMapping("/get-all")
-    public ResponseEntity<List<Event>> getAllEvents() {
-        List<Event> events = eventService.getAllEvents();
-        return ResponseEntity.ok(events);
-    }
-
-    /**
      * Gets a single id of an event which will be searched in the database and returned.
      *
      * @param eventId ID of the event which will be searched.
@@ -43,8 +32,7 @@ public class EventController {
      */
     @PostMapping("/get-single/{eventId}")
     public ResponseEntity<Event> getEvent(@PathVariable Long eventId) {
-        Event event = eventService.getEventById(eventId);
-        return ResponseEntity.ok(event);
+        return ResponseEntity.ok(eventService.getEventById(eventId));
     }
 
     /**
