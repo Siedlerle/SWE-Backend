@@ -1,4 +1,4 @@
-package com.eventmaster.backend.RoleManagement.UserOrgaRole;
+package com.eventmaster.backend.RoleManagement.OrgaUserRole;
 
 import com.eventmaster.backend.OrganizationManagement.Organization;
 import com.eventmaster.backend.RoleManagement.Role.Role;

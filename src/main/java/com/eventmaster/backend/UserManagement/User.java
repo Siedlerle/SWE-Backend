@@ -1,7 +1,7 @@
 package com.eventmaster.backend.UserManagement;
 
-import com.eventmaster.backend.RoleManagement.UserEventRole.EventUserRole;
-import com.eventmaster.backend.RoleManagement.UserOrgaRole.OrgaUserRole;
+import com.eventmaster.backend.RoleManagement.EventUserRole.EventUserRole;
+import com.eventmaster.backend.RoleManagement.OrgaUserRole.OrgaUserRole;
 import com.eventmaster.backend.SurveyManagement.QuestionUser.QuestionUser;
 import jakarta.persistence.*;
 

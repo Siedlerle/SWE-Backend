@@ -3,7 +3,7 @@ package com.eventmaster.backend.EventManagement;
 import com.eventmaster.backend.InformationDistribution.Chat.Chat;
 import com.eventmaster.backend.InformationDistribution.Document.Document;
 import com.eventmaster.backend.OrganizationManagement.Organization;
-import com.eventmaster.backend.RoleManagement.UserEventRole.EventUserRole;
+import com.eventmaster.backend.RoleManagement.EventUserRole.EventUserRole;
 import com.eventmaster.backend.SurveyManagement.Question.Question;
 import jakarta.persistence.*;
 

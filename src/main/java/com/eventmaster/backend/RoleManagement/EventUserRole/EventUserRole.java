@@ -1,4 +1,4 @@
-package com.eventmaster.backend.RoleManagement.UserEventRole;
+package com.eventmaster.backend.RoleManagement.EventUserRole;
 
 import com.eventmaster.backend.EventManagement.Event;
 import com.eventmaster.backend.RoleManagement.Role.Role;

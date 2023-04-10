@@ -1,8 +1,8 @@
 package com.eventmaster.backend.RoleManagement.Role;
 
 
-import com.eventmaster.backend.RoleManagement.UserEventRole.EventUserRole;
-import com.eventmaster.backend.RoleManagement.UserOrgaRole.OrgaUserRole;
+import com.eventmaster.backend.RoleManagement.EventUserRole.EventUserRole;
+import com.eventmaster.backend.RoleManagement.OrgaUserRole.OrgaUserRole;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
