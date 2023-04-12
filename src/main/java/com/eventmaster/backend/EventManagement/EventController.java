@@ -40,7 +40,7 @@ public class EventController {
      * Gets an Event and adds it to the database
      *
      * @param event Event which will be added to the database
-     * @return HTTP response with a body including a boolean as status for succes
+     * @return HTTP response with a body including a boolean as status for success
      */
     @PostMapping("/add")
     public ResponseEntity<Boolean> addEvent(@RequestBody Event event) {
@@ -51,7 +51,7 @@ public class EventController {
      * Gets an id of an event and this will be deleted in the database.
      *
      * @param eventId ID of the event which will be deleted in the database.
-     * @return HTTP response with a body including a boolean as status for succes
+     * @return HTTP response with a body including a boolean as status for success
      */
     @PostMapping("/delete")
     public ResponseEntity<Boolean> deleteEvent(@PathVariable Long eventId){
@@ -62,7 +62,7 @@ public class EventController {
      * Gets an id of an event to update it.
      *
      * @param event Event Object with all the changes
-     * @return HTTP response with a body including a boolean as status for succes
+     * @return HTTP response with a body including a boolean as status for success
      */
     @PostMapping("/update")
     public ResponseEntity<Boolean> updateEvent(@RequestBody Event event){

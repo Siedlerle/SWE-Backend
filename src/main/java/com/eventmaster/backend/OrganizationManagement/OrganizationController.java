@@ -14,9 +14,13 @@ public class OrganizationController {
     }
 
 
-    @PostMapping("get-single/{organizationId}")
-    public ResponseEntity<Organization> getOrganization(@PathVariable Long organizationId) {
+    @PostMapping("/get-single")
+    public ResponseEntity<Organization> getOrganization(@RequestBody Long organizationId) {
         return ResponseEntity.ok(organizationService.getOrganizationById(organizationId));
     }
 
+    @PostMapping("/add")
+    public ResponseEntity<Boolean> addOrganization(@RequestBody Organization organization) {
+        return ResponseEntity.ok(organizationService.createOrganization(organization));
+    }
 }
