@@ -1,5 +1,8 @@
 package com.eventmaster.backend.OrganizationManagement;
 
+import com.eventmaster.backend.RoleManagement.OrgaUserRole.OrgaUserRoleService;
+import com.eventmaster.backend.UserManagement.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
@@ -11,6 +14,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class OrganizationService {
     private final OrganizationRepository organizationRepository;
+
+    @Autowired
+    private OrgaUserRoleService orgaUserRoleService;
 
     public OrganizationService(OrganizationRepository organizationRepository) {
         this.organizationRepository = organizationRepository;
@@ -31,9 +37,21 @@ public class OrganizationService {
      * @param newOrganization Organization which will be added to the database
      * @return Boolean as status for success
      */
-    public boolean createOrganization(Organization newOrganization) {
+    public boolean createOrganization(Organization newOrganization, User admin) {
         try {
             organizationRepository.save(newOrganization);
+
+            long orgaId = newOrganization.getId();
+            String adminMail = admin.getEmailAdress();
+
+            boolean userExists = false;
+
+            //TODO: if User exists
+            orgaUserRoleService.addAdminToOrga(orgaId, adminMail);
+            //TODO: Else User mit temp Passwort erstellen
+
+
+
 
             return true;
         } catch (Exception e) {

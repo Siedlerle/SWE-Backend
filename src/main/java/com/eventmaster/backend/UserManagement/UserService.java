@@ -21,7 +21,7 @@ public class UserService {
      * @param user User which is being added
      * @return Boolen as status for succes
      */
-    public boolean createUser(User user) {
+    public boolean creatUser(User user) {
         try {
             userRepository.save(user);
             return true;

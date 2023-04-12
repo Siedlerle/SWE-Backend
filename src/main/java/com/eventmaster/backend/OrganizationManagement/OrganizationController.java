@@ -1,5 +1,6 @@
 package com.eventmaster.backend.OrganizationManagement;
 
+import com.eventmaster.backend.UserManagement.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,8 @@ public class OrganizationController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Boolean> addOrganization(@RequestBody Organization organization) {
-        return ResponseEntity.ok(organizationService.createOrganization(organization));
+    public ResponseEntity<Boolean> addOrganization(@RequestParam Organization organization,
+                                                   @RequestParam User admin) {
+        return ResponseEntity.ok(organizationService.createOrganization(organization, admin));
     }
 }
