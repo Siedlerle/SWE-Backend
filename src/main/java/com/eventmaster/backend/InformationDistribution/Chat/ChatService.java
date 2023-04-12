@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class ChatService {
 
     private final ChatRepository chatRepository;
-    private final EventRepository eventRepository;
+    private final EventRepository eventRepository; //TODO: Stattdessen auf EventService zugreifen.
     public ChatService(ChatRepository chatRepository, EventRepository eventRepository){
         this.chatRepository = chatRepository;
         this.eventRepository = eventRepository;

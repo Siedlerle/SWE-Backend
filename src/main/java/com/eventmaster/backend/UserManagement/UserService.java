@@ -17,11 +17,11 @@ public class UserService {
     }
 
     /**
-     * An user is added to the databse
+     * A user is added to the databse
      * @param user User which is being added
      * @return Boolen as status for succes
      */
-    public boolean creatUser(User user) {
+    public boolean createUser(User user) {
         try {
             userRepository.save(user);
             return true;
@@ -32,7 +32,7 @@ public class UserService {
     }
 
     /**
-     * An user is searched in the database
+     * A user is searched in the database
      * @param mail Mail from User which is searched for
      * @return UserObject
      */

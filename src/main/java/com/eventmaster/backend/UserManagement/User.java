@@ -23,7 +23,7 @@ public class User {
     //---------------------------------------------------------------------------
     String firstname;
     String lastname;
-    String emailAdress;
+    String emailAddress;
     String password;
     boolean verified;
     //@TODO Kann jeder User eine Adresse angeben(damit man vllt als Bonus Feature events in Seiner Umgebung anzeigen kann?, PLZ abhängig/Bundesland, oder sprengt des den Rahmen?)
@@ -80,11 +80,11 @@ public class User {
     }
 
     public String getEmailAdress() {
-        return emailAdress;
+        return emailAddress;
     }
 
     public void setEmailAdress(String emailAdress) {
-        this.emailAdress = emailAdress;
+        this.emailAddress = emailAdress;
     }
 
     public String getPassword() {
