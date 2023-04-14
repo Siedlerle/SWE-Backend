@@ -13,7 +13,7 @@ public class CorsConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedMethods("GET", "POST", "PUT", "DELETE") //TODO: Hier reicht theoretisch nur POST, wenn wir nur POST verwenden.
                 .allowedHeaders("*");
     }
 }

@@ -1,4 +1,6 @@
 package com.eventmaster.backend.RoleManagement.OrgaUserRole;
 
-public interface OrgaUserRoleRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface OrgaUserRoleRepository extends JpaRepository<OrgaUserRole, Long> {
 }

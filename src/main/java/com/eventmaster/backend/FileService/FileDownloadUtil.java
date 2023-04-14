@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+//TODO: Das würde ich zu dem DocumentService dazunehmen, weils auch keine extra FileDownload Klasse im Diagramm gibt
 public class FileDownloadUtil {
     private Path foundFile;
 

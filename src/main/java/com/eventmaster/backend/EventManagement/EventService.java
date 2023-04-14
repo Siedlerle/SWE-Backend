@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * A class which receive and process the requests of the controller
+ * A class which receives and processes the requests of the controller
  *
  * @author Fabian Eilber
  */
