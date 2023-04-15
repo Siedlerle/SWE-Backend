@@ -1,4 +1,4 @@
-package com.eventmaster.backend.services;
+package com.eventmaster.backend.serviceswithouttoken;
 
 import com.eventmaster.backend.repositories.OrgaRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;

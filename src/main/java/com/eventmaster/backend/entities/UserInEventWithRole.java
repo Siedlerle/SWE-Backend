@@ -16,5 +16,43 @@ public class UserInEventWithRole {
     @JoinColumn(name = "eventId",referencedColumnName = "id")
     private Event event;
 
+    @ManyToOne
+    @JoinColumn(name = "roleId", referencedColumnName = "id")
+    private EventRole role;
+
     //---------------------------------------------------------------------------
+
+
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
+
+    public EventRole getRole() {
+        return role;
+    }
+
+    public void setRole(EventRole role) {
+        this.role = role;
+    }
 }

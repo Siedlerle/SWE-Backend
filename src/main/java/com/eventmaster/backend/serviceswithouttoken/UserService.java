@@ -1,9 +1,9 @@
-package com.eventmaster.backend.services;
+package com.eventmaster.backend.serviceswithouttoken;
 
 import com.eventmaster.backend.config.AuthenticationResponse;
 import com.eventmaster.backend.config.JwtService;
-import com.eventmaster.backend.repositories.UserRepository;
 import com.eventmaster.backend.entities.User;
+import com.eventmaster.backend.repositories.UserRepository;
 import com.eventmaster.backend.token.Token;
 import com.eventmaster.backend.token.TokenRepository;
 import com.eventmaster.backend.token.TokenType;

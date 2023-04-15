@@ -18,7 +18,7 @@ public class UserInOrgaWithRole {
 
     @ManyToOne
     @JoinColumn(name = "roleId",referencedColumnName = "id")
-    private Role role;
+    private OrgaRole role;
     //---------------------------------------------------------------------------
 
     public long getId() {
@@ -42,10 +42,10 @@ public class UserInOrgaWithRole {
         this.organization = organization;
     }
 
-    public Role getRole() {
+    public OrgaRole getRole() {
         return role;
     }
-    public void setRole(Role role) {
+    public void setRole(OrgaRole role) {
         this.role = role;
     }
 }

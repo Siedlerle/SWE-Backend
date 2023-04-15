@@ -1,8 +1,7 @@
 package com.eventmaster.backend.controller;
 
 import com.eventmaster.backend.entities.Event;
-import com.eventmaster.backend.entities.Organisation;
-import com.eventmaster.backend.entities.Role;
+import com.eventmaster.backend.entities.EventRole;
 import com.eventmaster.backend.entities.User;
 import com.eventmaster.backend.services.OrganisationService;
 import com.eventmaster.backend.services.UserService;
@@ -28,14 +27,12 @@ public class UserController {
 
 
 
-
+/*
     //Operations regarding user authentications
     @PostMapping("/auth/register")
     public ResponseEntity<?> register(@RequestBody User user){
         return ResponseEntity.ok(userService.register(user));
     }
-
-    /*
     @PostMapping("/auth/verify")
     public ResponseEntity<?> verify(String authToken) {
         return
@@ -115,7 +112,7 @@ public class UserController {
 
 
 
-
+*/
     //Operations regarding user, event connection
     @PostMapping("/event/accept-invitation")
     public ResponseEntity<String> acceptEventInvitation(long eventId, String authToken){
@@ -128,7 +125,7 @@ public class UserController {
     }
 
     @PostMapping("/event/get-role")
-    public ResponseEntity<Role> getRoleForEvent(long eventId, String authToken){
+    public ResponseEntity<EventRole> getRoleForEvent(long eventId, String authToken){
         return
     }
 
@@ -151,6 +148,5 @@ public class UserController {
     public ResponseEntity<List<Event>> getAllEventsForUser( User user, String authToken){
         return
     }
- */
 
 }

@@ -15,8 +15,12 @@ public class Event {
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "organizationId",referencedColumnName = "id")
-    private Organisation organization;
+    @JoinColumn(name = "organisationId",referencedColumnName = "id")
+    private Organisation organisation;
+
+    @ManyToOne
+    @JoinColumn(name = "eventSeriesId", referencedColumnName = "id")
+    private EventSeries eventSeries;
 
     @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Chat> chats = new HashSet<>();
@@ -52,12 +56,12 @@ public class Event {
         this.id = id;
     }
 
-    public Organisation getOrganization() {
-        return organization;
+    public Organisation getOrganisation() {
+        return organisation;
     }
 
-    public void setOrganization(Organisation organization) {
-        this.organization = organization;
+    public void setOrganisation(Organisation organization) {
+        this.organisation = organization;
     }
 
     public Set<Chat> getChats() {

@@ -11,10 +11,10 @@ public class Organisation {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @OneToMany(mappedBy = "organization",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "organisation",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Event> events = new HashSet<>();
 
-    @OneToMany(mappedBy = "organization",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "organisation",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<UserInOrgaWithRole> orgaUserRoles = new HashSet<>();
 
     private String name;
@@ -35,5 +35,13 @@ public class Organisation {
     }
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }

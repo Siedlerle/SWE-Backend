@@ -1,4 +1,4 @@
 package com.eventmaster.backend.repositories;
 
-public interface EventUserRoleRepository {
+public interface EventGroupRepository {
 }

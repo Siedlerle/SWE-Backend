@@ -15,8 +15,9 @@ public class Chat {
     @JoinColumn(name = "eventId",referencedColumnName = "id")
     private Event event;
 
-    @OneToMany(mappedBy = "chat",cascade = CascadeType.ALL,orphanRemoval = true)
-    private Set<Comment> comments = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "userId",referencedColumnName = "id")
+    private User user;
 
     //---------------------------------------------------------------------------
     String message;
@@ -47,11 +48,12 @@ public class Chat {
         this.message = message;
     }
 
-    public Set<Comment> getComments() {
-        return this.comments;
+    public User getUser() {
+        return user;
     }
 
-    public void removeComment(Comment comment) {
-        comments.remove(comment);
+    public void setUser(User user) {
+        this.user = user;
     }
+
 }
