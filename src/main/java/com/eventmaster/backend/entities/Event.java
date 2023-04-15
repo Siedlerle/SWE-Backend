@@ -18,10 +18,6 @@ public class Event {
     @JoinColumn(name = "organisationId",referencedColumnName = "id")
     private Organisation organisation;
 
-    @ManyToOne
-    @JoinColumn(name = "eventSeriesId", referencedColumnName = "id")
-    private EventSeries eventSeries;
-
     @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Chat> chats = new HashSet<>();
 

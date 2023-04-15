@@ -46,7 +46,6 @@ public class EventService {
      */
     public boolean createEvent(Event event) {
         try {
-            System.out.println("hello World");
             eventRepository.save(event);
             return true;
         } catch (Exception e) {

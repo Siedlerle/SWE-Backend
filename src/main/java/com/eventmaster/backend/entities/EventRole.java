@@ -13,8 +13,8 @@ public class EventRole {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @Column(unique = true)
     private String Role;
-
 
     @OneToMany(mappedBy = "eventRole",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<UserInEventWithRole> userInEventWithRoles  = new HashSet<>();
