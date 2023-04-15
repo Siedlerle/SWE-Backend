@@ -2,6 +2,12 @@ package com.eventmaster.backend.entities;
 
 import jakarta.persistence.*;
 
+/**
+ * This class serves as an entity to save roles for events in the database.
+ *
+ * @author Fabian Eilber
+ * @author Fabian Unger
+ */
 @Entity
 public class UserInEventWithRole {
     @Id
@@ -22,7 +28,7 @@ public class UserInEventWithRole {
 
     //---------------------------------------------------------------------------
 
-
+    private boolean hasAttended;
 
     public long getId() {
         return id;
@@ -54,5 +60,13 @@ public class UserInEventWithRole {
 
     public void setRole(EventRole role) {
         this.role = role;
+    }
+
+    public boolean isHasAttended() {
+        return hasAttended;
+    }
+
+    public void setHasAttended(boolean hasAttended) {
+        this.hasAttended = hasAttended;
     }
 }

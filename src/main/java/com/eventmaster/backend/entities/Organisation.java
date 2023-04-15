@@ -5,6 +5,13 @@ import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * This class serves as an entity to save an organisation in the database.
+ *
+ * @author Lars Holweger
+ * @author Fabian Eilber
+ * @author Fabian Unger
+ */
 @Entity
 public class Organisation {
     @Id
@@ -17,9 +24,15 @@ public class Organisation {
     @OneToMany(mappedBy = "organisation",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<UserInOrgaWithRole> orgaUserRoles = new HashSet<>();
 
+    @OneToMany(mappedBy = "organisation",cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<Group> groups = new HashSet<>();
+
+    @OneToMany(mappedBy = "organisation",cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<Preset> presets = new HashSet<>();
+
     private String name;
 
-    private String location; //@TODO Auch hier wieder das location/Address Problem
+    private String location;
 
     //---------------------------------------------------------------------------
 
@@ -43,5 +56,13 @@ public class Organisation {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public Set<Group> getGroups() {
+        return groups;
+    }
+
+    public Set<Preset> getPresets() {
+        return presets;
     }
 }

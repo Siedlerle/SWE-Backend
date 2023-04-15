@@ -2,6 +2,11 @@ package com.eventmaster.backend.entities;
 
 import jakarta.persistence.*;
 
+/**
+ * This class serves as an entity to save a comment in the database.
+ *
+ * @author Fabian Unger
+ */
 @Entity
 public class Comment {
     @Id
@@ -16,7 +21,7 @@ public class Comment {
     @JoinColumn(name = "userId", referencedColumnName = "id")
     private User user;
 
-    private String message;
+    private String text;
 
     public long getId() {
         return this.id;
@@ -42,11 +47,11 @@ public class Comment {
         this.user = user;
     }
 
-    public String getMessage() {
-        return this.message;
+    public String getText() {
+        return this.text;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setText(String text) {
+        this.text = text;
     }
 }

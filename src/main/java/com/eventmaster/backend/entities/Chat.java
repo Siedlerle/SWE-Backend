@@ -1,10 +1,17 @@
 package com.eventmaster.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * This class serves as an entity to save a chatmessage in the database.
+ *
+ * @author Fabian Eilber
+ * @author Lars Holweger
+ */
 @Entity
 public class Chat {
     @Id
@@ -18,6 +25,10 @@ public class Chat {
     @ManyToOne
     @JoinColumn(name = "userId",referencedColumnName = "id")
     private User user;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "chat",cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<Comment> comments = new HashSet<>();
 
     //---------------------------------------------------------------------------
     String message;
@@ -54,6 +65,10 @@ public class Chat {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
     }
 
 }

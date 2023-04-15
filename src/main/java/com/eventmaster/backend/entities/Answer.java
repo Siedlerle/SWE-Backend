@@ -3,6 +3,12 @@ package com.eventmaster.backend.entities;
 
 import jakarta.persistence.*;
 
+/**
+ * This class serves as an entity to save a multiple-choice-answer in the database.
+ *
+ * @author Fabian Eilber
+ * @authoer Lars Holweger
+ */
 @Entity
 public class Answer {
     @Id
@@ -14,8 +20,8 @@ public class Answer {
     private Question question;
 
     //---------------------------------------------------------------------------
-    String text;
-    long amount;
+    private String text;
+    private long amount;
 
     //---------------------------------------------------------------------------
 

@@ -8,6 +8,13 @@ import java.sql.Time;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * This class serves as an entity to save an event in the database.
+ *
+ * @author Lars Holweger
+ * @author Fabian Eilber
+ * @author Fabian Unger
+ */
 @Entity
 public class Event {
     @Id
@@ -17,6 +24,10 @@ public class Event {
     @ManyToOne
     @JoinColumn(name = "organisationId",referencedColumnName = "id")
     private Organisation organisation;
+
+    @ManyToOne
+    @JoinColumn(name = "eventSeriesId",referencedColumnName = "id")
+    private EventSeries eventSeries;
 
     @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Chat> chats = new HashSet<>();
@@ -30,9 +41,14 @@ public class Event {
     @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<UserInEventWithRole> eventUserRoles = new HashSet<>();
 
+    @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<GroupInEvent> eventGroups = new HashSet<>();
+
     //---------------------------------------------------------------------------
     String name;
     String type;
+    String status;
+    boolean isPublic;
     String description;
     File image;
     //@TODO brauchen wir hier eine Adress Tabelle oder wollen wir location als String speichern? (Falls ja, kann man auch jeder Organiazion Adresse(n) zuweisen)
@@ -58,6 +74,14 @@ public class Event {
 
     public void setOrganisation(Organisation organization) {
         this.organisation = organization;
+    }
+
+    public EventSeries getEventSeries() {
+        return eventSeries;
+    }
+
+    public void setEventSeries(EventSeries eventSeries) {
+        this.eventSeries = eventSeries;
     }
 
     public Set<Chat> getChats() {
@@ -96,6 +120,10 @@ public class Event {
         this.eventUserRoles = eventUserRoles;
     }
 
+    public Set<GroupInEvent> getEventGroups() {
+        return eventGroups;
+    }
+
     public String getName() {
         return name;
     }
@@ -110,6 +138,22 @@ public class Event {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
     }
 
     public String getDescription() {

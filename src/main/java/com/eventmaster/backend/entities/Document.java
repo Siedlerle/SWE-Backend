@@ -3,6 +3,12 @@ package com.eventmaster.backend.entities;
 import com.eventmaster.backend.entities.Event;
 import jakarta.persistence.*;
 
+/**
+ * This class serves as an entity to save a document in the database.
+ *
+ * @author Fabian Eilber
+ * @authoer Lars Holweger
+ */
 @Entity
 public class Document {
     @Id
