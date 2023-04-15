@@ -1,10 +1,6 @@
 package com.eventmaster.backend.services;
 
 import com.eventmaster.backend.repositories.OrgaUserRoleRepository;
-import com.eventmaster.backend.entities.OrgaUserRole;
-import com.eventmaster.backend.entities.Organisation;
-import com.eventmaster.backend.entities.Role;
-import com.eventmaster.backend.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,24 +19,4 @@ public class OrgaUserRoleService {
         this.repository = orgaUserRoleRepository;
     }
 
-
-
-    public boolean addAdminToOrga(long orgaId, String userMail) {
-        try {
-            User user = userService.getUserByMail(userMail);
-            Organisation organization = organizationService.getOrganizationById(orgaId);
-            Role role = null;
-            //TODO: role = roleService.getByName("Administrator");
-
-            OrgaUserRole orgaUserRole = new OrgaUserRole();
-            orgaUserRole.setUser(user);
-            orgaUserRole.setOrganization(organization);
-            orgaUserRole.setRole(role);
-            repository.save(orgaUserRole);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
 }

@@ -3,7 +3,7 @@ package com.eventmaster.backend.entities;
 import jakarta.persistence.*;
 
 @Entity
-public class EventUserRole {
+public class UserInEventWithRole {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -16,8 +16,5 @@ public class EventUserRole {
     @JoinColumn(name = "eventId",referencedColumnName = "id")
     private Event event;
 
-    @ManyToOne
-    @JoinColumn(name = "roleId",referencedColumnName = "id")
-    private Role role;
     //---------------------------------------------------------------------------
 }

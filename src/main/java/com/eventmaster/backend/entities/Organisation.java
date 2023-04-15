@@ -15,7 +15,7 @@ public class Organisation {
     private Set<Event> events = new HashSet<>();
 
     @OneToMany(mappedBy = "organization",cascade = CascadeType.ALL,orphanRemoval = true)
-    private Set<OrgaUserRole> orgaUserRoles = new HashSet<>();
+    private Set<UserInOrgaWithRole> orgaUserRoles = new HashSet<>();
 
     private String name;
 

@@ -1,7 +1,7 @@
 package com.eventmaster.backend.repositories;
 
-import com.eventmaster.backend.entities.OrgaUserRole;
+import com.eventmaster.backend.entities.UserInOrgaWithRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface OrgaUserRoleRepository extends JpaRepository<OrgaUserRole, Long> {
+public interface OrgaUserRoleRepository extends JpaRepository<UserInOrgaWithRole, Long> {
 }

@@ -19,7 +19,7 @@ public class Question {
     private Set<Answer> answers = new HashSet<>();
 
     @OneToMany(mappedBy = "question",cascade = CascadeType.ALL,orphanRemoval = true)
-    private Set<QuestionUser> questionUsers = new HashSet<>();
+    private Set<QuestionAnsweredByUser> questionUsers = new HashSet<>();
     //---------------------------------------------------------------------------
     String text;
     String type;//@TODO auch hier wieder, kann man die Types auch nicht als String speichern (sondern als ENUM)?

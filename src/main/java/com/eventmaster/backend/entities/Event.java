@@ -28,7 +28,7 @@ public class Event {
     private Set<Question> questions = new HashSet<>();
 
     @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
-    private Set<EventUserRole> eventUserRoles = new HashSet<>();
+    private Set<UserInEventWithRole> eventUserRoles = new HashSet<>();
 
     //---------------------------------------------------------------------------
     String name;
@@ -88,11 +88,11 @@ public class Event {
         this.questions = questions;
     }
 
-    public Set<EventUserRole> getEventUserRoles() {
+    public Set<UserInEventWithRole> getEventUserRoles() {
         return eventUserRoles;
     }
 
-    public void setEventUserRoles(Set<EventUserRole> eventUserRoles) {
+    public void setEventUserRoles(Set<UserInEventWithRole> eventUserRoles) {
         this.eventUserRoles = eventUserRoles;
     }
 

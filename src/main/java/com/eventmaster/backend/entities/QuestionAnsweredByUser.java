@@ -3,7 +3,7 @@ package com.eventmaster.backend.entities;
 import jakarta.persistence.*;
 
 @Entity
-public class QuestionUser {
+public class QuestionAnsweredByUser {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;

@@ -1,105 +1,68 @@
 package com.eventmaster.backend.entities;
 
-import com.eventmaster.backend.entities.EventUserRole;
-import com.eventmaster.backend.entities.OrgaUserRole;
-import com.eventmaster.backend.entities.QuestionUser;
+import com.eventmaster.backend.token.Token;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collection;
+import java.util.List;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-public class User {
+public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
-    private Set<EventUserRole> userEventRoles = new HashSet<>();
+    @GeneratedValue
+    private Integer id;
+    private String firstname;
+    private String lastname;
+    private String email;
+    private String password;
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
-    private Set<OrgaUserRole> orgaUserRoles = new HashSet<>();
-
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
-    private Set<QuestionUser> questionUsers = new HashSet<>();
-    //---------------------------------------------------------------------------
-    String firstname;
-    String lastname;
-    String emailAddress;
-    String password;
-    boolean verified;
-    //@TODO Kann jeder User eine Adresse angeben(damit man vllt als Bonus Feature events in Seiner Umgebung anzeigen kann?, PLZ abhängig/Bundesland, oder sprengt des den Rahmen?)
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
 
-    //---------------------------------------------------------------------------
-
-    public long getId() {
-        return id;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public Set<EventUserRole> getUserEventRoles() {
-        return userEventRoles;
-    }
-
-    public void setUserEventRoles(Set<EventUserRole> userEventRoles) {
-        this.userEventRoles = userEventRoles;
-    }
-
-    public Set<OrgaUserRole> getOrgaUserRoles() {
-        return orgaUserRoles;
-    }
-
-    public void setOrgaUserRoles(Set<OrgaUserRole> orgaUserRoles) {
-        this.orgaUserRoles = orgaUserRoles;
-    }
-
-    public Set<QuestionUser> getQuestionUsers() {
-        return questionUsers;
-    }
-
-    public void setQuestionUsers(Set<QuestionUser> questionUsers) {
-        this.questionUsers = questionUsers;
-    }
-
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public String getEmailAdress() {
-        return emailAddress;
-    }
-
-    public void setEmailAdress(String emailAdress) {
-        this.emailAddress = emailAdress;
-    }
-
+    @Override
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    @Override
+    public String getUsername() {
+        return email;
     }
 
-    public boolean isVerified() {
-        return verified;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
-    public void setVerified(boolean verified) {
-        this.verified = verified;
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

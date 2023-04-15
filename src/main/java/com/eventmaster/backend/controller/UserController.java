@@ -7,10 +7,7 @@ import com.eventmaster.backend.entities.User;
 import com.eventmaster.backend.services.OrganisationService;
 import com.eventmaster.backend.services.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,10 +31,11 @@ public class UserController {
 
     //Operations regarding user authentications
     @PostMapping("/auth/register")
-    public ResponseEntity<?> register(User user){
-        return
+    public ResponseEntity<?> register(@RequestBody User user){
+        return ResponseEntity.ok(userService.register(user));
     }
 
+    /*
     @PostMapping("/auth/verify")
     public ResponseEntity<?> verify(String authToken) {
         return
@@ -63,8 +61,6 @@ public class UserController {
         return
     }
 
-
-/*
 
     //Operations regarding user, orga connection
     @PostMapping("/orga/get-all")

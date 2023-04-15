@@ -3,7 +3,7 @@ package com.eventmaster.backend.entities;
 import jakarta.persistence.*;
 
 @Entity
-public class OrgaUserRole {
+public class UserInOrgaWithRole {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
