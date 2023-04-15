@@ -12,6 +12,7 @@ import java.util.Set;
  *
  * @author Fabian Eilber
  * @author Lars Holweger
+ * @author Fabian Unger
  */
 @Entity
 public class User {

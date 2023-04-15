@@ -2,6 +2,12 @@ package com.eventmaster.backend.entities;
 
 import jakarta.persistence.*;
 
+/**
+ * This class serves as an entity to save the connection from a user, an organisation and a role in the database.
+ *
+ * @author Fabian Eilber
+ * @author Lars Holweger
+ */
 @Entity
 public class UserInOrgaWithRole {
     @Id

@@ -3,10 +3,10 @@ package com.eventmaster.backend.entities;
 import jakarta.persistence.*;
 
 /**
- * This class serves as an entity to save roles for events in the database.
+ * This class serves as an entity to save the connection from a user, an event and a role in the database.
  *
  * @author Fabian Eilber
- * @author Fabian Unger
+ * @author Lars Holweger
  */
 @Entity
 public class UserInEventWithRole {

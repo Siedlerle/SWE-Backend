@@ -5,6 +5,11 @@ import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * This class serves as an entity to save a role for an organisation in the database.
+ *
+ * @author Fabian Eilber
+ */
 @Entity
 public class OrgaRole {
     @Id
