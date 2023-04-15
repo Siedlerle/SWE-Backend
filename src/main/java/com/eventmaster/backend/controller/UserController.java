@@ -2,9 +2,12 @@ package com.eventmaster.backend.controller;
 
 import com.eventmaster.backend.entities.Event;
 import com.eventmaster.backend.entities.EventRole;
-import com.eventmaster.backend.services.OrganisationService;
+import com.eventmaster.backend.entities.Organisation;
+import com.eventmaster.backend.entities.UserInOrgaWithRole;
+import com.eventmaster.backend.serviceswithouttoken.OrganisationService;
 import com.eventmaster.backend.serviceswithouttoken.UserInEventWithRoleService;
 import com.eventmaster.backend.services.UserService;
+import com.eventmaster.backend.serviceswithouttoken.UserInOrgaWithRoleService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,8 +27,8 @@ public class UserController {
     //Services needed for operations
     private UserService userService;
     private OrganisationService organisationService;
-
     private UserInEventWithRoleService userInEventWithRoleService;
+    private UserInOrgaWithRoleService userInOrgaWithRoleService;
 
 
 
@@ -59,48 +62,52 @@ public class UserController {
     public ResponseEntity<?> delete(User user, String authToken){
         return
     }
-
+*/
 
     //Operations regarding user, orga connection
     @PostMapping("/orga/get-all")
-    public ResponseEntity<List<Organisation>> getAllOrganisations(String authToken){
-        return
+    public ResponseEntity<List<Organisation>> getAllOrganisations(){
+        return ResponseEntity.ok(organisationService.getAllOrganisations());
+    }
+
+    @PostMapping("/orga/get-orga")
+    public ResponseEntity<Organisation> getOrganisation(long organisationId){
+        return ResponseEntity.ok(organisationService.getOrganisation(organisationId));
     }
 
     @PostMapping("/orga/get-for-user")
     public ResponseEntity<List<Organisation>> getOrganisationsForUser(String authToken){
-        return
+        long userId = 0;
+        return ResponseEntity.ok(userInOrgaWithRoleService.getOrgaForUser(userId));
     }
-
-    @PostMapping("/orga/get-orga")
-    public ResponseEntity<Organisation> getOrganisation(long organisationId, String authToken){
-        return
-    }
-
 
     @PostMapping("/orga/request-join")
     public ResponseEntity<String> requestJoin(long organisationId, String authToken){
-        return
+        long userId = 0;
+        return;
     }
 
     @PostMapping("/orga/accept-invitation")
     public ResponseEntity<String> acceptOrganisationInvitation(long organisationId, String authToken){
-        return
+        long userId = 0;
+        return;
     }
 
     @PostMapping("/orga/decline-invitation")
-    public ResponseEntity<String> declineOrganisationInvitation(long organisationId, String autToken){
-        return
+    public ResponseEntity<String> declineOrganisationInvitation(long organisationId, String authToken){
+        long userId = 0;
+        return;
     }
 
     @PostMapping("/orga/leave")
     public ResponseEntity<String> leaveOrganisation(long organisationId, String authToken, String reason){
-        return
+        long userId = 0;
+        return;
     }
 
 
 
-
+/*
     //Operations regarding user, event, orga connection
     @PostMapping("/orga/event/get-all-events-of-orga")
     public ResponseEntity<List<Event>> getAllVisibleEventsOfOrganisationForUser(long organisationId, String authToken){
@@ -111,9 +118,6 @@ public class UserController {
     public ResponseEntity<String> getRegisteredEventsForUserInOrganisation(long organisationId, String authToken){
         return
     }
-
-
-
 */
 
     //TODO für alle Endpoints muss noch die userId aus den Tokensretrieved werden

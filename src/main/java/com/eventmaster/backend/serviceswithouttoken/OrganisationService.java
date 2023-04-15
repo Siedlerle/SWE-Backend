@@ -5,6 +5,8 @@ import com.eventmaster.backend.repositories.OrganisationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 /**
  * A class which receives and processes the requests of the SysAdminController.
@@ -15,12 +17,10 @@ import org.springframework.stereotype.Service;
 public class OrganisationService {
     private final OrganisationRepository organisationRepository;
 
-    @Autowired
-    private OrgaUserRoleService orgaUserRoleService;
-
     public OrganisationService(OrganisationRepository organizationRepository) {
         this.organisationRepository = organizationRepository;
     }
+
 
     public String createOrganisation(Organisation organisation, String sysAdminPassword){
         //TODO passwort vom Sysadmin abfragen?
@@ -42,6 +42,14 @@ public class OrganisationService {
             e.printStackTrace();
             return "Organization creation failed";
         }
+    }
+
+    public List<Organisation> getAllOrganisations(){
+        return organisationRepository.findAll();
+    }
+
+    public Organisation getOrganisation(long organisationId){
+        return organisationRepository.findById(organisationId);
     }
 
 
