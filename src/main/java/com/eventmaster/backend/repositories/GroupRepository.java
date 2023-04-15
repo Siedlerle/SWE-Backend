@@ -1,4 +1,7 @@
 package com.eventmaster.backend.repositories;
 
-public interface GroupRepository {
+import com.eventmaster.backend.entities.Group;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface GroupRepository extends JpaRepository<Group, Long> {
 }
