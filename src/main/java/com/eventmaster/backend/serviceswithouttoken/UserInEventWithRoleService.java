@@ -37,6 +37,13 @@ public class UserInEventWithRoleService {
 
 
     //UserMethods
+
+    /**
+     * A user is being registered for an event
+     * @param eventId Id of the corresponding event
+     * @param userId Id of the corresponding user
+     * @return success message
+     */
     public String registerForEvent(long eventId, long userId){
         try {
 
@@ -55,6 +62,12 @@ public class UserInEventWithRoleService {
         }
     }
 
+    /**
+     * A user can accept an invitation to an event
+     * @param eventId Id of the event the user is invited to
+     * @param userId Id of the user who is being invited
+     * @return success message
+     */
     public String acceptEventInvitation(long eventId, long userId){
         try {
 
@@ -74,6 +87,12 @@ public class UserInEventWithRoleService {
         }
     }
 
+    /**
+     * A user can decline an invitation to an event
+     * @param eventId Id of the event the user is invited to
+     * @param userId Id of the user who is being invited
+     * @return success message
+     */
     public String declineEventInvitation(long eventId, long userId){
         try {
 
@@ -93,6 +112,12 @@ public class UserInEventWithRoleService {
         }
     }
 
+    /**
+     * For authorization purposes u can get your role corresponding to an event
+     * @param eventId Id of the event the user is requesting his role for
+     * @param userId Id of the user who is requesting the role
+     * @return Role of the user
+     */
     public EventRole getRoleForEvent(long eventId, long userId){
         try {
 
@@ -109,6 +134,11 @@ public class UserInEventWithRoleService {
         }
     }
 
+    /**
+     * A user can get all events he is registered for
+     * @param userId Id of the user to get registered events for
+     * @return List of events the user is registered for
+     */
     public List<Event> getRegisteredEventsForUser(long userId){
         try {
 
@@ -128,6 +158,13 @@ public class UserInEventWithRoleService {
         }
     }
 
+    /**
+     * A user can unregister from an event
+     * @param event Corresponding event
+     * @param userId Id of the user who is about to unregister
+     * @param reason Reason for unregistering as a feedback for the organizer
+     * @return success message
+     */
     public String unregisterFromEvent(Event event,long userId, String reason){
         //Todo reason speichern
         try {
