@@ -10,9 +10,17 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ $default-branch ]
+      branches:    
+      - '*'         # matches every branch that doesn't contain a '/'
+      - '*/*'       # matches every branch containing a single '/'
+      - '**'        # matches every branch
+      - '!master'   # excludes master
   pull_request:
-    branches: [ $default-branch ]
+      branches:    
+      - '*'         # matches every branch that doesn't contain a '/'
+      - '*/*'       # matches every branch containing a single '/'
+      - '**'        # matches every branch
+      - '!master'   # excludes master
 
 jobs:
   build:
