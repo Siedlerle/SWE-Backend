@@ -3,7 +3,9 @@ package com.eventmaster.backend.controller;
 import com.eventmaster.backend.entities.Event;
 import com.eventmaster.backend.entities.EventRole;
 import com.eventmaster.backend.entities.User;
+import com.eventmaster.backend.entities.UserInEventWithRole;
 import com.eventmaster.backend.services.OrganisationService;
+import com.eventmaster.backend.services.UserInEventWithRoleService;
 import com.eventmaster.backend.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +26,8 @@ public class UserController {
     //Services needed for operations
     private UserService userService;
     private OrganisationService organisationService;
+
+    private UserInEventWithRoleService userInEventWithRoleService;
 
 
 
@@ -116,37 +120,37 @@ public class UserController {
     //Operations regarding user, event connection
     @PostMapping("/event/accept-invitation")
     public ResponseEntity<String> acceptEventInvitation(long eventId, String authToken){
-        return
+        return ResponseEntity.ok(userInEventWithRoleService.acceptEventInvitation(eventId, authToken));
     }
 
     @PostMapping("/event/decline-invitation")
     public ResponseEntity<String> declineEventInvitation(long eventId, String authToken){
-        return
+        return ResponseEntity.ok(userInEventWithRoleService.declineEventInvitation(eventId, authToken));
     }
 
     @PostMapping("/event/get-role")
     public ResponseEntity<EventRole> getRoleForEvent(long eventId, String authToken){
-        return
+        return ResponseEntity.ok(userInEventWithRoleService.getRoleForEvent(eventId, authToken));
     }
 
     @PostMapping("/event/register")
     public ResponseEntity<String> registerForEvent(long eventId, String authToken){
-        return
+        return ResponseEntity.ok(userInEventWithRoleService.registerForEvent(eventId, authToken));
     }
 
     @PostMapping("/event/get-registered")
     public ResponseEntity<List<Event>> getRegisteredEventsForUser(String authToken){
-
+        return ResponseEntity.ok(userInEventWithRoleService.getRegisteredEventsForUser(authToken));
     }
 
     @PostMapping("/event/unregister")
     public ResponseEntity<String> ungregisterFromEvent(Event event, String authToken, String reason){
-        return
+        return ResponseEntity.ok(userInEventWithRoleService.unregisterFromEvent(event, reason, authToken));
     }
 
     @PostMapping("/event/get-all")
-    public ResponseEntity<List<Event>> getAllEventsForUser( User user, String authToken){
-        return
+    public ResponseEntity<List<Event>> getAllEventsForUser(String authToken){
+        return ResponseEntity.ok(userInEventWithRoleService.getAllEventsForUser(authToken));
     }
 
 }

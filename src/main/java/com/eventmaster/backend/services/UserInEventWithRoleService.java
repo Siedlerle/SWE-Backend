@@ -1,6 +1,7 @@
 package com.eventmaster.backend.services;
 
 import com.eventmaster.backend.entities.Event;
+import com.eventmaster.backend.entities.EventRole;
 import com.eventmaster.backend.entities.UserInEventWithRole;
 import com.eventmaster.backend.repositories.UserInEventWithRoleRepository;
 import org.springframework.stereotype.Service;
@@ -43,7 +44,7 @@ public class UserInEventWithRoleService {
 
     }
 
-    public Role getRoleForEvent(long eventId, String authToken){
+    public EventRole getRoleForEvent(long eventId, String authToken){
 
     }
 
