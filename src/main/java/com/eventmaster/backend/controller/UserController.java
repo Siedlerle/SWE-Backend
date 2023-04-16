@@ -1,9 +1,6 @@
 package com.eventmaster.backend.controller;
 
-import com.eventmaster.backend.entities.Event;
-import com.eventmaster.backend.entities.EventRole;
-import com.eventmaster.backend.entities.Organisation;
-import com.eventmaster.backend.entities.UserInOrgaWithRole;
+import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.serviceswithouttoken.OrganisationService;
 import com.eventmaster.backend.serviceswithouttoken.UserInEventWithRoleService;
 import com.eventmaster.backend.services.UserService;
@@ -29,6 +26,10 @@ public class UserController {
     private OrganisationService organisationService;
     private UserInEventWithRoleService userInEventWithRoleService;
     private UserInOrgaWithRoleService userInOrgaWithRoleService;
+
+    public UserController(){
+
+    }
 
 
 
@@ -106,7 +107,6 @@ public class UserController {
     }
 
 
-
 /*
     //Operations regarding user, event, orga connection
     @PostMapping("/orga/event/get-all-events-of-orga")
@@ -119,6 +119,7 @@ public class UserController {
         return
     }
 */
+
 
     //TODO für alle Endpoints muss noch die userId aus den Tokensretrieved werden
     //Operations regarding user, event connection

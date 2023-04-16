@@ -1,16 +1,16 @@
 package com.eventmaster.backend.demo;
 
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
-
+@RestController
+@CrossOrigin
+@RequestMapping("/demo")
 public class DemoTest {
 
-    @RequestMapping(value="/controller", method=GET)
-    @ResponseBody
+    @GetMapping
     public String demoTest() {
         return "successful test";
     }
