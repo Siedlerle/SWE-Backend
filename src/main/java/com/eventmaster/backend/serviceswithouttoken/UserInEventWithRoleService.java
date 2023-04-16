@@ -5,7 +5,6 @@ import com.eventmaster.backend.entities.EventRole;
 import com.eventmaster.backend.entities.User;
 import com.eventmaster.backend.entities.UserInEventWithRole;
 import com.eventmaster.backend.repositories.UserInEventWithRoleRepository;
-import org.springframework.data.spel.spi.EvaluationContextExtension;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,7 +51,7 @@ public class UserInEventWithRoleService {
             UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
             userInEventWithRole.setEvent(eventService.getEventById(eventId));
             userInEventWithRole.setUser(userService.getUserById(userId));
-            userInEventWithRole.setRole(eventRole);
+            userInEventWithRole.setEventRole(eventRole);
             userInEventWithRoleRepository.save(userInEventWithRole);
 
             return "Succesfully registered for Event";
@@ -77,7 +76,7 @@ public class UserInEventWithRoleService {
             UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
             userInEventWithRole.setEvent(eventService.getEventById(eventId));
             userInEventWithRole.setUser(userService.getUserById(userId));
-            userInEventWithRole.setRole(eventRole);
+            userInEventWithRole.setEventRole(eventRole);
             userInEventWithRoleRepository.save(userInEventWithRole);
 
             return "Succesfully accepted the invitation";
@@ -102,7 +101,7 @@ public class UserInEventWithRoleService {
             UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
             userInEventWithRole.setEvent(eventService.getEventById(eventId));
             userInEventWithRole.setUser(userService.getUserById(userId));
-            userInEventWithRole.setRole(eventRole);
+            userInEventWithRole.setEventRole(eventRole);
             userInEventWithRoleRepository.save(userInEventWithRole);
 
             return "Succesfully declined the invitation";
@@ -125,7 +124,7 @@ public class UserInEventWithRoleService {
             Event event = eventService.getEventById(eventId);
             UserInEventWithRole userInEvent = userInEventWithRoleRepository.findByUserAndEvent(user, event);
 
-            EventRole eventRole = userInEvent.getRole();
+            EventRole eventRole = userInEvent.getEventRole();
 
             return eventRole;
         }catch (Exception e) {
@@ -147,7 +146,7 @@ public class UserInEventWithRoleService {
             List<UserInEventWithRole> eventsForUser =  userInEventWithRoleRepository.findByUser(user);
             List<Event> registeredEventsForUser = null;
             for(UserInEventWithRole event: eventsForUser){
-                if(event.getRole().equals("REGISTERED")){
+                if(event.getEventRole().equals("REGISTERED")){
                     registeredEventsForUser.add(event.getEvent());
                 }
             }

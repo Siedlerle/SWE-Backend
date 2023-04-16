@@ -84,25 +84,25 @@ public class UserController {
     @PostMapping("/orga/request-join")
     public ResponseEntity<String> requestJoin(long organisationId, String authToken){
         long userId = 0;
-        return;
+        return ResponseEntity.ok("nicht implementiert");
     }
 
     @PostMapping("/orga/accept-invitation")
     public ResponseEntity<String> acceptOrganisationInvitation(long organisationId, String authToken){
         long userId = 0;
-        return;
+        return ResponseEntity.ok("nicht implementiert");
     }
 
     @PostMapping("/orga/decline-invitation")
     public ResponseEntity<String> declineOrganisationInvitation(long organisationId, String authToken){
         long userId = 0;
-        return;
+        return ResponseEntity.ok("nicht implementiert");
     }
 
     @PostMapping("/orga/leave")
     public ResponseEntity<String> leaveOrganisation(long organisationId, String authToken, String reason){
         long userId = 0;
-        return;
+        return ResponseEntity.ok("nicht implementiert");
     }
 
 

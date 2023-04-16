@@ -12,6 +12,7 @@ import java.util.Set;
  * @author Fabian Unger
  */
 @Entity
+@Table(name="group_table")
 public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

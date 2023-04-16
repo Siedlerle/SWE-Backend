@@ -19,12 +19,12 @@ public class UserInOrgaWithRole {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "organizationId",referencedColumnName = "id")
-    private Organisation organization;
+    @JoinColumn(name = "organisationId",referencedColumnName = "id")
+    private Organisation organisation;
 
     @ManyToOne
     @JoinColumn(name = "roleId",referencedColumnName = "id")
-    private OrgaRole role;
+    private OrgaRole orgaRole;
     //---------------------------------------------------------------------------
 
     public long getId() {
@@ -42,16 +42,16 @@ public class UserInOrgaWithRole {
     }
 
     public Organisation getOrganization() {
-        return organization;
+        return organisation;
     }
-    public void setOrganization(Organisation organization) {
-        this.organization = organization;
+    public void setOrganization(Organisation organisation) {
+        this.organisation = organisation;
     }
 
-    public OrgaRole getRole() {
-        return role;
+    public OrgaRole getOrgaRole() {
+        return orgaRole;
     }
-    public void setRole(OrgaRole role) {
-        this.role = role;
+    public void setOrgaRole(OrgaRole orgaRole) {
+        this.orgaRole = orgaRole;
     }
 }

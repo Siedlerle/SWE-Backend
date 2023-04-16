@@ -24,7 +24,7 @@ public class UserInEventWithRole {
 
     @ManyToOne
     @JoinColumn(name = "roleId", referencedColumnName = "id")
-    private EventRole role;
+    private EventRole eventRole;
 
     //---------------------------------------------------------------------------
 
@@ -54,12 +54,12 @@ public class UserInEventWithRole {
         this.event = event;
     }
 
-    public EventRole getRole() {
-        return role;
+    public EventRole getEventRole() {
+        return eventRole;
     }
 
-    public void setRole(EventRole role) {
-        this.role = role;
+    public void setEventRole(EventRole eventRole) {
+        this.eventRole = eventRole;
     }
 
     public boolean isHasAttended() {

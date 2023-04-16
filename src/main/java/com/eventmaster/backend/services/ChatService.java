@@ -7,7 +7,6 @@ import com.eventmaster.backend.repositories.ChatRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
-@Service
 public class ChatService {
 
     private final ChatRepository chatRepository;

@@ -13,7 +13,6 @@ import java.util.List;
  * @author Fabian Eilber
  */
 
-@Service
 public class EventService {
 
     private final EventRepository eventRepository;

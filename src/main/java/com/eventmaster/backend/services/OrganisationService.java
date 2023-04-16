@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
  *
  * @author Fabian Eilber
  */
-@Service
 public class OrganisationService {
     private final OrganisationRepository organisationRepository;
 
