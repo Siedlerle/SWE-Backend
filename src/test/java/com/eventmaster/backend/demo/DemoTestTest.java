@@ -19,7 +19,7 @@ class DemoTestTest {
 
     @Test
     public void testDemoEndpoint() throws Exception {
-        mockMvc.perform(get("/demoTest"))
+        mockMvc.perform(get("/demo"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("successful test"));
     }
