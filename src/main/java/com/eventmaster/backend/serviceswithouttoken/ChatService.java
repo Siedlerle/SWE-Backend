@@ -7,6 +7,14 @@ import com.eventmaster.backend.repositories.EventRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+/**
+ * A class which receives and processes the requests of multiple controllers concerning the management of chats
+ *
+ * @author Fabian Eilber
+ */
+
 @Service
 public class ChatService {
 
@@ -17,9 +25,13 @@ public class ChatService {
         this.eventRepository = eventRepository;
     }
 
-
-    public Chat getChatById(long eventId) {
-        return chatRepository.findById(eventId).orElse(null);
+    /**
+     * Searching for the Chat corresponding to an event
+     * @param eventId Id of the event the chat is searched for
+     * @return A list of chat objects as they store the message
+     */
+    public List<Chat> getChatForEvent(long eventId) {
+        return chatRepository.findChatById(eventId);
     }
 
     public void createChat(long eventId, Chat chat) {

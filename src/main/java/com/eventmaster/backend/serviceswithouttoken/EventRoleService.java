@@ -4,6 +4,12 @@ import com.eventmaster.backend.entities.EventRole;
 import com.eventmaster.backend.repositories.EventRoleRepository;
 import org.springframework.stereotype.Service;
 
+/**
+ * A class which receives and processes the requests of multiple controllers concerning the management of eventroles
+ *
+ * @author Fabian Eilber
+ */
+
 @Service
 public class EventRoleService {
 
