@@ -27,11 +27,6 @@ public class UserController {
     private UserInEventWithRoleService userInEventWithRoleService;
     private UserInOrgaWithRoleService userInOrgaWithRoleService;
 
-    public UserController(){
-
-    }
-
-
 
 /*
     //Operations regarding user authentications

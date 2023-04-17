@@ -31,6 +31,16 @@ public class EventService {
     }
 
     /**
+     * The database is searched for all events of an organisation
+     * @param orgaId Id of the corresponding organisation
+     * @return List of events
+     */
+    public List<Event> getEventsOfOrganisation(long orgaId){
+        return eventRepository.findByOrganisationId(orgaId);
+    }
+
+
+    /**
      * The database is searched for events with the corresponding ID
      * @param eventId ID of the event which will be searched.
      * @return Event Object

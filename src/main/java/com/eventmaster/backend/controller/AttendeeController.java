@@ -9,6 +9,12 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * A class which handles the HTTP-requests for attendee functions.
+ *
+ * @author Fabian Eilber
+ */
+
 @RestController
 @CrossOrigin
 @RequestMapping("/attendee")
