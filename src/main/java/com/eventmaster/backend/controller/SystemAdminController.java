@@ -1,12 +1,11 @@
 package com.eventmaster.backend.controller;
 
 import com.eventmaster.backend.entities.Organisation;
-import com.eventmaster.backend.services.OrganisationService;
+
+import com.eventmaster.backend.entities.User;
+import com.eventmaster.backend.serviceswithouttoken.*;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * A class which handles the HTTP-requests for system admin functions.
@@ -19,18 +18,37 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/sys-admin")
 public class SystemAdminController {
 
-    private OrganisationService organizationService;
+    private OrganisationService organisationService;
+    private UserService userService;
 
 
 
-    @PostMapping("create-orga")
-    public ResponseEntity<?> createOrganisation(Organisation organisation, String sysAdminPassword){
-        return ResponseEntity.ok(organizationService.createOrganisation(organisation, sysAdminPassword));
+    @PostMapping("/create-orga")
+    public ResponseEntity<String> createOrganisation(@RequestParam Organisation organisation,
+                                                @RequestParam String sysAdminPassword){
+        //TODO passwort vom Sysadmin abfragen?
+        return ResponseEntity.ok(organisationService.createOrganisation(organisation));
     }
 
-    @PostMapping("edit-orga")
-    public ResponseEntity<?> editOrganisation(Organisation organisation, String sysAdminPassword){
-        return ResponseEntity.ok(organizationService.editOrganisation(organisation, sysAdminPassword));
+    @PostMapping("/edit-orga")
+    public ResponseEntity<String> editOrganisation(@RequestParam Organisation organisation,
+                                              @RequestParam String sysAdminPassword){
+        //TODO passwort vom Sysadmin abfragen?
+        return ResponseEntity.ok(organisationService.editOrganisation(organisation));
+    }
+
+    @PostMapping("/delete-orga")
+    public ResponseEntity<String> deleteOrganisation(@RequestParam long organisationId,
+                                                     @RequestParam String sysAdminPassword) {
+        //TODO passwort vom Sysadmin abfragen?
+        return ResponseEntity.ok(organisationService.deleteOrganisation(organisationId));
+    }
+
+    @PostMapping("/delete-user")
+    public ResponseEntity<String> deleteUser(@RequestParam long userId,
+                                             @RequestParam String sysAdminPassword) {
+        //TODO passwort vom Sysadmin abfragen?
+        return ResponseEntity.ok(userService.deleteUser(userId));
     }
 
 }

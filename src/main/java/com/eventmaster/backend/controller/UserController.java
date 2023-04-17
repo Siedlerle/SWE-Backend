@@ -68,7 +68,7 @@ public class UserController {
 
     @PostMapping("/orga/get-orga")
     public ResponseEntity<Organisation> getOrganisation(long organisationId){
-        return ResponseEntity.ok(organisationService.getOrganisation(organisationId));
+        return ResponseEntity.ok(organisationService.getOrganisationById(organisationId));
     }
 
     @PostMapping("/orga/get-for-user")

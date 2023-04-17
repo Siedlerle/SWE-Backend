@@ -11,6 +11,7 @@ import java.util.List;
 /**
  * A class which receives and processes the requests of the SysAdminController.
  *
+ * @author Fabian Unger
  * @author Fabian Eilber
  */
 @Service
@@ -21,47 +22,54 @@ public class OrganisationService {
         this.organisationRepository = organizationRepository;
     }
 
-
-    public String createOrganisation(Organisation organisation, String sysAdminPassword){
-        //TODO passwort vom Sysadmin abfragen?
-        try {
-            organisationRepository.save(organisation);
-            return "Organization succesfully created";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Organization creation failed";
-        }
-    }
-
-    public String editOrganisation(Organisation organisation, String sysAdminPassword){
-        //TODO passwort vom Sysadmin abfragen?
-        try {
-            //TODO Organisation finden und mit neuen daten überladen und speichern
-            return "Organization succesfully created";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Organization creation failed";
-        }
-    }
-
     public List<Organisation> getAllOrganisations(){
         return organisationRepository.findAll();
     }
 
-    public Organisation getOrganisation(long organisationId){
+    public Organisation getOrganisationById(long organisationId){
         return organisationRepository.findById(organisationId);
     }
 
-
-    public String deleteOrganisation(Organisation organisation, String sysAdminPassword){
-        //TODO passwort vom Sysadmin abfragen?
+    public String createOrganisation(Organisation organisation){
         try {
-            //TODO Organisation finden und mit neuen daten überladen und speichern
-            return "Organization succesfully created";
+            organisationRepository.save(organisation);
+            return "Organisation succesfully created";
         } catch (Exception e) {
             e.printStackTrace();
-            return "Organization creation failed";
+            return "Organisation creation failed";
         }
     }
 
+    public String editOrganisation(Organisation newOrganisation){
+        try {
+            long id = newOrganisation.getId();
+            Organisation oldOrganisation = this.organisationRepository.findById(id);
+
+            String newName = newOrganisation.getName();
+            String newLocation = newOrganisation.getLocation();
+
+            oldOrganisation.setName(newName);
+            oldOrganisation.setLocation(newLocation);
+
+            //TODO Wird das beim Saven eine neue Entität oder wird die alte überschrieben?
+            this.organisationRepository.save(oldOrganisation);
+
+            return "Organisation succesfully changed";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Organisation change failed";
+        }
+    }
+
+    public String deleteOrganisation(long organisationId){
+        try {
+            Organisation organisation = this.getOrganisationById(organisationId);
+            this.organisationRepository.deleteById(organisationId);
+
+            return "Organisation " + organisation.getName() + " deleted successfully";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Organisation deleted";
+        }
+    }
 }
