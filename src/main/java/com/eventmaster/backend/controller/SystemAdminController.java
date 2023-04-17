@@ -22,7 +22,12 @@ public class SystemAdminController {
     private UserService userService;
 
 
-
+    /**
+     * Endpoint to create an organisation.
+     * @param organisation Organisation which will be saved.
+     * @param sysAdminPassword Password of the System-Admin to authorize him.
+     * @return success message
+     */
     @PostMapping("/create-orga")
     public ResponseEntity<String> createOrganisation(@RequestParam Organisation organisation,
                                                 @RequestParam String sysAdminPassword){
@@ -30,6 +35,12 @@ public class SystemAdminController {
         return ResponseEntity.ok(organisationService.createOrganisation(organisation));
     }
 
+    /**
+     * Endpoint to change an already existing organisation.
+     * @param organisation Organisation which will be changed.
+     * @param sysAdminPassword Password of the System-Admin to authorize him.
+     * @return success message
+     */
     @PostMapping("/edit-orga")
     public ResponseEntity<String> editOrganisation(@RequestParam Organisation organisation,
                                               @RequestParam String sysAdminPassword){
@@ -37,6 +48,12 @@ public class SystemAdminController {
         return ResponseEntity.ok(organisationService.editOrganisation(organisation));
     }
 
+    /**
+     * Endpoint to delete an organisation.
+     * @param organisationId ID of the organisation which will be deleted.
+     * @param sysAdminPassword Password of the System-Admin to authorize him.
+     * @return success message
+     */
     @PostMapping("/delete-orga")
     public ResponseEntity<String> deleteOrganisation(@RequestParam long organisationId,
                                                      @RequestParam String sysAdminPassword) {
@@ -44,6 +61,12 @@ public class SystemAdminController {
         return ResponseEntity.ok(organisationService.deleteOrganisation(organisationId));
     }
 
+    /**
+     * Endpoint to delete a user.
+     * @param userId ID of the user which will be deleted.
+     * @param sysAdminPassword Password of the System-Admin to authorize him.
+     * @return success message
+     */
     @PostMapping("/delete-user")
     public ResponseEntity<String> deleteUser(@RequestParam long userId,
                                              @RequestParam String sysAdminPassword) {

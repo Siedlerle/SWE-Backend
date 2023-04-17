@@ -22,14 +22,28 @@ public class OrganisationService {
         this.organisationRepository = organizationRepository;
     }
 
+    /**
+     * Get all organisations in the database in a list.
+     * @return List of organisations in the database.
+     */
     public List<Organisation> getAllOrganisations(){
         return organisationRepository.findAll();
     }
 
+    /**
+     * Get the complete organisation by her id.
+     * @param organisationId ID of the organisation which will be returned.
+     * @return Organisation Object
+     */
     public Organisation getOrganisationById(long organisationId){
         return organisationRepository.findById(organisationId);
     }
 
+    /**
+     * Saves a new organisation in the database.
+     * @param organisation Organisation object which will be saved.
+     * @return String if successful or not.
+     */
     public String createOrganisation(Organisation organisation){
         try {
             organisationRepository.save(organisation);
@@ -40,6 +54,11 @@ public class OrganisationService {
         }
     }
 
+    /**
+     * Changes an already existing organisation.
+     * @param newOrganisation The new organisation which will replace the old organisation.
+     * @return String if successful or not.
+     */
     public String editOrganisation(Organisation newOrganisation){
         try {
             long id = newOrganisation.getId();
@@ -61,6 +80,11 @@ public class OrganisationService {
         }
     }
 
+    /**
+     * Deletes an organisation in the database.
+     * @param organisationId ID of the organisation which will be deleted.
+     * @return String if successful or not.
+     */
     public String deleteOrganisation(long organisationId){
         try {
             Organisation organisation = this.getOrganisationById(organisationId);
