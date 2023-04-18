@@ -23,6 +23,7 @@ public class UserInEventWithRoleService {
     private final EventService eventService;
     private final EventRoleService eventRoleService;
 
+
     public UserInEventWithRoleService(
             UserInEventWithRoleRepository userInEventWithRoleRepository,
             UserService userService,

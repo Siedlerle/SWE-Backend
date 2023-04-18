@@ -44,11 +44,14 @@ public class User {
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Comment> comments = new HashSet<>();
 
+    //---------------------------------------------------------------------------
+
     private String firstname;
     private String lastname;
-    private String email;
+    private String emailAdress;
     private String password;
 
+    //---------------------------------------------------------------------------
 
     public Integer getId() {
         return id;
@@ -122,12 +125,12 @@ public class User {
         this.lastname = lastname;
     }
 
-    public String getEmail() {
-        return email;
+    public String getEmailAdress() {
+        return emailAdress;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmailAdress(String emailAdress) {
+        this.emailAdress = emailAdress;
     }
 
     public String getPassword() {

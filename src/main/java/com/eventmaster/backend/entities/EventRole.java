@@ -11,32 +11,34 @@ import java.util.Set;
  *
  * @author Fabian Eilber
  */
+
 @Entity
 public class EventRole {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
 
-    @Column(unique = true)
-    private String Role;
+    @Id
+    private Long id;
+
+    String roleName;
 
     @OneToMany(mappedBy = "eventRole",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<UserInEventWithRole> userInEventWithRoles  = new HashSet<>();
 
-    public long getId() {
-        return id;
-    }
+    //---------------------------------------------------------------------------
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getRole() {
-        return Role;
+    public Long getId() {
+        return id;
     }
 
-    public void setRole(String role) {
-        Role = role;
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 }

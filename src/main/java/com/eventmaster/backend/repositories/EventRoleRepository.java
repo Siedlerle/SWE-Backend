@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
  *
  * @author Fabian Eilber
  */
-public interface EventRoleRepository extends JpaRepository<EventRole, Long > {
-    EventRole findByRole(String role);
+public interface EventRoleRepository extends JpaRepository<EventRole, Long>{
+
+    EventRole findEventRoleByRoleName(String roleName);
+
 }

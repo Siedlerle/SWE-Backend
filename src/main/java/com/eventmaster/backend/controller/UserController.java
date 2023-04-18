@@ -120,7 +120,7 @@ public class UserController {
     //Operations regarding user, event connection
 
     /**
-     * Endpoint for an user to accept an invitation to an event
+     * Endpoint for a user to accept an invitation to an event
      * @param eventId Id of the event user is about to accept
      * @param authToken Token from user to get further information
      * @return success message
@@ -132,7 +132,7 @@ public class UserController {
     }
 
     /**
-     * Endpoint for an user to decline an invitation to an event
+     * Endpoint for a user to decline an invitation to an event
      * @param eventId Id of the event user is about to decline
      * @param authToken Token from user to get further information
      * @return success message
@@ -145,7 +145,7 @@ public class UserController {
 
     /**
      * Endpont for an user to get his role for a specific event
-     * @param eventId Id of the event an user wants to get his role for
+     * @param eventId Id of the event a user wants to get his role for
      * @param authToken Token from user to get further information
      * @return role of the user for the corresponding event
      */
@@ -156,8 +156,8 @@ public class UserController {
     }
 
     /**
-     * Endpoint for an user to register for an event
-     * @param eventId Id of the event an user is about to register for
+     * Endpoint for a user to register for an event
+     * @param eventId Id of the event a user is about to register for
      * @param authToken Token from user to get further information
      * @return success message
      */
@@ -168,9 +168,9 @@ public class UserController {
     }
 
     /**
-     * Endpoint to get all events an user is registered for
+     * Endpoint to get all events a user is registered for
      * @param authToken Token from user to get further information
-     * @return List of events an user is registered for
+     * @return List of events a user is registered for
      */
     @PostMapping("/event/get-registered")
     public ResponseEntity<List<Event>> getRegisteredEventsForUser(String authToken){
@@ -179,7 +179,7 @@ public class UserController {
     }
 
     /**
-     * Endpoint to unregister an user from an event
+     * Endpoint to unregister a user from an event
      * @param event Corresponding event for unregistration
      * @param authToken Token from user to get further information
      * @param reason Reason why the user is unregistering

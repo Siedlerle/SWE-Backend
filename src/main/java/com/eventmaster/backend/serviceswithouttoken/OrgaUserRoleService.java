@@ -8,11 +8,11 @@ import org.springframework.stereotype.Service;
 public class OrgaUserRoleService {
     private final OrgaRoleRepository repository;
 
-    @Autowired
+
     private UserService userService;
-    @Autowired
+
     private OrganisationService organizationService;
-    @Autowired
+
     private RoleService roleService;
 
     public OrgaUserRoleService(OrgaRoleRepository orgaUserRoleRepository) {
