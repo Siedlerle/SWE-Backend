@@ -18,11 +18,10 @@ public class UserService {
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
-
     public User getUserById(long userId) {
         return userRepository.findUserById(userId);
     }
+    public User getUserByMail(String userMail) { return userRepository.findByEmailAdress(userMail).get(); }
 
     public String deleteUser(long userId) {
         try {

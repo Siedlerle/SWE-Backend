@@ -10,12 +10,14 @@ import java.util.List;
 public class UserInOrgaWithRoleService {
     private final UserInOrgaWithRoleRepository userInOrgaWithRoleRepository;
     private final UserService userService;
+    private final OrganisationService organisationService;
 
     public UserInOrgaWithRoleService(
             UserInOrgaWithRoleRepository userInOrgaWithRoleRepository,
-            UserService userService) {
+            UserService userService, OrganisationService organisationService) {
         this.userInOrgaWithRoleRepository = userInOrgaWithRoleRepository;
         this.userService = userService;
+        this.organisationService = organisationService;
     }
 
 
@@ -34,6 +36,33 @@ public class UserInOrgaWithRoleService {
         }catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+
+
+
+
+
+
+    public String removeUserFromOrganisation(long organisationId, String userMail) {
+        try {
+            User user = userService.getUserByMail(userMail);
+            Organisation organisation = organisationService.getOrganisationById(organisationId);
+            List <UserInOrgaWithRole> userInOrgaWithRoles = userInOrgaWithRoleRepository.findByUser(user);
+
+            for(UserInOrgaWithRole userInOrgaWithRole : userInOrgaWithRoles) {
+                if (userInOrgaWithRole.getOrganization().getId() == organisation.getId())
+                {
+                    userInOrgaWithRoleRepository.delete(userInOrgaWithRole);
+                    return "Removed successfully";
+                }
+            }
+
+            return "User is not in organisation";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Remove failed";
         }
     }
 }

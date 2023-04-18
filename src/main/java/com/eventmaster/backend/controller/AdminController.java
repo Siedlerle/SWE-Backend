@@ -36,4 +36,10 @@ public class AdminController {
         return ResponseEntity.ok(eventService.getEventsOfOrganisation(orgaId));
     }
 
+    @PostMapping("/remove-user-from-orga/{orgaId}")
+    public ResponseEntity<String> removeUserFromOrganisation(@PathVariable long orgaId,
+                                                             @RequestBody String userMail) {
+        return ResponseEntity.ok(userInOrgaWithRoleService.removeUserFromOrganisation(orgaId, userMail));
+    }
+
 }
