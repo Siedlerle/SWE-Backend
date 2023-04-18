@@ -9,4 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author Fabian Unger
  */
 public interface GroupRepository extends JpaRepository<Group, Long> {
+    Group findById(long groupId);
 }

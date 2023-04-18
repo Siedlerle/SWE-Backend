@@ -6,6 +6,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * A class which receives and processes the requests of multiple controllers concerning the management of the connection between users and organisations witch specific roles.
+ *
+ * @author Fabian Eilber
+ * @author Fabian Unger
+ */
 @Service
 public class UserInOrgaWithRoleService {
     private final UserInOrgaWithRoleRepository userInOrgaWithRoleRepository;
@@ -40,11 +46,12 @@ public class UserInOrgaWithRoleService {
     }
 
 
-
-
-
-
-
+    /**
+     * Removes a user from an organisation by deleting the UserInOrgaWithRole in the database.
+     * @param organisationId ID of the organisation from which the user will be removed.
+     * @param userMail Mail of the user who will be removed.
+     * @return String about success of failure.
+     */
     public String removeUserFromOrganisation(long organisationId, String userMail) {
         try {
             User user = userService.getUserByMail(userMail);

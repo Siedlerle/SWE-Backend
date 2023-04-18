@@ -73,7 +73,7 @@ public class OrganisationService {
             //TODO Wird das beim Saven eine neue Entität oder wird die alte überschrieben?
             this.organisationRepository.save(oldOrganisation);
 
-            return "Organisation succesfully changed";
+            return "Organisation changed successfully";
         } catch (Exception e) {
             e.printStackTrace();
             return "Organisation change failed";
@@ -93,7 +93,7 @@ public class OrganisationService {
             return "Organisation " + organisation.getName() + " deleted successfully";
         } catch (Exception e) {
             e.printStackTrace();
-            return "Organisation deleted";
+            return "Organisation not deleted";
         }
     }
 }
