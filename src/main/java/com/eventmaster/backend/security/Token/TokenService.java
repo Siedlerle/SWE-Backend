@@ -26,7 +26,7 @@ public class TokenService {
     }
 
     public List<Token> findAllValidTokenByUser(Long userId){
-        return findAllValidTokenByUser(userId);
+        return tokenRepository.findAllValidTokenByUser(userId);
     }
 
     public Token findByToken(String token){
