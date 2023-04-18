@@ -73,7 +73,6 @@ public class UserInEventWithRoleService {
 
             EventRole eventRole = eventRoleService.findByRole("ACCEPTED");
 
-
             UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
             userInEventWithRole.setEvent(eventService.getEventById(eventId));
             userInEventWithRole.setUser(userService.getUserById(userId));

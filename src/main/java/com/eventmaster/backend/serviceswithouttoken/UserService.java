@@ -7,8 +7,13 @@ import com.eventmaster.backend.security.Token.TokenService;
 import com.eventmaster.backend.security.Token.TokenType;
 import com.eventmaster.backend.security.auth.AuthenticationResponse;
 import com.eventmaster.backend.security.config.JwtService;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * A class which receives and processes the requests of multiple controllers concerning the management of users
@@ -23,16 +28,19 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final TokenService tokenService;
+    private final AuthenticationManager authenticationManager;
 
 
     public UserService(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
-            JwtService jwtService, TokenService tokenService) {
+            JwtService jwtService, TokenService tokenService,
+            AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.tokenService = tokenService;
+        this.authenticationManager = authenticationManager;
     }
 
     public AuthenticationResponse register(User request){
@@ -47,6 +55,43 @@ public class UserService {
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         saveUserToken(savedUser, jwtToken);
+        return AuthenticationResponse.builder()
+                .accessToken(jwtToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
+    public String verify(String authToken) {
+        String emailAdress = jwtService.extractUsername(authToken);
+        User verifyUser = userRepository.findByEmailAdress(emailAdress);
+
+        List<Token> tokens = verifyUser.getTokens();
+
+
+        for (Token token: tokens) {
+            if(token.getToken().equals(authToken)) {
+                if (!token.isRevoked() || !token.isExpired()) {
+                    verifyUser.setEnabled(true);
+                    userRepository.save(verifyUser);
+                    return "successfully verified";
+                }
+            }
+        }
+        return "failed to verify";
+    }
+
+    public AuthenticationResponse login(User request){
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmailAdress(),
+                        request.getPassword()
+                )
+        );
+
+        var user = userRepository.findByEmailAdress(request.getEmailAdress());
+        var jwtToken = jwtService.generateToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
+        saveUserToken(user, jwtToken);
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
@@ -84,4 +129,6 @@ public class UserService {
             return "User not deleted";
         }
     }
+
+
 }

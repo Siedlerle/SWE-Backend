@@ -37,17 +37,19 @@ public class UserController {
         return ResponseEntity.ok(userService.register(user));
     }
 
-    /*
+
     @PostMapping("/auth/verify")
-    public ResponseEntity<?> verify(String authToken) {
-        return
+    public ResponseEntity<?> verify(@RequestParam String authToken) {
+        return ResponseEntity.ok(userService.verify(authToken));
     }
+
 
     @PostMapping("/auth/login")
-    public ResponseEntity<?> login (User user){
-        return
+    public ResponseEntity<?> login (@RequestBody User user){
+        return ResponseEntity.ok(userService.login(user));
     }
 
+    /*
     @PostMapping("/auth/pwd-reset-request")
     public ResponseEntity<?> requestPasswordReset(String emailAdress){
         return
