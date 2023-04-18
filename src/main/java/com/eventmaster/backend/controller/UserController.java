@@ -3,8 +3,9 @@ package com.eventmaster.backend.controller;
 import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.serviceswithouttoken.OrganisationService;
 import com.eventmaster.backend.serviceswithouttoken.UserInEventWithRoleService;
-import com.eventmaster.backend.services.UserService;
+import com.eventmaster.backend.serviceswithouttoken.UserService;
 import com.eventmaster.backend.serviceswithouttoken.UserInOrgaWithRoleService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,22 +19,25 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
+@RequiredArgsConstructor
 @RequestMapping("/user")
 public class UserController {
 
     //Services needed for operations
-    private UserService userService;
-    private OrganisationService organisationService;
-    private UserInEventWithRoleService userInEventWithRoleService;
-    private UserInOrgaWithRoleService userInOrgaWithRoleService;
+    private final UserService userService;
+    private final OrganisationService organisationService;
+    private final UserInEventWithRoleService userInEventWithRoleService;
+    private final UserInOrgaWithRoleService userInOrgaWithRoleService;
 
 
-/*
+
     //Operations regarding user authentications
     @PostMapping("/auth/register")
     public ResponseEntity<?> register(@RequestBody User user){
         return ResponseEntity.ok(userService.register(user));
     }
+
+    /*
     @PostMapping("/auth/verify")
     public ResponseEntity<?> verify(String authToken) {
         return
