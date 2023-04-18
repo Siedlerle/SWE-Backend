@@ -5,10 +5,13 @@ import com.eventmaster.backend.serviceswithouttoken.OrganisationService;
 import com.eventmaster.backend.serviceswithouttoken.UserInEventWithRoleService;
 import com.eventmaster.backend.serviceswithouttoken.UserService;
 import com.eventmaster.backend.serviceswithouttoken.UserInOrgaWithRoleService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -49,22 +52,28 @@ public class UserController {
         return ResponseEntity.ok(userService.login(user));
     }
 
-    /*
+
     @PostMapping("/auth/pwd-reset-request")
-    public ResponseEntity<?> requestPasswordReset(String emailAdress){
-        return
+    public ResponseEntity<?> requestPasswordReset(@RequestParam String emailAdress){
+        return ResponseEntity.ok(userService.requestPasswordReset(emailAdress));
     }
 
+
     @PostMapping("/auth/reset-pwd")
-    public ResponseEntity<?> resetPassword(User user, String authToken){
-        return
+    public ResponseEntity<?> resetPassword(@RequestBody User user){
+        return ResponseEntity.ok(userService.resetPassword(user));
     }
 
     @PostMapping("/auth/delete")
-    public ResponseEntity<?> delete(User user, String authToken){
-        return
+    public ResponseEntity<?> delete(@RequestParam long userId){
+        return ResponseEntity.ok(userService.deleteUser(userId));
     }
-*/
+
+    @PostMapping("auth/refresh")
+    public void refresh(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        userService.refreshToken(request, response);
+    }
+
 
     //Operations regarding user, orga connection
     @PostMapping("/orga/get-all")

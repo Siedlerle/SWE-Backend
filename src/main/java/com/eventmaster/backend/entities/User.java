@@ -33,7 +33,7 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private long id;
     private String firstname;
     private String lastname;
     private String emailAdress;
@@ -75,11 +75,11 @@ public class User implements UserDetails {
 
     //---------------------------------------------------------------------------
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

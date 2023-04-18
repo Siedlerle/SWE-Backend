@@ -7,12 +7,17 @@ import com.eventmaster.backend.security.Token.TokenService;
 import com.eventmaster.backend.security.Token.TokenType;
 import com.eventmaster.backend.security.auth.AuthenticationResponse;
 import com.eventmaster.backend.security.config.JwtService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -109,6 +114,32 @@ public class UserService {
         tokenService.saveToken(token);
     }
 
+    public String requestPasswordReset(String emailAdress){
+        return "not implemented yet";
+    }
+
+    public AuthenticationResponse resetPassword(User user){
+        try{
+            User changedUser = userRepository.findByEmailAdress(user.getEmailAdress());
+
+            changedUser.setPassword(passwordEncoder.encode(user.getPassword()));
+
+            var savedUser = userRepository.save(changedUser);
+            var jwtToken = jwtService.generateToken(changedUser);
+            var refreshToken = jwtService.generateRefreshToken(changedUser);
+            saveUserToken(savedUser, jwtToken);
+            return AuthenticationResponse.builder()
+                    .accessToken(jwtToken)
+                    .refreshToken(refreshToken)
+                    .build();
+
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
     public User getUserById(long userId) {
         return userRepository.findUserById(userId);
     }
@@ -121,7 +152,8 @@ public class UserService {
         try {
 
             User user = this.getUserById(userId);
-            this.userRepository.deleteById(userId);
+            tokenService.deleteToken(user.getId());
+            userRepository.delete(userRepository.findByEmailAdress(user.getEmailAdress()));
 
             return "User " + user.getFirstname() + " " + user.getLastname() + " deleted successfully" ;
         }catch (Exception e) {
@@ -130,5 +162,44 @@ public class UserService {
         }
     }
 
+
+
+    public void refreshToken(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws IOException {
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String refreshToken;
+        final String userEmail;
+        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+            return;
+        }
+        refreshToken = authHeader.substring(7);
+        userEmail = jwtService.extractUsername(refreshToken);
+        if (userEmail != null) {
+            var user = this.userRepository.findByEmailAdress(userEmail);
+            if (jwtService.isTokenValid(refreshToken, user)) {
+                var accessToken = jwtService.generateToken(user);
+                revokeAllUserTokens(user);
+                saveUserToken(user, accessToken);
+                var authResponse = AuthenticationResponse.builder()
+                        .accessToken(accessToken)
+                        .refreshToken(refreshToken)
+                        .build();
+                new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+            }
+        }
+    }
+
+    private void revokeAllUserTokens(User user) {
+        var validUserTokens = tokenService.findAllValidTokenByUser(user.getId());
+        if (validUserTokens.isEmpty())
+            return;
+        validUserTokens.forEach(token -> {
+            token.setExpired(true);
+            token.setRevoked(true);
+        });
+        tokenService.saveAll(validUserTokens);
+    }
 
 }
