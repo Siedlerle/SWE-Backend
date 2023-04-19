@@ -133,6 +133,9 @@ public class UserService {
         try{
             User resetUserPwd = userRepository.findByEmailAdress(emailAdress);
 
+            revokeAllUserTokens(resetUserPwd);
+
+
             var jwtToken = jwtService.generateToken(resetUserPwd);
             var refreshToken = jwtService.generateRefreshToken(resetUserPwd);
             saveUserToken(resetUserPwd, jwtToken);
@@ -158,6 +161,8 @@ public class UserService {
             User changedUser = userRepository.findByEmailAdress(user.getEmailAdress());
 
             changedUser.setPassword(passwordEncoder.encode(user.getPassword()));
+
+            revokeAllUserTokens(changedUser);
 
             var savedUser = userRepository.save(changedUser);
             var jwtToken = jwtService.generateToken(changedUser);
