@@ -9,4 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author Fabian Eilber
  */
 public interface EventSeriesRepository extends JpaRepository<EventSeries, Long> {
+    EventSeries findById(long eventSeriesId);
 }

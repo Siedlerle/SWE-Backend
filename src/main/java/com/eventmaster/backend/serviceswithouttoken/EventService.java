@@ -11,6 +11,7 @@ import java.util.List;
  * A class which receives and processes the requests of the controller
  *
  * @author Fabian Eilber
+ * @author Fabian Unger
  */
 
 @Service
@@ -50,32 +51,32 @@ public class EventService {
     }
 
     /**
-     * An event is added to the databse
+     * An event is added to the database
      * @param event Event which is being added
-     * @return Boolen as status for succes
+     * @return String about success or failure
      */
-    public boolean createEvent(Event event) {
+    public String createEvent(Event event) {
         try {
             eventRepository.save(event);
-            return true;
+            return "Event created successfully";
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return "Event creation failed";
         }
     }
 
     /**
      * An event corresponding to the eventId is being deleted
      * @param eventId ID of the event which will be deleted.
-     * @return Boolen as status for succes
+     * @return Boolen as status for success
      */
-    public boolean deleteEvent(Long eventId){
+    public String deleteEvent(Long eventId){
         try {
             eventRepository.deleteById(eventId);
-            return true;
+            return "Event deleted successfully";
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return "Deletion failed";
         }
     }
 
@@ -90,5 +91,18 @@ public class EventService {
         return participants;
     }
 
-
+    /**
+     * An existing event in the database is being changed.
+     * @param event New event with the new data.
+     * @return String about success or failure.
+     */
+    public String changeEvent(Event event) {
+        try {
+            eventRepository.save(event);
+            return "Event changed successfully";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Change failed";
+        }
+    }
 }
