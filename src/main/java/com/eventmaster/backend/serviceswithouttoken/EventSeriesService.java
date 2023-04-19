@@ -23,6 +23,15 @@ public class EventSeriesService {
         this.eventService = eventService;
     }
 
+    public EventSeries getEventSeriesById(long eventSeriesId) {
+        try {
+            return eventSeriesRepository.findById(eventSeriesId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      * A series of events is being created by creating multiple events with a specific time interval.
      * @param lastEvent Event with the data for all other events and the last date of taking place.
@@ -49,7 +58,7 @@ public class EventSeriesService {
         try {
             long eventSeriesId = eventSeries.getId();
 
-            EventSeries oldEventSeries = this.eventSeriesRepository.findById(eventSeriesId);
+            EventSeries oldEventSeries = getEventSeriesById(eventSeriesId);
             Set<Event> EventSeries = oldEventSeries.getEvents();
 
             //TODO: Alle Events durchgehen und Daten abändern.
@@ -62,13 +71,40 @@ public class EventSeriesService {
     }
 
     /**
+     * Changes the status of the events which belong to a series of events.
+     * @param eventSeriesId ID of the EventSeries
+     * @param newStatus New status for the events.
+     * @return String about success or failure.
+     */
+    public String changeStatusOfEventSeries(long eventSeriesId, String newStatus) {
+        try {
+            EventSeries eventSeries = getEventSeriesById(eventSeriesId);
+
+            Set<Event> events = eventSeries.getEvents();
+
+            for (Event event : events) {
+                if (!event.getStatus().equals("abgeschlossen")) {
+                    event.setStatus(newStatus);
+                    eventService.changeEvent(event);
+                }
+            }
+
+            eventSeriesRepository.save(eventSeries);
+            return "Status changed successfully";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Change of status failed";
+        }
+    }
+
+    /**
      * A series of events is being deleted from the database.
      * @param eventSeriesId ID of the EventSeries which contains the series of events.
      * @return String about success or failure.
      */
     public String deleteEventSeries(long eventSeriesId) {
         try {
-            EventSeries eventSeries = this.eventSeriesRepository.findById(eventSeriesId);
+            EventSeries eventSeries = getEventSeriesById(eventSeriesId);
             Set<Event> events = eventSeries.getEvents();
 
             for (Event event : events) {

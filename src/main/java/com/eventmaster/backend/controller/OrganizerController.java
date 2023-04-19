@@ -19,6 +19,14 @@ import java.util.List;
 @CrossOrigin
 @RequestMapping("/organizer")
 public class OrganizerController {
+    /*
+    Es fehlen:
+    -
+
+     */
+
+
+
     @Autowired
     private EventService eventService;
     @Autowired
@@ -48,6 +56,18 @@ public class OrganizerController {
     @PostMapping("/event/change")
     public ResponseEntity<String> changeEvent(@RequestBody Event event) {
         return ResponseEntity.ok(eventService.changeEvent(event));
+    }
+
+    /**
+     * Endpoint to change the status of an event.
+     * @param eventId ID of the event where the status will be changed.
+     * @param status New status of the event.
+     * @return String about success or failure.
+     */
+    @PostMapping("/event/{eventId}/status/change")
+    public ResponseEntity<String> changeEventStatus(@PathVariable long eventId,
+                                                    @RequestBody String status) {
+        return ResponseEntity.ok(eventService.changeStatusOfEvent(eventId, status));
     }
 
     /**
@@ -82,6 +102,18 @@ public class OrganizerController {
     public ResponseEntity<String> changeEventSeries(@RequestParam EventSeries eventSeries,
                                                     @RequestParam Event lastEvent) {
         return ResponseEntity.ok(eventSeriesService.changeEventSeries(lastEvent, eventSeries));
+    }
+
+    /**
+     * Endpoint to change the status of the events belonging to the EventSeries.
+     * @param eventSeriesId ID of the EventSeries containing the events.
+     * @param status New status for the events.
+     * @return String about success or failure.
+     */
+    @PostMapping("/event-series/{eventSeriesId}/status/change")
+    public ResponseEntity<String> changeStatusOfEventSeries(@PathVariable long eventSeriesId,
+                                                            @RequestBody String status) {
+        return ResponseEntity.ok(eventSeriesService.changeStatusOfEventSeries(eventSeriesId, status));
     }
 
     /**
