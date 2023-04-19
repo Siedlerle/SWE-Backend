@@ -67,6 +67,11 @@ public class UserController {
     }
 
 
+    /**
+     * Endpoint to request to reset a users password
+     * @param emailAdress Mail of the corresponding user
+     * @return successmessage
+     */
     @PostMapping("/auth/pwd-reset-request")
     public ResponseEntity<?> requestPasswordReset(@RequestParam String emailAdress){
         return ResponseEntity.ok(userService.requestPasswordReset(emailAdress));

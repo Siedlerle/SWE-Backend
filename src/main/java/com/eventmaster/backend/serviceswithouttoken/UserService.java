@@ -1,4 +1,6 @@
 package com.eventmaster.backend.serviceswithouttoken;
+import com.eventmaster.backend.EmailService.EmailService;
+import com.eventmaster.backend.entities.Event;
 import com.eventmaster.backend.entities.Role;
 import com.eventmaster.backend.entities.User;
 import com.eventmaster.backend.repositories.UserRepository;
@@ -10,7 +12,9 @@ import com.eventmaster.backend.security.config.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -30,25 +34,26 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
-    private final TokenService tokenService;
-    private final AuthenticationManager authenticationManager;
+    @Autowired
+    private  PasswordEncoder passwordEncoder;
+    @Autowired
+    private  JwtService jwtService;
+    @Autowired
+    private  TokenService tokenService;
+    @Autowired
+    private  AuthenticationManager authenticationManager;
+    @Autowired
+    private EmailService emailService;
+
+    private final SimpleMailMessage mailMessage = new SimpleMailMessage();
 
 
     public UserService(
-            UserRepository userRepository,
-            PasswordEncoder passwordEncoder,
-            JwtService jwtService, TokenService tokenService,
-            AuthenticationManager authenticationManager) {
+            UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtService = jwtService;
-        this.tokenService = tokenService;
-        this.authenticationManager = authenticationManager;
     }
 
-    public AuthenticationResponse register(User request){
+    public String register(User request){
         var user = User.builder()
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
@@ -61,19 +66,16 @@ public class UserService {
         var refreshToken = jwtService.generateRefreshToken(user);
         saveUserToken(savedUser, jwtToken);
 
-
         mailMessage.setFrom("ftb-solutions@outlook.de");
         mailMessage.setTo(user.getEmailAdress());
         mailMessage.setSubject("Complete Registration!");
-        mailMessage.setText("To confirm your account, please click here : "
-                +"http://localhost:8080/user/verify-account?token="+verificationToken.getVerificationToken());
+        mailMessage.setText("Hello " + user.getFirstname() + "," +
+                        "\nto confirm your account, please click here : \n"
+                +"http://localhost:8080/user/auth/verify?authToken=" + jwtToken + "\n"
+                +"WARNING: The token is only valid up to 15 Minutes");
         emailService.sendEmail(mailMessage);
 
-
-        return AuthenticationResponse.builder()
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken)
-                .build();
+        return "Successfully registered";
     }
 
     public String verify(String authToken) {
@@ -81,7 +83,6 @@ public class UserService {
         User verifyUser = userRepository.findByEmailAdress(emailAdress);
 
         List<Token> tokens = verifyUser.getTokens();
-
 
         for (Token token: tokens) {
             if(token.getToken().equals(authToken)) {
@@ -102,6 +103,9 @@ public class UserService {
                         request.getPassword()
                 )
         );
+
+        User revokeUserTokens = userRepository.findByEmailAdress(request.getEmailAdress());
+        revokeAllUserTokens(revokeUserTokens);
 
         var user = userRepository.findByEmailAdress(request.getEmailAdress());
         var jwtToken = jwtService.generateToken(user);
@@ -124,8 +128,29 @@ public class UserService {
         tokenService.saveToken(token);
     }
 
+    //Todo Link für Änderungsfeld anpassen
     public String requestPasswordReset(String emailAdress){
-        return "not implemented yet";
+        try{
+            User resetUserPwd = userRepository.findByEmailAdress(emailAdress);
+
+            var jwtToken = jwtService.generateToken(resetUserPwd);
+            var refreshToken = jwtService.generateRefreshToken(resetUserPwd);
+            saveUserToken(resetUserPwd, jwtToken);
+
+            mailMessage.setFrom("ftb-solutions@outlook.de");
+            mailMessage.setTo(emailAdress);
+            mailMessage.setSubject("Complete Registration!");
+            mailMessage.setText("Hello " + resetUserPwd.getFirstname() + "," +
+                    "\nto confirm your account, please click here : \n"
+                    +"Token to authenticate reset: " + jwtToken + "\n"
+                    +"WARNING: The token is only valid up to 15 Minutes");
+            emailService.sendEmail(mailMessage);
+
+            return "reset-request sent";
+        }catch (Exception e) {
+            e.printStackTrace();
+            return "request failed";
+        }
     }
 
     public AuthenticationResponse resetPassword(User user){
@@ -147,7 +172,6 @@ public class UserService {
             e.printStackTrace();
             return null;
         }
-
     }
 
     public User getUserById(long userId) {
@@ -202,14 +226,15 @@ public class UserService {
     }
 
     private void revokeAllUserTokens(User user) {
-        var validUserTokens = tokenService.findAllValidTokenByUser(user.getId());
-        if (validUserTokens.isEmpty())
+        List<Token> validUserTokens = tokenService.findAllValidTokensByUser(user);
+        if (validUserTokens.isEmpty()) {
             return;
+        }
         validUserTokens.forEach(token -> {
             token.setExpired(true);
             token.setRevoked(true);
+            tokenService.saveToken(token);
         });
-        tokenService.saveAll(validUserTokens);
     }
 
 }

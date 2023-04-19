@@ -12,12 +12,15 @@ public interface TokenRepository extends JpaRepository<Token, Long> {
      *  @param id the user ID to retrieve tokens for
      *  @return a list of valid tokens associated with the specified user
      */
+    /*
     @Query(value = """
       select t from Token t inner join User u\s
       on t.user.id = u.id\s
       where u.id = :id and (t.expired = false or t.revoked = false)\s
       """)
-    List<Token> findAllValidTokenByUser(Long id);
+    List<Token> findAllValidTokenByUserId(Long id);
+    */
+
 
     /**
      * Retrieves an optional token by its value.
@@ -26,5 +29,10 @@ public interface TokenRepository extends JpaRepository<Token, Long> {
      */
     Token findByToken(String token);
 
+    /**
+     * Searches for tokens for corresponding user
+     * @param userId Id of the user
+     * @return List of tokens for user
+     */
     List<Token> findTokensByUserId (Long userId);
 }
