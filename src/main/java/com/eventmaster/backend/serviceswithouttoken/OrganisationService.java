@@ -70,7 +70,6 @@ public class OrganisationService {
             oldOrganisation.setName(newName);
             oldOrganisation.setLocation(newLocation);
 
-            //TODO Wird das beim Saven eine neue Entität oder wird die alte überschrieben?
             this.organisationRepository.save(oldOrganisation);
 
             return "Organisation changed successfully";
