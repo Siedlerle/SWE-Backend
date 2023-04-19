@@ -6,6 +6,7 @@ import com.eventmaster.backend.serviceswithouttoken.EventService;
 import com.eventmaster.backend.serviceswithouttoken.GroupService;
 import com.eventmaster.backend.serviceswithouttoken.UserInEventWithRoleService;
 import com.eventmaster.backend.serviceswithouttoken.UserInOrgaWithRoleService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,9 +24,13 @@ import java.util.List;
 @RequestMapping("/admin")
 public class AdminController {
 
+    @Autowired
     private  EventService eventService;
+    @Autowired
     private  UserInOrgaWithRoleService userInOrgaWithRoleService;
+    @Autowired
     private  GroupService groupService;
+    @Autowired
     private  UserInEventWithRoleService userInEventWithRoleService;
 
     /**
