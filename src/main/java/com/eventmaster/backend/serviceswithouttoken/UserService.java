@@ -60,6 +60,16 @@ public class UserService {
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         saveUserToken(savedUser, jwtToken);
+
+
+        mailMessage.setFrom("ftb-solutions@outlook.de");
+        mailMessage.setTo(user.getEmailAdress());
+        mailMessage.setSubject("Complete Registration!");
+        mailMessage.setText("To confirm your account, please click here : "
+                +"http://localhost:8080/user/verify-account?token="+verificationToken.getVerificationToken());
+        emailService.sendEmail(mailMessage);
+
+
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
