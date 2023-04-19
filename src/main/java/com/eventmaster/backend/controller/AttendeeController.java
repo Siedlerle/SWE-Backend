@@ -2,6 +2,7 @@ package com.eventmaster.backend.controller;
 
 import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.serviceswithouttoken.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +21,15 @@ import java.util.List;
 @RequestMapping("/attendee")
 public class AttendeeController {
 
+    @Autowired
     private ChatService chatService;
+    @Autowired
     private CommentService commentService;
+    @Autowired
     private DocumentService documentService;
+    @Autowired
     private QuestionService questionService;
+    @Autowired
     private AnswerService answerService;
 
 
@@ -86,8 +92,7 @@ public class AttendeeController {
     public ResponseEntity<String> answerSurvey(
             @RequestBody List<Answer> answers,
             @PathVariable long userId){
-        //Todo implementieren der Antwortlogik
-        return ResponseEntity.ok("Not yet implemented");
+        return ResponseEntity.ok(answerService.answerQuestion(answers, userId));
     }
 
     /**
