@@ -61,40 +61,80 @@ public class UserController {
 */
 
     //Operations regarding user, orga connection
+
+    /**
+     * Endpoint for a user to get all existing organisations
+     * @return List of Organisations
+     */
     @PostMapping("/orga/get-all")
     public ResponseEntity<List<Organisation>> getAllOrganisations(){
         return ResponseEntity.ok(organisationService.getAllOrganisations());
     }
 
+    /**
+     * Endpoint for a user to get Information about Organisation
+     * @param organisationId Id of the corresponding Organisation
+     * @return Organisation object
+     */
     @PostMapping("/orga/get-orga")
     public ResponseEntity<Organisation> getOrganisation(long organisationId){
         return ResponseEntity.ok(organisationService.getOrganisationById(organisationId));
     }
 
+    /**
+     * Endpoint for a user to get all organisations a User is part of
+     * @param authToken Token to retrieve the id of the user requesting
+     * @return List of organisations the user is part of
+     */
     @PostMapping("/orga/get-for-user")
     public ResponseEntity<List<Organisation>> getOrganisationsForUser(String authToken){
         long userId = 0;
         return ResponseEntity.ok(userInOrgaWithRoleService.getOrgaForUser(userId));
     }
 
+    /**
+     * Endpoint for a user to request to join a organisation
+     * @param organisationId Id of the corresponding Organisation
+     * @param authToken Token to retrieve the id of the user requesting
+     * @return successmessage
+     */
     @PostMapping("/orga/request-join")
     public ResponseEntity<String> requestJoin(long organisationId, String authToken){
         long userId = 0;
         return ResponseEntity.ok("nicht implementiert");
     }
 
+    /**
+     * Endpoint for a user to accept an invitation to an orga
+     * @param organisationId Id of the corresponding Organisation
+     * @param authToken Token to retrieve the id of the user requesting
+     * @return successmessage
+     */
     @PostMapping("/orga/accept-invitation")
     public ResponseEntity<String> acceptOrganisationInvitation(long organisationId, String authToken){
         long userId = 0;
         return ResponseEntity.ok("nicht implementiert");
     }
 
+    /**
+     * Endpoint for a user to decline an invitation to an orga
+     * @param organisationId Id of the corresponding Organisation
+     * @param authToken Token to retrieve the id of the user requesting
+     * @return successmessage
+     */
     @PostMapping("/orga/decline-invitation")
     public ResponseEntity<String> declineOrganisationInvitation(long organisationId, String authToken){
         long userId = 0;
         return ResponseEntity.ok("nicht implementiert");
     }
 
+    /**
+     * Endpoint for a user to leave an organisation
+     * @param organisationId Id of the corresponding Organisation
+     * @param authToken Token to retrieve the id of the user requesting
+     * @param reason Reason why the user leaves the organisation
+     * @return successmessage
+     */
     @PostMapping("/orga/leave")
     public ResponseEntity<String> leaveOrganisation(long organisationId, String authToken, String reason){
         long userId = 0;
