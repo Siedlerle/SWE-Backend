@@ -47,7 +47,7 @@ public class OrganisationService {
     public String createOrganisation(Organisation organisation){
         try {
             organisationRepository.save(organisation);
-            return "Organisation succesfully created";
+            return "Organisation created successfully";
         } catch (Exception e) {
             e.printStackTrace();
             return "Organisation creation failed";
@@ -59,7 +59,7 @@ public class OrganisationService {
      * @param newOrganisation The new organisation which will replace the old organisation.
      * @return String if successful or not.
      */
-    public String editOrganisation(Organisation newOrganisation){
+    public String changeOrganisation(Organisation newOrganisation){
         try {
             long id = newOrganisation.getId();
             Organisation oldOrganisation = this.organisationRepository.findById(id);

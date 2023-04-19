@@ -4,6 +4,7 @@ import com.eventmaster.backend.entities.Organisation;
 
 import com.eventmaster.backend.entities.User;
 import com.eventmaster.backend.serviceswithouttoken.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/sys-admin")
 public class SystemAdminController {
 
+    @Autowired
     private OrganisationService organisationService;
     private UserService userService;
 
@@ -28,9 +30,9 @@ public class SystemAdminController {
      * @param sysAdminPassword Password of the System-Admin to authorize him.
      * @return success message
      */
-    @PostMapping("/create-orga")
-    public ResponseEntity<String> createOrganisation(@RequestParam Organisation organisation,
-                                                @RequestParam String sysAdminPassword){
+    @PostMapping("/organisation/create")
+    public ResponseEntity<String> createOrganisation(@RequestBody Organisation organisation,
+                                                     @RequestParam String sysAdminPassword){
         //TODO passwort vom Sysadmin abfragen?
         return ResponseEntity.ok(organisationService.createOrganisation(organisation));
     }
@@ -41,11 +43,11 @@ public class SystemAdminController {
      * @param sysAdminPassword Password of the System-Admin to authorize him.
      * @return success message
      */
-    @PostMapping("/edit-orga")
-    public ResponseEntity<String> editOrganisation(@RequestParam Organisation organisation,
+    @PostMapping("/organisation/change")
+    public ResponseEntity<String> changeOrganisation(@RequestBody Organisation organisation,
                                               @RequestParam String sysAdminPassword){
         //TODO passwort vom Sysadmin abfragen?
-        return ResponseEntity.ok(organisationService.editOrganisation(organisation));
+        return ResponseEntity.ok(organisationService.changeOrganisation(organisation));
     }
 
     /**
@@ -54,8 +56,8 @@ public class SystemAdminController {
      * @param sysAdminPassword Password of the System-Admin to authorize him.
      * @return success message
      */
-    @PostMapping("/delete-orga")
-    public ResponseEntity<String> deleteOrganisation(@RequestParam long organisationId,
+    @PostMapping("/organisation/delete/{organisationId}")
+    public ResponseEntity<String> deleteOrganisation(@PathVariable long organisationId,
                                                      @RequestParam String sysAdminPassword) {
         //TODO passwort vom Sysadmin abfragen?
         return ResponseEntity.ok(organisationService.deleteOrganisation(organisationId));
@@ -67,7 +69,7 @@ public class SystemAdminController {
      * @param sysAdminPassword Password of the System-Admin to authorize him.
      * @return success message
      */
-    @PostMapping("/delete-user")
+    @PostMapping("/user/delete")
     public ResponseEntity<String> deleteUser(@RequestParam long userId,
                                              @RequestParam String sysAdminPassword) {
         //TODO passwort vom Sysadmin abfragen?
