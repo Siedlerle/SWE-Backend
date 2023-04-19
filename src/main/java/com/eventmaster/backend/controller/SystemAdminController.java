@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 /**
  * A class which handles the HTTP-requests for system admin functions.
  *
+ * @author Fabian Unger
  * @author Fabian Eilber
  */
 
