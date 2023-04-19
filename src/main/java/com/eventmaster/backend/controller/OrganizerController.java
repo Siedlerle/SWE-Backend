@@ -4,6 +4,7 @@ import com.eventmaster.backend.entities.Event;
 import com.eventmaster.backend.entities.EventSeries;
 import com.eventmaster.backend.entities.Preset;
 import com.eventmaster.backend.serviceswithouttoken.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,10 +19,15 @@ import java.util.List;
 @CrossOrigin
 @RequestMapping("/organizer")
 public class OrganizerController {
+    @Autowired
     private EventService eventService;
+    @Autowired
     private EventSeriesService eventSeriesService;
+    @Autowired
     private OrganisationService organisationService;
+    @Autowired
     private PresetService presetService;
+    @Autowired
     private UserInEventWithRoleService userInEventWithRoleService;
 
     /**

@@ -22,6 +22,7 @@ public class SystemAdminController {
 
     @Autowired
     private OrganisationService organisationService;
+    @Autowired
     private UserService userService;
 
 
