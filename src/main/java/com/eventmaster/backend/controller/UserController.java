@@ -1,10 +1,11 @@
 package com.eventmaster.backend.controller;
 
 import com.eventmaster.backend.entities.*;
+import com.eventmaster.backend.serviceswithouttoken.UserService;
 import com.eventmaster.backend.serviceswithouttoken.OrganisationService;
 import com.eventmaster.backend.serviceswithouttoken.UserInEventWithRoleService;
-import com.eventmaster.backend.services.UserService;
 import com.eventmaster.backend.serviceswithouttoken.UserInOrgaWithRoleService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,9 +23,13 @@ import java.util.List;
 public class UserController {
 
     //Services needed for operations
+    @Autowired
     private UserService userService;
+    @Autowired
     private OrganisationService organisationService;
+    @Autowired
     private UserInEventWithRoleService userInEventWithRoleService;
+    @Autowired
     private UserInOrgaWithRoleService userInOrgaWithRoleService;
 
 
