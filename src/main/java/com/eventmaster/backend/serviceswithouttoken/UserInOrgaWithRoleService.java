@@ -40,13 +40,61 @@ public class UserInOrgaWithRoleService {
             List <Organisation> organisationsForUser = null;
 
             for(UserInOrgaWithRole orgasForUser: userInOrgaWithRoles){
-                organisationsForUser.add(orgasForUser.getOrganization());
+                organisationsForUser.add(orgasForUser.getOrganisation());
             }
 
             return organisationsForUser;
         }catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    /**
+     * Sets a new userInOrgaWithRole
+     * @param organisationId Id of the corresponding orga
+     * @param userMail Mail of the corresponding user
+     * @return successmessage
+     */
+    public String requestJoin(long organisationId, String userMail){
+        try {
+            User user = userService.getUserByMail(userMail);
+            Organisation organisation = organisationService.getOrganisationById(organisationId);
+
+            UserInOrgaWithRole userInOrgaWithRole = new UserInOrgaWithRole();
+            userInOrgaWithRole.setUser(user);
+            userInOrgaWithRole.setOrganisation(organisation);
+
+            //Todo Rolle für Anfrage festlegen
+
+            userInOrgaWithRoleRepository.save(userInOrgaWithRole);
+            return "Requested join successfully";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Request failed";
+        }
+    }
+
+    public String leaveOrganisation(long organisationId, String userMail, String reason){
+        try {
+            User user = userService.getUserByMail(userMail);
+            Organisation organisation = organisationService.getOrganisationById(organisationId);
+
+            //Todo reason per mail an den admin o.ä. der Organisation
+
+            List<UserInOrgaWithRole> userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser(user);
+
+            for (UserInOrgaWithRole deleteUserInOrgaWithRole: userInOrgaWithRole) {
+                if(deleteUserInOrgaWithRole.getOrganisation() == organisation){
+                    userInOrgaWithRoleRepository.delete(deleteUserInOrgaWithRole);
+                    return "Removed successfully";
+                }
+            }
+
+            return "User has no matching organisation";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Leaving organisation failed";
         }
     }
 
@@ -64,7 +112,7 @@ public class UserInOrgaWithRoleService {
             List <UserInOrgaWithRole> userInOrgaWithRoles = userInOrgaWithRoleRepository.findByUser(user);
 
             for(UserInOrgaWithRole userInOrgaWithRole : userInOrgaWithRoles) {
-                if (userInOrgaWithRole.getOrganization().getId() == organisation.getId())
+                if (userInOrgaWithRole.getOrganisation().getId() == organisation.getId())
                 {
                     userInOrgaWithRoleRepository.delete(userInOrgaWithRole);
                     return "Removed successfully";

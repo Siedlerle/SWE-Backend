@@ -41,10 +41,10 @@ public class UserInOrgaWithRole {
         this.user = user;
     }
 
-    public Organisation getOrganization() {
+    public Organisation getOrganisation() {
         return organisation;
     }
-    public void setOrganization(Organisation organisation) {
+    public void setOrganisation(Organisation organisation) {
         this.organisation = organisation;
     }
 
