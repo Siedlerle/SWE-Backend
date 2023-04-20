@@ -7,12 +7,15 @@ import com.eventmaster.backend.entities.UserInEventWithRole;
 import com.eventmaster.backend.repositories.UserInEventWithRoleRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A class which receives and processes the requests of multiple controllers concerning the management of events
  *
  * @author Fabian Eilber
+ * @author Fabian Unger
  */
 
 @Service
@@ -36,7 +39,7 @@ public class UserInEventWithRoleService {
     }
 
 
-    //UserMethods
+    //region UserMethods
 
     /**
      * A user is being registered for an event
@@ -173,10 +176,10 @@ public class UserInEventWithRoleService {
             UserInEventWithRole unregisterEvent = userInEventWithRoleRepository.findByUserAndEvent(user, event);
             userInEventWithRoleRepository.delete(unregisterEvent);
 
-            return "Unregister from event" + event.getName() + "was successfully" ;
+            return "Unregister from event " + event.getName() + " was successfully" ;
         }catch (Exception e) {
             e.printStackTrace();
-            return "Unregister from event" + event.getName() +"was not successfully";
+            return "Unregister from event " + event.getName() +" was not successfully";
         }
 
     }
@@ -186,4 +189,34 @@ public class UserInEventWithRoleService {
     }
 
  */
+
+    //endregion
+
+    //region TutorMethods
+
+    /**
+     * Finds all attendees for an event and returns them in a list.
+     * @param eventId ID of the event where the users attend.
+     * @return List of users
+     */
+    public List<User> getAttendeesForEvent(long eventId) {
+        try {
+            Event event = eventService.getEventById(eventId);
+            Set<UserInEventWithRole> userInEventWithRoleList = event.getEventUserRoles();
+            List<User> attendees = new ArrayList<>();
+            for (UserInEventWithRole uer : userInEventWithRoleList) {
+                //TODO: Nur wenn Rolle Teilnehmer ist zur Liste hinzufügen.
+                User attendee = uer.getUser();
+                attendees.add(attendee);
+            }
+            return attendees;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    //endregion
+
+
 }

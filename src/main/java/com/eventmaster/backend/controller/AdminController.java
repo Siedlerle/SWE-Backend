@@ -75,6 +75,11 @@ public class AdminController {
         return ResponseEntity.ok(groupService.changeGroup(group));
     }
 
+    /**
+     * Endpoint to delete a group.
+     * @param groupId ID of the group which will be deleted.
+     * @return String about success or failure.
+     */
     @PostMapping("/delete-group")
     public ResponseEntity<String> deleteGroup(@RequestBody long groupId) {
         return ResponseEntity.ok(groupService.deleteGroup(groupId));
