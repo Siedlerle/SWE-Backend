@@ -1,5 +1,6 @@
 package com.eventmaster.backend.controller;
 
+//Todo import explizit definieren
 import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.serviceswithouttoken.UserService;
 import com.eventmaster.backend.serviceswithouttoken.OrganisationService;
@@ -11,12 +12,16 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+//Todo Version der ersten Erstellung und der letzten Änderung hinzufügen
 /**
  * A class which handles the HTTP-requests for user functions.
  *
  * @author Fabian Eilber
+ * @version 1.0
+ * @since 1.0
  */
 
+//Todo CORS und CrossOrigin anhand von Artikel überdenken
 @RestController
 @CrossOrigin
 @RequestMapping("/user")
@@ -146,7 +151,7 @@ public class UserController {
         return ResponseEntity.ok(userInOrgaWithRoleService.leaveOrganisation(organisationId, authToken, reason));
     }
 
-
+    //Todo Controller aufteilen, falls diese zu groß werden
 /*
     //Operations regarding user, event, orga connection
     @PostMapping("/orga/event/get-all-events-of-orga")
@@ -172,6 +177,7 @@ public class UserController {
      */
     @PostMapping("/event/accept-invitation")
     public ResponseEntity<String> acceptEventInvitation(long eventId, String authToken){
+        //Todo Validierung der Inputs
         long userId = 0;
         return ResponseEntity.ok(userInEventWithRoleService.acceptEventInvitation(eventId, userId));
     }

@@ -74,17 +74,20 @@ public class UserInEventWithRoleService {
     public String acceptEventInvitation(long eventId, long userId){
         try {
 
+            //Todo Enum für roleName nutzen
             EventRole eventRole = eventRoleService.findByRole("ACCEPTED");
 
-
             UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
+            //Todo Abfragen von User oder Event in if-Abfragen "abfangen" im Fehlerfall
             userInEventWithRole.setEvent(eventService.getEventById(eventId));
             userInEventWithRole.setUser(userService.getUserById(userId));
             userInEventWithRole.setEventRole(eventRole);
             userInEventWithRoleRepository.save(userInEventWithRole);
 
+            //Todo return Strings nicht wie hier festlegen. Strings auslagern als resource
             return "Succesfully accepted the invitation";
         }catch (Exception e) {
+            //Todo Exceptionhandling weiter ausbauen, sodass Nutzer weiß was genau passiert ist
             e.printStackTrace();
             return "Error during registration";
         }
@@ -172,6 +175,7 @@ public class UserInEventWithRoleService {
         //Todo reason speichern
         try {
 
+            //Todo Variablenbennenung anpassen
             User user = userService.getUserById(userId);
             UserInEventWithRole unregisterEvent = userInEventWithRoleRepository.findByUserAndEvent(user, event);
             userInEventWithRoleRepository.delete(unregisterEvent);
