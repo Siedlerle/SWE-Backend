@@ -11,7 +11,7 @@ import java.util.List;
  * @author Fabian Eilber
  */
 public interface DocumentRepository extends JpaRepository<Document,Long> {
-
+    Document findById(long docId);
     List<Document> findDocumentByEventId(long eventId);
 
 }

@@ -16,24 +16,44 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 /**
  * A class which receives and processes the requests of multiple controllers concerning the management of documents
  *
  * @author Fabian Eilber
+ * @author Fabian Unger
  */
 
 @Service
 public class DocumentService {
 
     private final DocumentRepository documentRepository;
-    //Todo Zugriff über Service nicht direkt auf eventRepository
-    private final EventRepository eventRepository;
 
-    public DocumentService(DocumentRepository documentRepository, EventRepository eventRepository){
+    private final EventService eventService;
+
+    public DocumentService(DocumentRepository documentRepository, EventService eventService){
         this.documentRepository = documentRepository;
-        this.eventRepository = eventRepository;
+        this.eventService = eventService;
+    }
+
+    /**
+     * Searches for a document by a given ID.
+     * @param docId Id of the document.
+     * @return Document with the correct ID.
+     */
+    public Document getDocumentById(long docId) {
+        try {
+            return documentRepository.findById(docId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -46,7 +66,7 @@ public class DocumentService {
     }
 
     /**
-     * Searching for a file by its filename and filepath
+     * Searching for a file by its filename and filepath and downloads it.
      * @param uri filepath of the file
      * @param filename name of the file
      * @return Resource which transfers the data of a file
@@ -65,10 +85,15 @@ public class DocumentService {
                 .body(resource);
     }
 
-
-
-    public void createDocument(long eventId, MultipartFile multipartFile) throws IOException {
-        Event event = eventRepository.findById(eventId).get();
+    /**
+     * Creates a document by passing the file to the saveFile method. It receives the download link from this and saves it in the document object.
+     * @param eventId ID of the event which contains the document.
+     * @param multipartFile File which will be saved.
+     * @return String about success or failure.
+     * @throws IOException
+     */
+    public String createDocument(long eventId, MultipartFile multipartFile) throws IOException {
+        Event event = eventService.getEventById(eventId);
 
         String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
         long size = multipartFile.getSize();
@@ -77,28 +102,66 @@ public class DocumentService {
         doc.setName(fileName);
         doc.setSize(size);
         doc.setEvent(event);
-        doc = documentRepository.save(doc);
-
-        String filecode = FileUploadUtil.saveFile(eventId, fileName, multipartFile,doc.getId());
-
-        doc.setDownloadUri("event/" + eventId + "/" + filecode);
+        try{
+            doc = documentRepository.save(doc);
+            String filecode = saveFile(eventId,doc.getId(), fileName, multipartFile);
+            doc.setDownloadUri("event/" + eventId + "/" + filecode);
+            return "success";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "failure";
+        }
     }
 
-    public void deleteDocument(Document doc) {
-        Document document = documentRepository.findById(doc.getId()).get();
+    /**
+     * Deletes a document belonging to an event from the database and the server.
+     * @param docId ID of the document which will be deleted.
+     * @return String about success or failure.
+     */
+    public String deleteDocument(long docId) {
+        Document document = getDocumentById(docId);
 
-        long docId = document.getId();
         String uri = document.getDownloadUri();
-        long eventId = document.getEvent().getId();
 
         Event event = document.getEvent();
-        event.removeDocument(document);
 
-        document.setEvent(null);
+        try {
+            event.removeDocument(document);
+            document.setEvent(null);
+            documentRepository.delete(document);
 
-        documentRepository.delete(document);
+            File file = new File("/media/eventfiles/" + uri);
+            file.delete();
+            return "success";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "failure";
+        }
+    }
 
-        File file = new File("/media/eventfiles/" + uri);
-        file.delete();
+    /**
+     * Saves a file on the server at e specific path.
+     * @param eventId ID of the event which contains the file.
+     * @param documentId ID of the document.
+     * @param fileName Name of the file which will be saved.
+     * @param multipartFile File which will be saved.
+     * @return ID of the document.
+     * @throws IOException
+     */
+    public String saveFile(long eventId, long documentId, String fileName, MultipartFile multipartFile) throws IOException {
+        Path uploadPath = Paths.get("/media/eventfiles/event/" + eventId);
+
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        try (InputStream inputStream = multipartFile.getInputStream()) {
+            Path filePath = uploadPath.resolve(String.valueOf(documentId));//fileCode
+            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException ioe) {
+            throw new IOException("Could not save file: " + fileName, ioe);
+        }
+
+        return String.valueOf(documentId);
     }
 }

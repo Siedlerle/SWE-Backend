@@ -11,6 +11,6 @@ import java.util.List;
  * @author Fabian Eilber
  */
 public interface ChatRepository extends JpaRepository<Chat, Long> {
-    List<Chat> findChatById(long eventId);
+    List<Chat> findChatByEvent_Id(long eventId);
 }
 

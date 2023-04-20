@@ -1,11 +1,15 @@
 package com.eventmaster.backend.controller;
 
 import com.eventmaster.backend.entities.User;
+import com.eventmaster.backend.serviceswithouttoken.ChatService;
+import com.eventmaster.backend.serviceswithouttoken.DocumentService;
 import com.eventmaster.backend.serviceswithouttoken.UserInEventWithRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -21,7 +25,10 @@ public class TutorController {
 
     @Autowired
     UserInEventWithRoleService userInEventWithRoleService;
-
+    @Autowired
+    ChatService chatService;
+    @Autowired
+    DocumentService documentService;
 
     /**
      * Endpoint to get all attendees of an event.
@@ -69,5 +76,47 @@ public class TutorController {
     public ResponseEntity<String> addUserToEvent(@PathVariable long eventId,
                                                  @RequestBody String userMail) {
         return ResponseEntity.ok(userInEventWithRoleService.addUserToEvent(eventId, userMail));
+    }
+
+    /**
+     * Endpoint to create a Chat and connect it to its event.
+     * @param eventId Id of the event which contains the chat.
+     * @param message Text of the chat.
+     * @param authToken AuthToken to identify the user.
+     * @return String about success or failure.
+     */
+    @PostMapping("/event/{eventId}/chat/add")
+    public ResponseEntity<String> sendMessage(@PathVariable long eventId,
+                                              @RequestParam String message,
+                                              @RequestParam String authToken) {
+        long userId = 0;
+        return ResponseEntity.ok(chatService.sendMessage(eventId, userId, message));
+    }
+
+    /**
+     * Endpoint to upload a file to an event.
+     * @param eventId ID of the event which will contain the document.
+     * @param multipartFile File which will be saved.
+     * @param authToken Token to identify user.
+     * @return String about success or failure.
+     * @throws IOException
+     */
+    @PostMapping("/event/{eventId}/file/upload")
+    public ResponseEntity<String> uploadFile(@PathVariable long eventId,
+                                             @RequestParam("file")MultipartFile multipartFile,
+                                             @RequestParam String authToken) throws IOException {
+        return ResponseEntity.ok(documentService.createDocument(eventId, multipartFile));
+    }
+
+    /**
+     * Endpoint to delete a token from database and server.
+     * @param docId ID of the document.
+     * @param authToken Token to identify user.
+     * @return String about success or failure.
+     */
+    @PostMapping("/event/file/{docId}/delete")
+    public ResponseEntity<String> deleteFile(@PathVariable long docId,
+                                             @RequestParam String authToken) {
+        return ResponseEntity.ok(documentService.deleteDocument(docId));
     }
 }
