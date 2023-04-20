@@ -27,6 +27,11 @@ public class UserInOrgaWithRoleService {
     }
 
 
+    /**
+     * Retrieve information about orgas user is a part of
+     * @param userId Id of the corresponding user
+     * @return List of organisation objects
+     */
     public List<Organisation> getOrgaForUser(long userId) {
         try {
             User user = userService.getUserById(userId);
