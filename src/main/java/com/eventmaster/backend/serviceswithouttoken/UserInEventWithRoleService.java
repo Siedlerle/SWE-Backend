@@ -220,6 +220,77 @@ public class UserInEventWithRoleService {
         }
     }
 
+    /**
+     * Finds all connections between a given event and a list of users and returns their attending states.
+     * @param eventId ID of the event where the users participate.
+     * @param userIds List of IDs from users which participate at the event.
+     * @return List of booleans in the order of the List of userIds.
+     */
+    public List<Boolean> getAttendingStatusForUsers(long eventId, List<Long> userIds) {
+        List<Boolean> attendingStates = new ArrayList<>();
+        try {
+            for (long userId : userIds) {
+                UserInEventWithRole uer = userInEventWithRoleRepository.findByUser_IdAndEvent_Id(userId, eventId);
+                boolean attendingState = uer.isHasAttended();
+                attendingStates.add(attendingState);
+            }
+            return attendingStates;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Updates the attending status for given users at an event.
+     * @param eventId ID of the event where the users attend.
+     * @param userIds List of userIds from whom the attending status gets updated.
+     * @param attending List of booleans which contains the new attending states.
+     * @return String about success or failure.
+     */
+    public String updateAttendingStatusForUsers(long eventId, List<Long> userIds, List<Boolean> attending) {
+        try {
+            int i = 0;
+            for (long userId : userIds) {
+                boolean newIsAttending = attending.get(i);
+                UserInEventWithRole userInEvent = userInEventWithRoleRepository.findByUser_IdAndEvent_Id(userId, eventId);
+                userInEvent.setHasAttended(newIsAttending);
+                i++;
+                userInEventWithRoleRepository.save(userInEvent);
+            }
+            return "success";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "failure";
+        }
+    }
+
+    /**
+     * Adds a user to an event directly without an invitation.
+     * @param eventId ID of the event.
+     * @param userMail Mail of the user.
+     * @return String about success or failure.
+     */
+    public String addUserToEvent(long eventId, String userMail) {
+        Event event = eventService.getEventById(eventId);
+        User user = userService.getUserByMail(userMail);
+        try {
+            UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
+            userInEventWithRole.setEvent(event);
+            userInEventWithRole.setUser(user);
+            //TODO: Rolle Teilnehmer festlegen beim Hinzufügen eines Teilnehmers durch den Tutor.
+            // userInEventWithRole.setEventRole();
+            userInEventWithRole.setHasAttended(true);
+
+            userInEventWithRoleRepository.save(userInEventWithRole);
+
+            return "success";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "failure";
+        }
+    }
+
     //endregion
 
 

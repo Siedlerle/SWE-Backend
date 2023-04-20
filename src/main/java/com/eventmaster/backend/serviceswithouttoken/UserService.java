@@ -21,7 +21,14 @@ public class UserService {
     public User getUserById(long userId) {
         return userRepository.findUserById(userId);
     }
-    public User getUserByMail(String userMail) { return userRepository.findByEmailAdress(userMail).get(); }
+    public User getUserByMail(String userMail) {
+        try {
+            return userRepository.findByEmailAdress(userMail).get();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     public String deleteUser(long userId) {
         try {

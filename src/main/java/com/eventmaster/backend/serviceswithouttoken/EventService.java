@@ -47,7 +47,13 @@ public class EventService {
      * @return Event Object
      */
     public Event getEventById(Long eventId) {
-        return eventRepository.findById(eventId).orElse(null);
+        try {
+            return eventRepository.findById(eventId).orElse(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
     }
 
     /**
