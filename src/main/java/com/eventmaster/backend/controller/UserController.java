@@ -1,6 +1,7 @@
 package com.eventmaster.backend.controller;
 
 import com.eventmaster.backend.entities.*;
+import com.eventmaster.backend.security.auth.VerificationResponse;
 import com.eventmaster.backend.serviceswithouttoken.OrganisationService;
 import com.eventmaster.backend.serviceswithouttoken.UserInEventWithRoleService;
 import com.eventmaster.backend.serviceswithouttoken.UserService;
@@ -52,7 +53,7 @@ public class UserController {
      * @return successmessage
      */
     @PostMapping("/auth/verify")
-    public ResponseEntity<?> verify(@RequestParam String authToken) {
+    public ResponseEntity<VerificationResponse> verify(@RequestParam String authToken) {
         return ResponseEntity.ok(userService.verify(authToken));
     }
 

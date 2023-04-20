@@ -8,6 +8,7 @@ import com.eventmaster.backend.security.Token.Token;
 import com.eventmaster.backend.security.Token.TokenService;
 import com.eventmaster.backend.security.Token.TokenType;
 import com.eventmaster.backend.security.auth.AuthenticationResponse;
+import com.eventmaster.backend.security.auth.VerificationResponse;
 import com.eventmaster.backend.security.config.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -71,14 +72,14 @@ public class UserService {
         mailMessage.setSubject("Complete Registration!");
         mailMessage.setText("Hello " + user.getFirstname() + "," +
                         "\nto confirm your account, please click here : \n"
-                +"http://localhost:8080/user/auth/verify?authToken=" + jwtToken + "\n"
+                +"http://localhost:4200/login?authToken=" + jwtToken + "\n"
                 +"WARNING: The token is only valid up to 15 Minutes");
         emailService.sendEmail(mailMessage);
 
         return "Successfully registered";
     }
 
-    public String verify(String authToken) {
+    public VerificationResponse verify(String authToken) {
         String emailAdress = jwtService.extractUsername(authToken);
         User verifyUser = userRepository.findByEmailAdress(emailAdress);
 
@@ -89,11 +90,15 @@ public class UserService {
                 if (!token.isRevoked() || !token.isExpired()) {
                     verifyUser.setEnabled(true);
                     userRepository.save(verifyUser);
-                    return "successfully verified";
+                    return VerificationResponse.builder()
+                            .message("Verifikation war erfolgreich")
+                            .build();
                 }
             }
         }
-        return "failed to verify";
+        return VerificationResponse.builder()
+                .message("Verifikation war erfolglos")
+                .build();
     }
 
     public AuthenticationResponse login(User request){
