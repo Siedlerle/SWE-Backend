@@ -13,10 +13,10 @@ import java.util.Set;
 @Entity
 public class OrgaRole {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    private String Role;
+    @Enumerated(EnumType.ORDINAL)
+    private EnumOrgaRole role;
 
 
     @OneToMany(mappedBy = "orgaRole",cascade = CascadeType.ALL,orphanRemoval = true)
@@ -30,12 +30,12 @@ public class OrgaRole {
         this.id = id;
     }
 
-    public String getRole() {
-        return Role;
+    public EnumOrgaRole getRole() {
+        return role;
     }
 
-    public void setRole(String role) {
-        Role = role;
+    public void setRole(EnumOrgaRole role) {
+        this.role = role;
     }
 }
 

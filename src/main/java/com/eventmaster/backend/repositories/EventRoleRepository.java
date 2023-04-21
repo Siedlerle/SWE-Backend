@@ -1,5 +1,6 @@
 package com.eventmaster.backend.repositories;
 
+import com.eventmaster.backend.entities.EnumEventRole;
 import com.eventmaster.backend.entities.EventRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -10,6 +11,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface EventRoleRepository extends JpaRepository<EventRole, Long>{
 
-    EventRole findEventRoleByRoleName(String roleName);
-
+    EventRole findByRole(EnumEventRole role);
+    EventRole findById(long id);
 }

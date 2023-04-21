@@ -1,6 +1,5 @@
 package com.eventmaster.backend.entities;
 
-import com.eventmaster.backend.serviceswithouttoken.UserInEventWithRoleService;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -19,7 +18,8 @@ public class EventRole {
     @Id
     private Long id;
 
-    String roleName;
+    @Enumerated(EnumType.ORDINAL)
+    private EnumEventRole role;
 
     @OneToMany(mappedBy = "eventRole",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<UserInEventWithRole> userInEventWithRoles  = new HashSet<>();
@@ -34,11 +34,11 @@ public class EventRole {
         return id;
     }
 
-    public String getRoleName() {
-        return roleName;
+    public EnumEventRole getRole() {
+        return role;
     }
 
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
+    public void setRole(EnumEventRole role) {
+        this.role = role;
     }
 }

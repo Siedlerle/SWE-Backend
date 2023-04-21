@@ -1,5 +1,6 @@
 package com.eventmaster.backend.repositories;
 
+import com.eventmaster.backend.entities.EnumOrgaRole;
 import com.eventmaster.backend.entities.OrgaRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -9,4 +10,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author Fabian Unger
  */
 public interface OrgaRoleRepository extends JpaRepository<OrgaRole, Long> {
+
+    OrgaRole findByRole(EnumOrgaRole role);
+    OrgaRole findById(long id);
+
 }

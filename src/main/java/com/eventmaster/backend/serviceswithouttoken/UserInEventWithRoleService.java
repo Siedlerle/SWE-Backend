@@ -1,9 +1,6 @@
 package com.eventmaster.backend.serviceswithouttoken;
 
-import com.eventmaster.backend.entities.Event;
-import com.eventmaster.backend.entities.EventRole;
-import com.eventmaster.backend.entities.User;
-import com.eventmaster.backend.entities.UserInEventWithRole;
+import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.repositories.UserInEventWithRoleRepository;
 import org.springframework.stereotype.Service;
 
@@ -50,7 +47,7 @@ public class UserInEventWithRoleService {
     public String registerForEvent(long eventId, long userId){
         try {
 
-            EventRole eventRole = eventRoleService.findByRole("REGISTERED");
+            EventRole eventRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
 
             UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
             userInEventWithRole.setEvent(eventService.getEventById(eventId));
@@ -73,9 +70,7 @@ public class UserInEventWithRoleService {
      */
     public String acceptEventInvitation(long eventId, long userId){
         try {
-
-            //Todo Enum für roleName nutzen
-            EventRole eventRole = eventRoleService.findByRole("ACCEPTED");
+            EventRole eventRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
 
             UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
             //Todo Abfragen von User oder Event in if-Abfragen "abfangen" im Fehlerfall
@@ -102,13 +97,13 @@ public class UserInEventWithRoleService {
     public String declineEventInvitation(long eventId, long userId){
         try {
 
-            EventRole eventRole = eventRoleService.findByRole("DECLINED");
+            //TODO hier einfach das userInEventWithRole Objekt löschen
 
 
             UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
             userInEventWithRole.setEvent(eventService.getEventById(eventId));
             userInEventWithRole.setUser(userService.getUserById(userId));
-            userInEventWithRole.setEventRole(eventRole);
+            // userInEventWithRole.setEventRole(eventRole);
             userInEventWithRoleRepository.save(userInEventWithRole);
 
             return "Succesfully declined the invitation";
@@ -147,13 +142,13 @@ public class UserInEventWithRoleService {
      */
     public List<Event> getRegisteredEventsForUser(long userId){
         try {
-
+            EventRole eventRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
             User user = userService.getUserById(userId);
 
             List<UserInEventWithRole> eventsForUser =  userInEventWithRoleRepository.findByUser(user);
             List<Event> registeredEventsForUser = null;
             for(UserInEventWithRole event: eventsForUser){
-                if(event.getEventRole().equals("REGISTERED")){
+                if(event.getEventRole().equals(eventRole)) {
                     registeredEventsForUser.add(event.getEvent());
                 }
             }
@@ -293,5 +288,33 @@ public class UserInEventWithRoleService {
 
     //endregion
 
+    //region OrganizerMethods
+
+    /**
+     * Sets a user as organizer for an event.
+     * @param userId ID of the user who will be organizer.
+     * @param eventId ID of the event.
+     * @return String about success or failure.
+     */
+    public String setOrganizerOfEvent(long userId, long eventId) {
+        User user = userService.getUserById(userId);
+        Event event = eventService.getEventById(eventId);
+        EventRole role = eventRoleService.findByRole(EnumEventRole.ORGANIZER);
+
+        UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
+        userInEventWithRole.setUser(user);
+        userInEventWithRole.setEvent(event);
+        userInEventWithRole.setEventRole(role);
+
+        try {
+            userInEventWithRoleRepository.save(userInEventWithRole);
+            return "success";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "failure";
+        }
+    }
+
+    //endregion
 
 }
