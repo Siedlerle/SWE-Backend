@@ -17,13 +17,15 @@ public class UserInOrgaWithRoleService {
     private final UserInOrgaWithRoleRepository userInOrgaWithRoleRepository;
     private final UserService userService;
     private final OrganisationService organisationService;
+    private final OrgaRoleService orgaRoleService;
 
     public UserInOrgaWithRoleService(
             UserInOrgaWithRoleRepository userInOrgaWithRoleRepository,
-            UserService userService, OrganisationService organisationService) {
+            UserService userService, OrganisationService organisationService, OrgaRoleService orgaRoleService) {
         this.userInOrgaWithRoleRepository = userInOrgaWithRoleRepository;
         this.userService = userService;
         this.organisationService = organisationService;
+        this.orgaRoleService = orgaRoleService;
     }
 
 
@@ -123,6 +125,72 @@ public class UserInOrgaWithRoleService {
         } catch (Exception e) {
             e.printStackTrace();
             return "Remove failed";
+        }
+    }
+
+    /**
+     * Sets at an existing relation between user and organisation the role of the user to admin.
+     * @param organisationId ID of the organisation where the user will be admin.
+     * @param userMail Mail of the user who will be admin.
+     * @return String about success or failure.
+     */
+    public String setPersonAdmin(long organisationId, String userMail) {
+        User user = userService.getUserByMail(userMail);
+        Organisation organisation = organisationService.getOrganisationById(organisationId);
+        OrgaRole newOrgaRole = orgaRoleService.findByRole(EnumOrgaRole.ADMIN);
+        UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId);
+
+        try {
+            userInOrgaWithRole.setOrgaRole(newOrgaRole);
+            userInOrgaWithRoleRepository.save(userInOrgaWithRole);
+            return "success";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "failure";
+        }
+    }
+
+    /**
+     * Sets at an existing relation between user and organisation the role of the user to organizer.
+     * @param organisationId ID of the organisation where the user will be organizer.
+     * @param userMail Mail of the user who will be organizer.
+     * @return String about success or failure.
+     */
+    public String setPersonOrganizer(long organisationId, String userMail) {
+        User user = userService.getUserByMail(userMail);
+        Organisation organisation = organisationService.getOrganisationById(organisationId);
+        OrgaRole newOrgaRole = orgaRoleService.findByRole(EnumOrgaRole.ORGANIZER);
+        UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId);
+
+        try {
+            userInOrgaWithRole.setOrgaRole(newOrgaRole);
+            userInOrgaWithRoleRepository.save(userInOrgaWithRole);
+            return "success";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "failure";
+        }
+    }
+
+    /**
+     * Sets at an existing relation between user and organisation the role of the user to normal user.
+     * @param organisationId ID of the organisation where the user will be a normal user.
+     * @param userMail Mail of the user who will be a normal user.
+     * @return String about success or failure.
+     */
+    public String setPersonUser(long organisationId, String userMail) {
+        User user = userService.getUserByMail(userMail);
+        Organisation organisation = organisationService.getOrganisationById(organisationId);
+        OrgaRole newOrgaRole = orgaRoleService.findByRole(EnumOrgaRole.USER);
+        UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId);
+
+        try {
+            userInOrgaWithRole.setOrgaRole(newOrgaRole);
+            userInOrgaWithRoleRepository.save(userInOrgaWithRole);
+            return "success";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "failure";
         }
     }
 }
