@@ -2,7 +2,7 @@ package com.eventmaster.backend.entities;
 
 public enum EnumOrgaRole {
 
-    USER("user"), ORGANIZER("organizer"), ADMIN("admin");
+    INVITED("invited"), USER("user"), ORGANIZER("organizer"), ADMIN("admin");
 
     public final String role;
 
