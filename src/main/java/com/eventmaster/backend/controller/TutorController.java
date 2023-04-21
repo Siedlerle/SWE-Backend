@@ -1,8 +1,10 @@
 package com.eventmaster.backend.controller;
 
+import com.eventmaster.backend.entities.Question;
 import com.eventmaster.backend.entities.User;
 import com.eventmaster.backend.serviceswithouttoken.ChatService;
 import com.eventmaster.backend.serviceswithouttoken.DocumentService;
+import com.eventmaster.backend.serviceswithouttoken.QuestionService;
 import com.eventmaster.backend.serviceswithouttoken.UserInEventWithRoleService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,13 +27,15 @@ public class TutorController {
     private final UserInEventWithRoleService userInEventWithRoleService;
     private final ChatService chatService;
     private final DocumentService documentService;
+    private final QuestionService questionService;
 
     public TutorController(UserInEventWithRoleService userInEventWithRoleService,
                            ChatService chatService,
-                           DocumentService documentService) {
+                           DocumentService documentService, QuestionService questionService) {
         this.userInEventWithRoleService = userInEventWithRoleService;
         this.chatService = chatService;
         this.documentService = documentService;
+        this.questionService = questionService;
     }
 
     /**
@@ -122,5 +126,19 @@ public class TutorController {
     public ResponseEntity<String> deleteFile(@PathVariable long docId,
                                              @RequestParam String authToken) {
         return ResponseEntity.ok(documentService.deleteDocument(docId));
+    }
+
+    /**
+     * Endpoint to delete a token from database and server.
+     * @param eventId ID of the event.
+     * @param question Questionnaire to be created.
+     * @param authToken Token to identify user.
+     * @return String about success or failure.
+     */
+    @PostMapping("/event/{eventId}/question/add")
+    public ResponseEntity<String> addQuestion(@PathVariable long eventId,
+                                              @RequestBody Question question,
+                                              @RequestParam String authToken){
+        return ResponseEntity.ok(questionService.createQuestion(eventId, question));
     }
 }
