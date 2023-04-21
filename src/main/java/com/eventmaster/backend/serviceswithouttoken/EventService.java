@@ -18,9 +18,11 @@ import java.util.List;
 public class EventService {
 
     private final EventRepository eventRepository;
+    private final UserInEventWithRoleService userInEventWithRoleService;
 
-    public EventService(EventRepository eventRepository) {
+    public EventService(EventRepository eventRepository, UserInEventWithRoleService userInEventWithRoleService) {
         this.eventRepository = eventRepository;
+        this.userInEventWithRoleService = userInEventWithRoleService;
     }
 
     /**
@@ -61,9 +63,12 @@ public class EventService {
      * @param event Event which is being added
      * @return String about success or failure
      */
-    public String createEvent(Event event) {
+    public String createEvent(Event event, long userId) {
+
+
         try {
             eventRepository.save(event);
+            userInEventWithRoleService.setOrganizerOfEvent(userId, event.getId());
             return "Event created successfully";
         } catch (Exception e) {
             e.printStackTrace();

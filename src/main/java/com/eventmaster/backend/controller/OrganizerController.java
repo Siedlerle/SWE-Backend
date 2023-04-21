@@ -34,11 +34,14 @@ public class OrganizerController {
     /**
      * Endpoint to create an event.
      * @param event Event which will be saved in the database.
+     * @param authToken Token to identify user.
      * @return String about success or failure.
      */
     @PostMapping("/event/create")
-    public ResponseEntity<String> createEvent(@RequestBody Event event) {
-        return ResponseEntity.ok(eventService.createEvent(event));
+    public ResponseEntity<String> createEvent(@RequestBody Event event,
+                                              @RequestParam String authToken) {
+        long userId = 0;
+        return ResponseEntity.ok(eventService.createEvent(event, userId));
     }
 
     /**
