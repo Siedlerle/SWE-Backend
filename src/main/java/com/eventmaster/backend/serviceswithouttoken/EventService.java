@@ -18,11 +18,11 @@ import java.util.List;
 public class EventService {
 
     private final EventRepository eventRepository;
-    private final UserInEventWithRoleService userInEventWithRoleService;
+    //private final UserInEventWithRoleService userInEventWithRoleService;
 
-    public EventService(EventRepository eventRepository, UserInEventWithRoleService userInEventWithRoleService) {
+    public EventService(EventRepository eventRepository/*, UserInEventWithRoleService userInEventWithRoleService*/) {
         this.eventRepository = eventRepository;
-        this.userInEventWithRoleService = userInEventWithRoleService;
+        //this.userInEventWithRoleService = userInEventWithRoleService;
     }
 
     /**
@@ -65,10 +65,10 @@ public class EventService {
      */
     public String createEvent(Event event, long userId) {
 
-
+        //TODO Ersteller des Events automatisch als Organizer setzen.
         try {
             eventRepository.save(event);
-            userInEventWithRoleService.setOrganizerOfEvent(userId, event.getId());
+            //userInEventWithRoleService.setOrganizerOfEvent(userId, event.getId());
             return "Event created successfully";
         } catch (Exception e) {
             e.printStackTrace();

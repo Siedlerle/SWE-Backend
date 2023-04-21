@@ -170,10 +170,9 @@ public class UserInEventWithRoleService {
         //Todo reason speichern
         try {
 
-            //Todo Variablenbennenung anpassen
             User user = userService.getUserById(userId);
-            UserInEventWithRole unregisterEvent = userInEventWithRoleRepository.findByUserAndEvent(user, event);
-            userInEventWithRoleRepository.delete(unregisterEvent);
+            UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(user, event);
+            userInEventWithRoleRepository.delete(userInEventWithRole);
 
             return "Unregister from event " + event.getName() + " was successfully" ;
         }catch (Exception e) {
