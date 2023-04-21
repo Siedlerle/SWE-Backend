@@ -4,6 +4,7 @@ import com.eventmaster.backend.security.Token.TokenRepository;
 import com.eventmaster.backend.security.Token.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -43,8 +44,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        if (request.getServletPath().contains("/**")) {
+        if (request.getServletPath().contains("/user/auth")) {
             filterChain.doFilter(request, response);
+            System.out.println("hello");
             return;
         }
 
