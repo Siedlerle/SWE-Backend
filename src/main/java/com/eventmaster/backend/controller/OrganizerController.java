@@ -19,13 +19,6 @@ import java.util.List;
 @CrossOrigin
 @RequestMapping("/organizer")
 public class OrganizerController {
-    /*
-    Es fehlen:
-    -
-
-     */
-
-
 
     @Autowired
     private EventService eventService;
