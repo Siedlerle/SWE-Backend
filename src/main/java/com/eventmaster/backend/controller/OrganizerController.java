@@ -61,8 +61,8 @@ public class OrganizerController {
      * @return String about success or failure.
      */
     @PostMapping("/event/{eventId}/status/change")
-    public ResponseEntity<String> changeEventStatus(@PathVariable long eventId,
-                                                    @RequestBody String status) {
+    public ResponseEntity<String> changeStatusOfEvent(@PathVariable long eventId,
+                                                      @RequestBody String status) {
         return ResponseEntity.ok(eventService.changeStatusOfEvent(eventId, status));
     }
 
