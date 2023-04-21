@@ -41,7 +41,7 @@ public class DocumentService {
     }
 
     public void deleteDocument(Document doc) {
-        Document document = documentRepository.findById(doc.getId()).get();
+        Document document = documentRepository.findById(doc.getId());
 
         long docId = document.getId();
         String uri = document.getDownloadUri();
