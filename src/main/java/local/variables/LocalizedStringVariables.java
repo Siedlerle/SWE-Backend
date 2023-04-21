@@ -60,7 +60,6 @@ public final class LocalizedStringVariables {
         public static final String ORGACREATEDFAILUREMESSAGE = "Orga creation failed";
         public static final String ORGACHANGEDSUCCESSMESSAGE = "Orga changed successfully";
         public static final String ORGACHANGEDFAILUREMESSAGE = "Orga was not changed";
-        public static final String ORGADELETEDSUCCESSMESSAGE = "Orga was deleted successfully";
         public static final String ORGADELETEDFAILUREMESSAGE = "Orga was not deleted";
 
 
