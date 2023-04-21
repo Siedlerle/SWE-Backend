@@ -37,6 +37,8 @@ public class OrganizerController {
         this.userInEventWithRoleService = userInEventWithRoleService;
     }
 
+    //region Event
+
     /**
      * Endpoint to create an event.
      * @param event Event which will be saved in the database.
@@ -81,6 +83,35 @@ public class OrganizerController {
     public ResponseEntity<String> deleteEvent(@PathVariable long eventId) {
         return ResponseEntity.ok(eventService.deleteEvent(eventId));
     }
+
+    /**
+     * Endpoint to change an attendee to a tutor in an event.
+     * @param eventId ID of the event.
+     * @param userMail Mail address of the user whom role will be changed.
+     * @return String about success or failure.
+     */
+    @PostMapping("/event/{eventId}/attendee/set-tutor")
+    public ResponseEntity<String> changeAttendeeToTutorOfEvent(@PathVariable long eventId,
+                                                               @RequestBody String userMail) {
+        return ResponseEntity.ok(userInEventWithRoleService.changeRoleOfPersonInEvent(eventId, userMail, false));
+    }
+
+    /**
+     * Endpoint to change a tutor to an attendee in an event.
+     * @param eventId ID of the event.
+     * @param userMail Mail address of the user whom role will be changed.
+     * @return String about success or failure.
+     */
+    @PostMapping("/event/{eventId}/attendee/set-attendee")
+    public ResponseEntity<String> changeTutorToAttendeeInEvent(@PathVariable long eventId,
+                                                               @RequestBody String userMail) {
+        return ResponseEntity.ok(userInEventWithRoleService.changeRoleOfPersonInEvent(eventId, userMail, true));
+    }
+    //endregion
+
+
+
+    //region EventSeries
 
     /**
      * Endpoint to create a series of events.
@@ -128,6 +159,10 @@ public class OrganizerController {
         return ResponseEntity.ok(eventSeriesService.deleteEventSeries(eventSeriesId));
     }
 
+    //endregion
+
+    //region Presets
+
     /**
      * Endpoint to get all presets from an organisation.
      * @param organisationId ID of the organisation which contains the presets.
@@ -169,4 +204,6 @@ public class OrganizerController {
     public ResponseEntity<String> deletePreset(@PathVariable long presetId) {
         return ResponseEntity.ok(presetService.deletePreset(presetId));
     }
+
+    //endregion
 }

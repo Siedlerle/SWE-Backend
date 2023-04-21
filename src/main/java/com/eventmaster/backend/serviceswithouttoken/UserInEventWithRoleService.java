@@ -314,6 +314,39 @@ public class UserInEventWithRoleService {
         }
     }
 
+    /**
+     * Changes the role of an already registered User to an event.
+     * @param eventId ID of the event where the user attends.
+     * @param userMail Mail address of the user whom role will be changed.
+     * @param changeToAttendee Bool if he switches from attendee to tutor or from tutor to attendee.
+     * @return String about success or failure.
+     */
+    public String changeRoleOfPersonInEvent(long eventId, String userMail, boolean changeToAttendee) {
+        Event event = eventService.getEventById(eventId);
+        User user = userService.getUserByMail(userMail);
+        EventRole newRole;
+        if (changeToAttendee)
+        {
+            newRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
+        } else {
+            newRole = eventRoleService.findByRole(EnumEventRole.TUTOR);
+        }
+
+        if (userInEventWithRoleRepository.existsByUserAndEvent(user, event))
+        {
+            UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(user, event);
+            userInEventWithRole.setEventRole(newRole);
+            try{
+                userInEventWithRoleRepository.save(userInEventWithRole);
+                return "success";
+            } catch (Exception e) {
+                return "failure";
+            }
+        } else {
+            return "The user must first be invited";
+        }
+    }
+
     //endregion
 
     //region AdminMethods
