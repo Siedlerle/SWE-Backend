@@ -27,7 +27,7 @@ public class OrgaRoleService {
         EnumOrgaRole roles;
 
         for (EnumOrgaRole role : EnumOrgaRole.values()) {
-            if (findByRoleName(role) == null) {
+            if (findByRole(role) == null) {
                 try {
                     OrgaRole staticOrgaRole = new OrgaRole();
                     staticOrgaRole.setId((long) role.ordinal());
@@ -46,7 +46,7 @@ public class OrgaRoleService {
      * @param role Name of role.
      * @return OrgaRole object if existing
      */
-    public OrgaRole findByRoleName(EnumOrgaRole role) {
+    public OrgaRole findByRole(EnumOrgaRole role) {
         try {
             return orgaRoleRepository.findByRole(role);
         } catch (Exception e) {
