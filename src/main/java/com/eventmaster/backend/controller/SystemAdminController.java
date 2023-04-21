@@ -2,9 +2,7 @@ package com.eventmaster.backend.controller;
 
 import com.eventmaster.backend.entities.Organisation;
 
-import com.eventmaster.backend.entities.User;
 import com.eventmaster.backend.serviceswithouttoken.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,10 +18,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/sys-admin")
 public class SystemAdminController {
 
-    @Autowired
-    private OrganisationService organisationService;
-    @Autowired
-    private UserService userService;
+    private final OrganisationService organisationService;
+    private final UserService userService;
+
+    public SystemAdminController(OrganisationService organisationService,
+                                 UserService userService) {
+        this.organisationService = organisationService;
+        this.userService = userService;
+    }
 
 
     /**

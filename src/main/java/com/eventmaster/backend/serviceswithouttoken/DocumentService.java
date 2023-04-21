@@ -37,7 +37,8 @@ public class DocumentService {
 
     private final EventService eventService;
 
-    public DocumentService(DocumentRepository documentRepository, EventService eventService){
+    public DocumentService(DocumentRepository documentRepository,
+                           EventService eventService){
         this.documentRepository = documentRepository;
         this.eventService = eventService;
     }

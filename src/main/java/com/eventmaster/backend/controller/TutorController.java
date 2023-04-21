@@ -4,7 +4,6 @@ import com.eventmaster.backend.entities.User;
 import com.eventmaster.backend.serviceswithouttoken.ChatService;
 import com.eventmaster.backend.serviceswithouttoken.DocumentService;
 import com.eventmaster.backend.serviceswithouttoken.UserInEventWithRoleService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,12 +22,17 @@ import java.util.List;
 @RequestMapping("/tutor")
 public class TutorController {
 
-    @Autowired
-    UserInEventWithRoleService userInEventWithRoleService;
-    @Autowired
-    ChatService chatService;
-    @Autowired
-    DocumentService documentService;
+    private final UserInEventWithRoleService userInEventWithRoleService;
+    private final ChatService chatService;
+    private final DocumentService documentService;
+
+    public TutorController(UserInEventWithRoleService userInEventWithRoleService,
+                           ChatService chatService,
+                           DocumentService documentService) {
+        this.userInEventWithRoleService = userInEventWithRoleService;
+        this.chatService = chatService;
+        this.documentService = documentService;
+    }
 
     /**
      * Endpoint to get all attendees of an event.
