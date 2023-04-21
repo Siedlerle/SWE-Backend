@@ -38,7 +38,7 @@ public class AdminController {
      * @param orgaId Id of the corresponding orga
      * @return List of events
      */
-    @PostMapping("/get-events-of-orga/{orgaId}")
+    @PostMapping("/orga/{orgaId}/events")
     public ResponseEntity<List<Event>> getEventsOfOrganisation(@PathVariable Long orgaId){
         return ResponseEntity.ok(eventService.getEventsOfOrganisation(orgaId));
     }
@@ -49,10 +49,46 @@ public class AdminController {
      * @param userMail Mail of the user.
      * @return String about success of failure.
      */
-    @PostMapping("/remove-user-from-orga/{orgaId}")
+    @PostMapping("/orga/{orgaId}/user/remove")
     public ResponseEntity<String> removeUserFromOrganisation(@PathVariable long orgaId,
                                                              @RequestBody String userMail) {
         return ResponseEntity.ok(userInOrgaWithRoleService.removeUserFromOrganisation(orgaId, userMail));
+    }
+
+    /**
+     * Endpoint to set the role of a user in an organisation to admin.
+     * @param orgaId ID of the organisation.
+     * @param userMail Mail of the user who will be admin.
+     * @return String about success or failure.
+     */
+    @PostMapping("/orga/{orgaId}/user/role/admin")
+    public ResponseEntity<String> setPersonAdmin(@PathVariable long orgaId,
+                                                 @RequestBody String userMail) {
+        return ResponseEntity.ok(userInOrgaWithRoleService.setPersonAdmin(orgaId, userMail));
+    }
+
+    /**
+     * Endpoint to set the role of a user in an organisation to organizer.
+     * @param orgaId ID of the organisation.
+     * @param userMail Mail of the user who will be organizer.
+     * @return String about success or failure.
+     */
+    @PostMapping("/orga/{orgaId}/user/role/organizer")
+    public ResponseEntity<String> setPersonOrganizer(@PathVariable long orgaId,
+                                                     @RequestBody String userMail) {
+        return ResponseEntity.ok(userInOrgaWithRoleService.setPersonOrganizer(orgaId, userMail));
+    }
+
+    /**
+     * Endpoint to set the role of a user in an organisation to a normal user.
+     * @param orgaId ID of the organisation.
+     * @param userMail Mail of the user who will be user.
+     * @return String about success or failure.
+     */
+    @PostMapping("/orga/{orgaId}/user/role/user")
+    public ResponseEntity<String> setPersonUser(@PathVariable long orgaId,
+                                                @RequestBody String userMail) {
+        return ResponseEntity.ok(userInOrgaWithRoleService.setPersonUser(orgaId, userMail));
     }
 
     /**
@@ -60,7 +96,7 @@ public class AdminController {
      * @param group Group object which will be saved in the database.
      * @return String about success of failure.
      */
-    @PostMapping("/create-group")
+    @PostMapping("/group/add")
     public ResponseEntity<String> createGroup(@RequestBody Group group) {
         return ResponseEntity.ok(groupService.createGroup(group));
     }
@@ -70,7 +106,7 @@ public class AdminController {
      * @param group New group which will overwrite the existing Group.
      * @return String about success of failure.
      */
-    @PostMapping("/change-group")
+    @PostMapping("/group/change")
     public ResponseEntity<String> changeGroup(@RequestBody Group group) {
         return ResponseEntity.ok(groupService.changeGroup(group));
     }
@@ -80,7 +116,7 @@ public class AdminController {
      * @param groupId ID of the group which will be deleted.
      * @return String about success or failure.
      */
-    @PostMapping("/delete-group")
+    @PostMapping("/group/delete")
     public ResponseEntity<String> deleteGroup(@RequestBody long groupId) {
         return ResponseEntity.ok(groupService.deleteGroup(groupId));
     }

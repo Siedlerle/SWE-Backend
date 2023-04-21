@@ -136,7 +136,6 @@ public class UserInOrgaWithRoleService {
      */
     public String setPersonAdmin(long organisationId, String userMail) {
         User user = userService.getUserByMail(userMail);
-        Organisation organisation = organisationService.getOrganisationById(organisationId);
         OrgaRole newOrgaRole = orgaRoleService.findByRole(EnumOrgaRole.ADMIN);
         UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId);
 
@@ -158,7 +157,6 @@ public class UserInOrgaWithRoleService {
      */
     public String setPersonOrganizer(long organisationId, String userMail) {
         User user = userService.getUserByMail(userMail);
-        Organisation organisation = organisationService.getOrganisationById(organisationId);
         OrgaRole newOrgaRole = orgaRoleService.findByRole(EnumOrgaRole.ORGANIZER);
         UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId);
 
@@ -180,7 +178,6 @@ public class UserInOrgaWithRoleService {
      */
     public String setPersonUser(long organisationId, String userMail) {
         User user = userService.getUserByMail(userMail);
-        Organisation organisation = organisationService.getOrganisationById(organisationId);
         OrgaRole newOrgaRole = orgaRoleService.findByRole(EnumOrgaRole.USER);
         UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId);
 
