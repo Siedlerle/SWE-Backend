@@ -2,7 +2,6 @@ package com.eventmaster.backend.controller;
 
 import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.serviceswithouttoken.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,17 +20,23 @@ import java.util.List;
 @RequestMapping("/attendee")
 public class AttendeeController {
 
-    @Autowired
-    private ChatService chatService;
-    @Autowired
-    private CommentService commentService;
-    @Autowired
-    private DocumentService documentService;
-    @Autowired
-    private QuestionService questionService;
-    @Autowired
-    private AnswerService answerService;
+    private final ChatService chatService;
+    private final CommentService commentService;
+    private final DocumentService documentService;
+    private final QuestionService questionService;
+    private final AnswerService answerService;
 
+    public AttendeeController(ChatService chatService,
+                              CommentService commentService,
+                              DocumentService documentService,
+                              QuestionService questionService,
+                              AnswerService answerService) {
+        this.chatService = chatService;
+        this.commentService = commentService;
+        this.documentService = documentService;
+        this.questionService = questionService;
+        this.answerService = answerService;
+    }
 
 
     /**

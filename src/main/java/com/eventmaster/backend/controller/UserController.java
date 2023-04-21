@@ -6,7 +6,6 @@ import com.eventmaster.backend.serviceswithouttoken.UserService;
 import com.eventmaster.backend.serviceswithouttoken.OrganisationService;
 import com.eventmaster.backend.serviceswithouttoken.UserInEventWithRoleService;
 import com.eventmaster.backend.serviceswithouttoken.UserInOrgaWithRoleService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,15 +26,20 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
 
-    //Services needed for operations
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private OrganisationService organisationService;
-    @Autowired
-    private UserInEventWithRoleService userInEventWithRoleService;
-    @Autowired
-    private UserInOrgaWithRoleService userInOrgaWithRoleService;
+    private final UserService userService;
+    private final OrganisationService organisationService;
+    private final UserInEventWithRoleService userInEventWithRoleService;
+    private final UserInOrgaWithRoleService userInOrgaWithRoleService;
+
+    public UserController(UserService userService,
+                          OrganisationService organisationService,
+                          UserInEventWithRoleService userInEventWithRoleService,
+                          UserInOrgaWithRoleService userInOrgaWithRoleService) {
+        this.userService = userService;
+        this.organisationService = organisationService;
+        this.userInEventWithRoleService = userInEventWithRoleService;
+        this.userInOrgaWithRoleService = userInOrgaWithRoleService;
+    }
 
 
 /*

@@ -4,7 +4,6 @@ import com.eventmaster.backend.entities.Event;
 import com.eventmaster.backend.entities.EventSeries;
 import com.eventmaster.backend.entities.Preset;
 import com.eventmaster.backend.serviceswithouttoken.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,16 +19,23 @@ import java.util.List;
 @RequestMapping("/organizer")
 public class OrganizerController {
 
-    @Autowired
-    private EventService eventService;
-    @Autowired
-    private EventSeriesService eventSeriesService;
-    @Autowired
-    private OrganisationService organisationService;
-    @Autowired
-    private PresetService presetService;
-    @Autowired
-    private UserInEventWithRoleService userInEventWithRoleService;
+    private final EventService eventService;
+    private final EventSeriesService eventSeriesService;
+    private final OrganisationService organisationService;
+    private final PresetService presetService;
+    private final UserInEventWithRoleService userInEventWithRoleService;
+
+    public OrganizerController(EventService eventService,
+                               EventSeriesService eventSeriesService,
+                               OrganisationService organisationService,
+                               PresetService presetService,
+                               UserInEventWithRoleService userInEventWithRoleService) {
+        this.eventService = eventService;
+        this.eventSeriesService = eventSeriesService;
+        this.organisationService = organisationService;
+        this.presetService = presetService;
+        this.userInEventWithRoleService = userInEventWithRoleService;
+    }
 
     /**
      * Endpoint to create an event.

@@ -3,6 +3,7 @@ package com.eventmaster.backend.serviceswithouttoken;
 import com.eventmaster.backend.entities.Organisation;
 import com.eventmaster.backend.entities.Preset;
 import com.eventmaster.backend.repositories.PresetRepository;
+import local.variables.LocalizedStringVariables;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -50,10 +51,10 @@ public class PresetService {
             Organisation organisation = this.organisationService.getOrganisationById(organisationId);
             preset.setOrganisation(organisation);
             this.presetRepository.save(preset);
-            return "Preset created successfully";
+            return LocalizedStringVariables.PRESETCREATEDSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "Creation failed";
+            return LocalizedStringVariables.PRESETCREATEDFAILUREMESSAGE;
         }
     }
 
@@ -65,10 +66,10 @@ public class PresetService {
     public String changePreset(Preset preset) {
         try {
             this.presetRepository.save(preset);
-            return "Preset changed successfully";
+            return LocalizedStringVariables.PRESETCHANGEDSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "Change failed";
+            return LocalizedStringVariables.PRESETCHANGEDFAILUREMESSAGE;
         }
     }
 
@@ -80,10 +81,10 @@ public class PresetService {
     public String deletePreset(long presetId) {
         try {
             this.presetRepository.deleteById(presetId);
-            return "Preset successfully deleted";
+            return LocalizedStringVariables.PRESETDELETEDSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "Deletion failed";
+            return LocalizedStringVariables.PRESETDELETEDFAILUREMESSAGE;
         }
     }
 }

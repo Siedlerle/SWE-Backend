@@ -1,7 +1,7 @@
 package com.eventmaster.backend.serviceswithouttoken;
 import com.eventmaster.backend.entities.User;
-import com.eventmaster.backend.entities.UserInEventWithRole;
 import com.eventmaster.backend.repositories.UserRepository;
+import local.variables.LocalizedStringVariables;
 import org.springframework.stereotype.Service;
 
 /**
@@ -32,14 +32,13 @@ public class UserService {
 
     public String deleteUser(long userId) {
         try {
-
             User user = this.getUserById(userId);
             this.userRepository.deleteById(userId);
 
-            return "User " + user.getFirstname() + " " + user.getLastname() + " deleted successfully" ;
+            return LocalizedStringVariables.USERDELETEDMESSAGE + user.getFirstname() +" "+user.getLastname();
         }catch (Exception e) {
             e.printStackTrace();
-            return "User not deleted";
+            return LocalizedStringVariables.USERNOTDELETEDMESSAGE;
         }
     }
 }

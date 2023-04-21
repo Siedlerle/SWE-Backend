@@ -3,6 +3,7 @@ package com.eventmaster.backend.serviceswithouttoken;
 import com.eventmaster.backend.entities.Event;
 import com.eventmaster.backend.entities.EventSeries;
 import com.eventmaster.backend.repositories.EventSeriesRepository;
+import local.variables.LocalizedStringVariables;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,10 +42,10 @@ public class EventSeriesService {
     public String createEventSeries(Event lastEvent, EventSeries eventSeries) {
         try {
             //TODO: Von heute an bis zum lastEvent in dem Abstand aus eventSeries die Events erstellen und zur Liste in eventSeries hinzufügen
-            return "EventSeries created successfully";
+            return LocalizedStringVariables.EVENTSERIESCREATEDSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "Creation failed";
+            return LocalizedStringVariables.EVENTSERIESCREATEDFAILUREMESSAGE;
         }
     }
 
@@ -63,10 +64,10 @@ public class EventSeriesService {
 
             //TODO: Alle Events durchgehen und Daten abändern.
 
-            return "EventSeries changed successfully";
+            return LocalizedStringVariables.EVENTSERIESCHANGEDSUCCESSMESAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "Change failed";
+            return LocalizedStringVariables.EVENTSERIESCHANGEDFAILUREMESSAGE;
         }
     }
 
@@ -90,10 +91,10 @@ public class EventSeriesService {
             }
 
             eventSeriesRepository.save(eventSeries);
-            return "Status changed successfully";
+            return LocalizedStringVariables.EVENTSERIESSTATUSCHANGESUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "Change of status failed";
+            return LocalizedStringVariables.EVENTSERIESSTATUSCHANGEFAILURESMESSAGE;
         }
     }
 
@@ -114,10 +115,10 @@ public class EventSeriesService {
 
             this.eventSeriesRepository.deleteById(eventSeriesId);
 
-            return "Eventseries deleted successfully";
+            return LocalizedStringVariables.EVENTSERIESDELETEDSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "Deletion failed";
+            return LocalizedStringVariables.EVENTSERIESDELETEDFAILUREMESSAGE;
         }
     }
 }

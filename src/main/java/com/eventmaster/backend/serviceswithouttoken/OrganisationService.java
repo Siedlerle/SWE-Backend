@@ -2,6 +2,7 @@ package com.eventmaster.backend.serviceswithouttoken;
 
 import com.eventmaster.backend.entities.Organisation;
 import com.eventmaster.backend.repositories.OrganisationRepository;
+import local.variables.LocalizedStringVariables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,10 +48,10 @@ public class OrganisationService {
     public String createOrganisation(Organisation organisation){
         try {
             organisationRepository.save(organisation);
-            return "Organisation created successfully";
+            return LocalizedStringVariables.ORGACREATEDSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "Organisation creation failed";
+            return LocalizedStringVariables.ORGACREATEDFAILUREMESSAGE;
         }
     }
 
@@ -72,10 +73,10 @@ public class OrganisationService {
 
             this.organisationRepository.save(oldOrganisation);
 
-            return "Organisation changed successfully";
+            return LocalizedStringVariables.ORGACHANGEDSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "Organisation change failed";
+            return LocalizedStringVariables.ORGACHANGEDFAILUREMESSAGE;
         }
     }
 
@@ -92,7 +93,7 @@ public class OrganisationService {
             return "Organisation " + organisation.getName() + " deleted successfully";
         } catch (Exception e) {
             e.printStackTrace();
-            return "Organisation not deleted";
+            return LocalizedStringVariables.ORGADELETEDFAILUREMESSAGE;
         }
     }
 }

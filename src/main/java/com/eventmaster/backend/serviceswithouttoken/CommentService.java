@@ -2,6 +2,7 @@ package com.eventmaster.backend.serviceswithouttoken;
 
 import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.repositories.CommentRepository;
+import local.variables.LocalizedStringVariables;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,10 +42,10 @@ public class CommentService {
             comment.setText(text);
             commentRepository.save(comment);
 
-            return "commented successfully";
+            return LocalizedStringVariables.COMMENTSUBMITSUCCESSMESSAGE;
         }catch (Exception e) {
             e.printStackTrace();
-            return "failed to comment";
+            return LocalizedStringVariables.COMMENTSUBMITFAILUREMESSAGE;
         }
     }
 
