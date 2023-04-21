@@ -3,6 +3,7 @@ package com.eventmaster.backend.serviceswithouttoken;
 import com.eventmaster.backend.entities.Event;
 import com.eventmaster.backend.entities.User;
 import com.eventmaster.backend.repositories.EventRepository;
+import local.variables.LocalizedStringVariables;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -69,10 +70,10 @@ public class EventService {
         try {
             eventRepository.save(event);
             userInEventWithRoleService.setOrganizerOfEvent(userId, event.getId());
-            return "Event created successfully";
+            return LocalizedStringVariables.EVENTCREATEDSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "Event creation failed";
+            return LocalizedStringVariables.EVENTCREATEDFAILUREMESSAGE;
         }
     }
 
@@ -84,10 +85,10 @@ public class EventService {
     public String changeEvent(Event event) {
         try {
             eventRepository.save(event);
-            return "Event changed successfully";
+            return LocalizedStringVariables.EVENTCHANGEDSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "Change failed";
+            return LocalizedStringVariables.EVENTCHANGEDFAILUREMESSAGE;
         }
     }
 
@@ -104,10 +105,10 @@ public class EventService {
 
             this.eventRepository.save(event);
 
-            return "Status changed successfully";
+            return LocalizedStringVariables.EVENTSTATUSCHANGEDSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "Change of status failed";
+            return LocalizedStringVariables.EVENTSTATUSCHANGEDFAILURESMESSAGE;
         }
     }
 
@@ -119,10 +120,10 @@ public class EventService {
     public String deleteEvent(Long eventId){
         try {
             eventRepository.deleteById(eventId);
-            return "Event deleted successfully";
+            return LocalizedStringVariables.EVENTDELETEDSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "Deletion failed";
+            return LocalizedStringVariables.EVENTDELETEDFAILUREMESSAGE;
         }
     }
 

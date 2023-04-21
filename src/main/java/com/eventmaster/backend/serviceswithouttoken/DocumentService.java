@@ -5,6 +5,7 @@ import com.eventmaster.backend.entities.Document;
 import com.eventmaster.backend.entities.Event;
 import com.eventmaster.backend.repositories.DocumentRepository;
 import com.eventmaster.backend.repositories.EventRepository;
+import local.variables.LocalizedStringVariables;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -107,10 +108,10 @@ public class DocumentService {
             doc = documentRepository.save(doc);
             String filecode = saveFile(eventId,doc.getId(), fileName, multipartFile);
             doc.setDownloadUri("event/" + eventId + "/" + filecode);
-            return "success";
+            return LocalizedStringVariables.DOCUMENTCREATEDSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "failure";
+            return LocalizedStringVariables.DOCUMENTCREATEDFAILUREMESSAGE;
         }
     }
 
@@ -133,10 +134,10 @@ public class DocumentService {
 
             File file = new File("/media/eventfiles/" + uri);
             file.delete();
-            return "success";
+            return LocalizedStringVariables.DOCUMENTDELETEDSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "failure";
+            return LocalizedStringVariables.DOCUMENTDELETEDFAILUREMESSAGE;
         }
     }
 

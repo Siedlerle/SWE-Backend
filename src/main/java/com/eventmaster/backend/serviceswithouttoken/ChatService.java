@@ -4,6 +4,7 @@ import com.eventmaster.backend.entities.Chat;
 import com.eventmaster.backend.entities.Event;
 import com.eventmaster.backend.entities.User;
 import com.eventmaster.backend.repositories.ChatRepository;
+import local.variables.LocalizedStringVariables;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -60,10 +61,10 @@ public class ChatService {
         chat.setMessage(message);
         try {
             chatRepository.save(chat);
-            return "success";
+            return LocalizedStringVariables.CHATSUBMITSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "failure";
+            return LocalizedStringVariables.CHATSUBMITFAILUREMESSAGE;
         }
     }
 }

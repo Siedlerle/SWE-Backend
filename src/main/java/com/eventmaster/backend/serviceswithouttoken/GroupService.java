@@ -2,6 +2,7 @@ package com.eventmaster.backend.serviceswithouttoken;
 
 import com.eventmaster.backend.entities.Group;
 import com.eventmaster.backend.repositories.GroupRepository;
+import local.variables.LocalizedStringVariables;
 import org.springframework.stereotype.Service;
 
 /**
@@ -26,10 +27,10 @@ public class GroupService {
     public String createGroup(Group group) {
         try {
             this.groupRepository.save(group);
-            return "Group saved successfully";
+            return LocalizedStringVariables.GROUPCREATEDSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "Creation failed";
+            return LocalizedStringVariables.GROUPCREATEDFAILUREMESSAGE;
         }
     }
 
@@ -49,10 +50,10 @@ public class GroupService {
 
             this.groupRepository.save(oldGroup);
 
-            return "Group changed successfully";
+            return LocalizedStringVariables.GROUPCHANGEDSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "Change failed";
+            return LocalizedStringVariables.GROUPCHANGEDFAILUREMESSAGE;
         }
     }
 
@@ -64,10 +65,10 @@ public class GroupService {
     public String deleteGroup(long groupId) {
         try {
             this.groupRepository.deleteById(groupId);
-            return "Group deleted successfully";
+            return LocalizedStringVariables.GROUPDELETEDSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "Group not deleted";
+            return LocalizedStringVariables.GROUPDELETEDFAILUREMESSAGE;
         }
     }
 }
