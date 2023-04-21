@@ -8,7 +8,6 @@ import com.eventmaster.backend.serviceswithouttoken.UserService;
 import com.eventmaster.backend.serviceswithouttoken.UserInOrgaWithRoleService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +22,6 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-@RequiredArgsConstructor
 @RequestMapping("/user")
 public class UserController {
 
@@ -33,6 +31,15 @@ public class UserController {
     private final UserInEventWithRoleService userInEventWithRoleService;
     private final UserInOrgaWithRoleService userInOrgaWithRoleService;
 
+    public UserController(UserService userService,
+                          OrganisationService organisationService,
+                          UserInEventWithRoleService userInEventWithRoleService,
+                          UserInOrgaWithRoleService userInOrgaWithRoleService) {
+        this.userService = userService;
+        this.organisationService = organisationService;
+        this.userInEventWithRoleService = userInEventWithRoleService;
+        this.userInOrgaWithRoleService = userInOrgaWithRoleService;
+    }
 
 
     //Operations regarding user authentications
