@@ -5,7 +5,7 @@ import com.eventmaster.backend.entities.Question;
 import com.eventmaster.backend.repositories.QuestionRepository;
 import org.springframework.stereotype.Service;
 
-@Service
+
 public class QuestionService {
 
     /*
