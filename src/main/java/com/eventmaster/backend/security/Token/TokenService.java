@@ -27,7 +27,6 @@ public class TokenService {
     }
 
     public List<Token> findAllValidTokensByUser(User user){
-        System.out.println(user.getId());
         List<Token> tokensFromUser = tokenRepository.findTokensByUserId(user.getId());
         List<Token> validTokens = new ArrayList<Token>();
         for (Token token: tokensFromUser) {
