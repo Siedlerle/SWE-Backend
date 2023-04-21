@@ -2,10 +2,7 @@ package com.eventmaster.backend.controller;
 
 import com.eventmaster.backend.entities.Event;
 import com.eventmaster.backend.entities.Group;
-import com.eventmaster.backend.serviceswithouttoken.EventService;
-import com.eventmaster.backend.serviceswithouttoken.GroupService;
-import com.eventmaster.backend.serviceswithouttoken.UserInEventWithRoleService;
-import com.eventmaster.backend.serviceswithouttoken.UserInOrgaWithRoleService;
+import com.eventmaster.backend.serviceswithouttoken.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,14 +22,18 @@ public class AdminController {
 
     private final EventService eventService;
     private final UserInOrgaWithRoleService userInOrgaWithRoleService;
+    private final UserInEventWithRoleService userInEventWithRoleService;
     private final GroupService groupService;
+    private final UserInGroupService userInGroupService;
 
     public AdminController(EventService eventService,
                            UserInOrgaWithRoleService userInOrgaWithRoleService,
-                           GroupService groupService) {
+                           UserInEventWithRoleService userInEventWithRoleService, GroupService groupService, UserInGroupService userInGroupService) {
         this.eventService = eventService;
         this.userInOrgaWithRoleService = userInOrgaWithRoleService;
+        this.userInEventWithRoleService = userInEventWithRoleService;
         this.groupService = groupService;
+        this.userInGroupService = userInGroupService;
     }
 
     /**
@@ -121,6 +122,42 @@ public class AdminController {
     @PostMapping("/group/delete")
     public ResponseEntity<String> deleteGroup(@RequestBody long groupId) {
         return ResponseEntity.ok(groupService.deleteGroup(groupId));
+    }
+
+    /**
+     * Endpoint to add a user to a group.
+     * @param groupId ID of the group.
+     * @param userMail Mail address of the user.
+     * @return String about success or failure.
+     */
+    @PostMapping("/group/{groupId}/user/add")
+    public ResponseEntity<String> addUserToGroup(@PathVariable long groupId,
+                                                 @RequestBody String userMail) {
+        return ResponseEntity.ok(userInGroupService.addUserToGroup(groupId, userMail));
+    }
+
+    /**
+     * Endpoint to remove a user from a group.
+     * @param groupId ID of the group.
+     * @param userMail Mail address of the user.
+     * @return String about success or failure.
+     */
+    @PostMapping("/group/{groupId}/user/remove")
+    public ResponseEntity<String> removeUserFromGroup(@PathVariable long groupId,
+                                                      @RequestBody String userMail) {
+        return ResponseEntity.ok(userInGroupService.removeUserFromGroup(groupId, userMail));
+    }
+
+    /**
+     * Endpoint to change the organizer of an event.
+     * @param eventId ID of the event.
+     * @param userMail Mail address of the new organizer.
+     * @return String about success or failure.
+     */
+    @PostMapping("/event/{eventId}/organizer/change")
+    public ResponseEntity<String> changeOrganizerOfEvent(@PathVariable long eventId,
+                                                         @RequestBody String userMail) {
+        return ResponseEntity.ok(userInEventWithRoleService.changeOrganizerOfEvent(eventId, userMail));
     }
 
 }

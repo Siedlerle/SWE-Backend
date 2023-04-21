@@ -316,4 +316,51 @@ public class UserInEventWithRoleService {
 
     //endregion
 
+    //region AdminMethods
+
+    /**
+     * Change the organizer of the event by removing the old organizer of the event and setting the new user as organizer of the event.
+     * @param eventId ID of the event.
+     * @param userMail Mail address of the new organizer.
+     * @return String about success or failure.
+     */
+    public String changeOrganizerOfEvent(long eventId, String userMail) {
+        User newOrganizer = userService.getUserByMail(userMail);
+        Event event = eventService.getEventById(eventId);
+        EventRole eventRole = eventRoleService.findByRole(EnumEventRole.ORGANIZER);
+
+        try {
+            UserInEventWithRole oldUserInEventWithRole = userInEventWithRoleRepository.findByEventAndEventRole(event, eventRole);
+            userInEventWithRoleRepository.delete(oldUserInEventWithRole);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Deletion failed";
+        }
+
+        if (userInEventWithRoleRepository.findByUserAndEvent(newOrganizer, event) == null) {
+            UserInEventWithRole newUserInEventWithRole = new UserInEventWithRole();
+            newUserInEventWithRole.setUser(newOrganizer);
+            newUserInEventWithRole.setEvent(event);
+            newUserInEventWithRole.setEventRole(eventRole);
+            try {
+                userInEventWithRoleRepository.save(newUserInEventWithRole);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "failure";
+            }
+        } else {
+            UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(newOrganizer, event);
+            userInEventWithRole.setEventRole(eventRole);
+            try {
+                userInEventWithRoleRepository.save(userInEventWithRole);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "failure";
+            }
+        }
+
+        return "success";
+    }
+
+    //endregion
 }
