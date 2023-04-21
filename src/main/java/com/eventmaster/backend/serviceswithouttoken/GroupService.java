@@ -20,6 +20,20 @@ public class GroupService {
     }
 
     /**
+     * Returns a group by a given id if it exists.
+     * @param id ID of the group.
+     * @return Group object if existing.
+     */
+    public Group getGroupById(long id) {
+        try {
+            return groupRepository.findById(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
      * Saves a new Group in the database.
      * @param group Group object which will be saved.
      * @return String about success of failure.
