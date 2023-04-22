@@ -2,6 +2,7 @@ package com.eventmaster.backend.entities;
 
 
 import com.eventmaster.backend.security.Token.Token;
+import com.eventmaster.backend.serviceswithouttoken.UserService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,10 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This class serves as an entity to save a user in the database.
@@ -41,8 +39,8 @@ public class User implements UserDetails {
 
     private boolean enabled;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    //@Enumerated(EnumType.STRING)
+    //private Role role;
 
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;
@@ -62,7 +60,7 @@ public class User implements UserDetails {
     private Set<UserInGroup> userInGroupSet = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.EAGER)
     private Set<UserInOrgaWithRole> userInOrgaWithRoleSet = new HashSet<>();
 
     @JsonIgnore
@@ -163,7 +161,13 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        String role;
+        for(UserInOrgaWithRole uiOwR : userInOrgaWithRoleSet){
+            role = "ROLE_"+uiOwR.getOrganisation().getId()+"_"+uiOwR.getOrgaRole().getRole().role;
+            authorities.add(new SimpleGrantedAuthority(role));
+        }
+        return authorities;
     }
 
     public String getPassword() {

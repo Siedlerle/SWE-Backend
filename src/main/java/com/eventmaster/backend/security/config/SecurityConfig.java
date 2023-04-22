@@ -1,5 +1,6 @@
 package com.eventmaster.backend.security.config;
 
+import com.eventmaster.backend.security.authorization.CustomAuthorizationManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -41,20 +42,18 @@ public class SecurityConfig{
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/user/auth/**")
-                .permitAll()
-                .anyRequest()
-                .authenticated()
+                    .requestMatchers("/user/auth/**").permitAll()
+                    .anyRequest().access(new CustomAuthorizationManager())
                 .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                    .authenticationProvider(authenticationProvider)
+                    .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout()
-                .logoutUrl("/logout")
-                .addLogoutHandler(logoutHandler)
-                .logoutSuccessHandler(((request, response, authentication) -> SecurityContextHolder.clearContext()));
+                    .logoutUrl("/logout")
+                    .addLogoutHandler(logoutHandler)
+                    .logoutSuccessHandler(((request, response, authentication) -> SecurityContextHolder.clearContext()));
 
         return http.build();
     }

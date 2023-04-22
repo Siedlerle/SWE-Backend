@@ -1,6 +1,5 @@
 package com.eventmaster.backend.serviceswithouttoken;
 import com.eventmaster.backend.EmailService.EmailService;
-import com.eventmaster.backend.entities.Event;
 import com.eventmaster.backend.entities.Role;
 import com.eventmaster.backend.entities.User;
 import com.eventmaster.backend.repositories.UserRepository;
@@ -8,8 +7,8 @@ import local.variables.LocalizedStringVariables;
 import com.eventmaster.backend.security.Token.Token;
 import com.eventmaster.backend.security.Token.TokenService;
 import com.eventmaster.backend.security.Token.TokenType;
-import com.eventmaster.backend.security.auth.AuthenticationResponse;
-import com.eventmaster.backend.security.auth.VerificationResponse;
+import com.eventmaster.backend.security.authentification.AuthenticationResponse;
+import com.eventmaster.backend.security.authentification.VerificationResponse;
 import com.eventmaster.backend.security.config.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +18,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -61,7 +59,6 @@ public class UserService {
                 .lastname(request.getLastname())
                 .emailAdress(request.getEmailAdress())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
                 .build();
         var savedUser = userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
@@ -75,7 +72,8 @@ public class UserService {
                         "\nto confirm your account, please click here : \n"
                 +"http://localhost:4200/login?authToken=" + jwtToken + "\n"
                 +"WARNING: The token is only valid up to 15 Minutes");
-        emailService.sendEmail(mailMessage);
+        //emailService.sendEmail(mailMessage);
+        System.out.println(mailMessage.getText());
 
         return "Successfully registered";
     }
@@ -153,8 +151,8 @@ public class UserService {
                     "\nto confirm your account, please click here : \n"
                     +"Token to authenticate reset: " + jwtToken + "\n"
                     +"WARNING: The token is only valid up to 15 Minutes");
-            emailService.sendEmail(mailMessage);
-
+            //emailService.sendEmail(mailMessage);
+            System.out.println(mailMessage.getText());
             return "reset-request sent";
         }catch (Exception e) {
             e.printStackTrace();
@@ -190,7 +188,7 @@ public class UserService {
     }
     public User getUserByMail(String userMail) {
         try {
-            return userRepository.findByEmailAdress(userMail).get();
+            return userRepository.findByEmailAdress(userMail);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
