@@ -113,14 +113,24 @@ public class EventSeriesService {
             EventSeries eventSeries = getEventSeriesById(eventSeriesId);
             Set<Event> events = eventSeries.getEvents();
 
+            boolean deletionSuccessful = true;
+
             for (Event event : events) {
-                long eventId = event.getId();
-                this.eventService.deleteEvent(eventId);
+                EnumEventStatus status = event.getStatus();
+                if (status.equals(EnumEventStatus.CANCELLED) || status.equals(EnumEventStatus.ACCOMPLISHED)) {
+                    long eventId = event.getId();
+                    this.eventService.deleteEvent(eventId);
+                } else {
+                    deletionSuccessful = false;
+                }
             }
-
-            this.eventSeriesRepository.deleteById(eventSeriesId);
-
-            return LocalizedStringVariables.EVENTSERIESDELETEDSUCCESSMESSAGE;
+            if (deletionSuccessful) {
+                this.eventSeriesRepository.deleteById(eventSeriesId);
+                return LocalizedStringVariables.EVENTSERIESDELETEDSUCCESSMESSAGE;
+            }
+            else {
+                return LocalizedStringVariables.EVENTSERIESDELETEDNOTALLMESSAGE;
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return LocalizedStringVariables.EVENTSERIESDELETEDFAILUREMESSAGE;
