@@ -218,6 +218,18 @@ public class OrganizerController {
         return ResponseEntity.ok(eventSeriesService.deleteEventSeries(eventSeriesId));
     }
 
+    /**
+     * Endpoint to invite a user to a series of events.
+     * @param eventSeriesId ID of the eventseries.
+     * @param userMail Mail of the user who will be invited.
+     * @return String about success or failure.
+     */
+    @PostMapping("/event-series/{eventSeriesId}/user/invite")
+    public ResponseEntity<String> inviteUserToEventSeries(@PathVariable long eventSeriesId,
+                                                          @RequestBody String userMail) {
+        return ResponseEntity.ok(eventSeriesService.inviteUserToEventSeries(eventSeriesId, userMail));
+    }
+
     //endregion
 
     //region Presets

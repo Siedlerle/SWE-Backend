@@ -7,7 +7,7 @@ import com.eventmaster.backend.repositories.EventSeriesRepository;
 import local.variables.LocalizedStringVariables;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.LocalDate;
 import java.util.Set;
 
 /**
@@ -19,10 +19,12 @@ import java.util.Set;
 public class EventSeriesService {
     private final EventSeriesRepository eventSeriesRepository;
     private final EventService eventService;
+    private final UserInEventWithRoleService userInEventWithRoleService;
 
-    public EventSeriesService(EventSeriesRepository eventSeriesRepository, EventService eventService) {
+    public EventSeriesService(EventSeriesRepository eventSeriesRepository, EventService eventService, UserInEventWithRoleService userInEventWithRoleService) {
         this.eventSeriesRepository = eventSeriesRepository;
         this.eventService = eventService;
+        this.userInEventWithRoleService = userInEventWithRoleService;
     }
 
     public EventSeries getEventSeriesById(long eventSeriesId) {
@@ -109,8 +111,8 @@ public class EventSeriesService {
      * @return String about success or failure.
      */
     public String deleteEventSeries(long eventSeriesId) {
+        EventSeries eventSeries = getEventSeriesById(eventSeriesId);
         try {
-            EventSeries eventSeries = getEventSeriesById(eventSeriesId);
             Set<Event> events = eventSeries.getEvents();
 
             boolean deletionSuccessful = true;
@@ -134,6 +136,36 @@ public class EventSeriesService {
         } catch (Exception e) {
             e.printStackTrace();
             return LocalizedStringVariables.EVENTSERIESDELETEDFAILUREMESSAGE;
+        }
+    }
+
+    /**
+     * Invites a user to a series of events by inviting him to the next event of the series.
+     * @param eventSeriesId ID of the eventseries who contains the multiple events.
+     * @param userMail Mail og the user who wille be invited.
+     * @return String about success or failure.
+     */
+    public String inviteUserToEventSeries(long eventSeriesId, String userMail) {
+        EventSeries eventSeries = getEventSeriesById(eventSeriesId);
+        Set<Event> events = eventSeries.getEvents();
+
+        LocalDate currentDate = LocalDate.now();
+
+        Event nextEvent = null;
+        for (Event event : events) {
+            LocalDate startDate = event.getStartDate().toLocalDate();
+            if (startDate.isAfter(currentDate) && (nextEvent == null || startDate.isBefore(nextEvent.getStartDate().toLocalDate()))) {
+                nextEvent = event;
+            }
+            if (nextEvent != null && startDate.isAfter(nextEvent.getStartDate().toLocalDate())) {
+                break;
+            }
+        }
+        if (nextEvent != null) {
+            return userInEventWithRoleService.inviteUserToFirstEventFromSeries(eventSeries, nextEvent.getId(), userMail);
+        }
+        else {
+            return LocalizedStringVariables.EVENTSERIESNONEXTEVENTFOUNDMESSAGE;
         }
     }
 }

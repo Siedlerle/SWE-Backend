@@ -182,12 +182,43 @@ public class UserInEventWithRoleService {
         }
 
     }
+
+    /**
+     * Checks if a user is invited to an event.
+     * @param eventId ID of the event.
+     * @param userMail Mail of the user.
+     * @return Boolean if user is invited or not.
+     */
+    public Boolean isUserInvitedToEvent(long eventId, String userMail) {
+        Event event = eventService.getEventById(eventId);
+        User user = userService.getUserByMail(userMail);
+        EventRole invitedSingleRole = eventRoleService.findByRole(EnumEventRole.INVITED);
+        EventRole invitedGroupRole = eventRoleService.findByRole(EnumEventRole.GROUPINVITED);
+        EventRole invitedSeriesRole = eventRoleService.findByRole(EnumEventRole.SERIESINVITED);
+
+        try {
+            if (userInEventWithRoleRepository.existsByUserAndEvent(user, event)) {
+                UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(user, event);
+                EventRole roleOfUser = userInEventWithRole.getEventRole();
+                if (roleOfUser.equals(invitedSingleRole) || roleOfUser.equals(invitedGroupRole) || roleOfUser.equals(invitedSeriesRole)) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 /*
     public List<Event> getAllEventsForUser(long userId){
        //Todo implementieren der inneren Login
     }
 
  */
+
+
 
     //endregion
 
@@ -378,7 +409,7 @@ public class UserInEventWithRoleService {
             userInEventWithRole.setUser(user);
             userInEventWithRole.setEvent(event);
             userInEventWithRole.setEventRole(inviteRole);
-            userInEventWithRole.setHasAttended(true);
+            userInEventWithRole.setHasAttended(false);
 
             try {
                 userInEventWithRoleRepository.save(userInEventWithRole);
@@ -386,6 +417,39 @@ public class UserInEventWithRoleService {
             } catch (Exception e) {
                 e.printStackTrace();
                 return LocalizedStringVariables.INVITEUSERTOEVENTFAILUREMESSAGE;
+            }
+        }
+    }
+
+    /**
+     * Invites a user to the first event of a series.
+     * @param eventSeries Series of events from which the event is the first one.
+     * @param eventId ID of the event which is the first of the series.
+     * @param userMail Mail of the user who will be invited.
+     * @return String about success or failure.
+     */
+    public String inviteUserToFirstEventFromSeries(EventSeries eventSeries, long eventId, String userMail) {
+        Event event = eventService.getEventById(eventId);
+        User user = userService.getUserByMail(userMail);
+
+        EventRole eventRole = eventRoleService.findByRole(EnumEventRole.SERIESINVITED);
+
+        if (userInEventWithRoleRepository.existsByUserAndEvent(user, event)) {
+            return LocalizedStringVariables.USERALREADYPARTOFEVENTMESSAGE;
+        } else {
+            UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
+            userInEventWithRole.setUser(user);
+            userInEventWithRole.setEvent(event);
+            userInEventWithRole.setEventRole(eventRole);
+            userInEventWithRole.setHasAttended(false);
+
+            try {
+                userInEventWithRoleRepository.save(userInEventWithRole);
+                //TODO Einladungsmail senden mit Anmerkung zu Series
+                return LocalizedStringVariables.INVITEUSERTOFIRSTEVENTOFSERIESSUCCESSMESSAGE;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return LocalizedStringVariables.INVITEUSERTOFIRSTEVENTOFSERIESFAILUREMESSAGE;
             }
         }
     }
