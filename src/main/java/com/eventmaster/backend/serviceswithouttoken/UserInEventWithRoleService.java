@@ -472,7 +472,7 @@ public class UserInEventWithRoleService {
             return LocalizedStringVariables.USERINEVENTWITHROLEDELETIONFAILUREMESSAGE;
         }
 
-        if (userInEventWithRoleRepository.findByUserAndEvent(newOrganizer, event) == null) {
+        if (!userInEventWithRoleRepository.existsByUserAndEvent(newOrganizer, event)) {
             UserInEventWithRole newUserInEventWithRole = new UserInEventWithRole();
             newUserInEventWithRole.setUser(newOrganizer);
             newUserInEventWithRole.setEvent(event);
