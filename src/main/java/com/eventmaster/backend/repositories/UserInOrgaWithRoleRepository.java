@@ -14,4 +14,5 @@ import java.util.List;
 public interface UserInOrgaWithRoleRepository extends JpaRepository<UserInOrgaWithRole, Long> {
     List<UserInOrgaWithRole> findByUser(User user);
     UserInOrgaWithRole findByUser_IdAndOrganisation_Id(long userId, long orgaId);
+    Boolean existsByUser_IdAndOrganisation_Id(long userId, long orgaId);
 }

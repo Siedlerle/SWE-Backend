@@ -77,23 +77,27 @@ public class UserInOrgaWithRoleService {
         }
     }
 
+    /**
+     * If the user is part of the organisation he will be removed from her.
+     * @param organisationId ID of the organisation.
+     * @param userMail Mail of the user who will leave the organisatione.
+     * @param reason Reason why he leaves the organisation.
+     * @return String about success or failure.
+     */
     public String leaveOrganisation(long organisationId, String userMail, String reason){
+        User user = userService.getUserByMail(userMail);
+        Organisation organisation = organisationService.getOrganisationById(organisationId);
         try {
-            User user = userService.getUserByMail(userMail);
-            Organisation organisation = organisationService.getOrganisationById(organisationId);
-
             //Todo reason per mail an den admin o.ä. der Organisation
 
-            List<UserInOrgaWithRole> userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser(user);
+            UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId);
 
-            for (UserInOrgaWithRole deleteUserInOrgaWithRole: userInOrgaWithRole) {
-                if(deleteUserInOrgaWithRole.getOrganisation() == organisation){
-                    userInOrgaWithRoleRepository.delete(deleteUserInOrgaWithRole);
-                    return LocalizedStringVariables.LEAVEORGANISATIONSUCCESSMESSAGE;
-                }
+            if(userInOrgaWithRole == null) {
+                return LocalizedStringVariables.USERISNOTINORGANISATIONMESSAGE;
+            } else {
+                userInOrgaWithRoleRepository.delete(userInOrgaWithRole);
+                return LocalizedStringVariables.LEAVEORGANISATIONSUCCESSMESSAGE;
             }
-
-            return LocalizedStringVariables.USERISNOTINORGANISATIONMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
             return LocalizedStringVariables.LEAVEORGANISATIONFAILUREMESSAGE;
@@ -188,6 +192,36 @@ public class UserInOrgaWithRoleService {
         } catch (Exception e) {
             e.printStackTrace();
             return LocalizedStringVariables.SETPERSONUSERINORGAFAILUREMESSAGE;
+        }
+    }
+
+    /**
+     * Invited a user to an organisation by setting the Role INVITED and sending the user an email.
+     * @param organisationId ID of the organisation.
+     * @param userMail Mail of the user who will be invited.
+     * @return String about success or failure.
+     */
+    public String inviteUserToOrganisation(long organisationId, String userMail) {
+        Organisation organisation = organisationService.getOrganisationById(organisationId);
+        User user = userService.getUserByMail(userMail);
+        OrgaRole inviteRole = orgaRoleService.findByRole(EnumOrgaRole.INVITED);
+
+        if (userInOrgaWithRoleRepository.existsByUser_IdAndOrganisation_Id(user.getId(), organisationId)) {
+            return LocalizedStringVariables.INVITEDUSERALREADYPARTOFORGANISATIONMESSAGE;
+        } else {
+            //TODO Einladungsmail an user senden.
+
+            try {
+                UserInOrgaWithRole userInOrgaWithRole = new UserInOrgaWithRole();
+                userInOrgaWithRole.setOrganisation(organisation);
+                userInOrgaWithRole.setUser(user);
+                userInOrgaWithRole.setOrgaRole(inviteRole);
+                userInOrgaWithRoleRepository.save(userInOrgaWithRole);
+                return LocalizedStringVariables.INVITEUSERTOORGANISATIONSUCCESSMESSAGE;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return LocalizedStringVariables.INVITEUSERTOORGANISATIONFAILUREMESSAGE;
+            }
         }
     }
 }
