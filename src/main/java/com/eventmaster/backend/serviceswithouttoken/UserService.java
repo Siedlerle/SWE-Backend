@@ -41,4 +41,5 @@ public class UserService {
             return LocalizedStringVariables.USERNOTDELETEDMESSAGE;
         }
     }
+
 }

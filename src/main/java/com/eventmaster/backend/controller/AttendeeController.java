@@ -94,11 +94,10 @@ public class AttendeeController {
      * @return successmessage
      */
     @PostMapping("/answer-survey/{userId}")
-    public ResponseEntity<String> answerSurvey(
+    public ResponseEntity<?> answerSurvey(
             @RequestBody List<Answer> answers,
             @PathVariable long userId){
-        //Todo implementieren der Antwortlogik
-        return ResponseEntity.ok("Not yet implemented");
+        return ResponseEntity.ok(answerService.addAnswer(answers, userId));
     }
 
     /**

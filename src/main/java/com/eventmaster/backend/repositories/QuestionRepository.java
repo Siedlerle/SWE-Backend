@@ -12,4 +12,5 @@ import java.util.List;
  */
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findByEventId(long eventId);
+    Question findById(long questionId);
 }

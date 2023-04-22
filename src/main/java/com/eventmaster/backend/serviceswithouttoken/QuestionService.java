@@ -65,4 +65,8 @@ public class QuestionService {
         }
 
     }
+
+    public Question findById(long questionId) {
+        return questionRepository.findById(questionId);
+    }
 }
