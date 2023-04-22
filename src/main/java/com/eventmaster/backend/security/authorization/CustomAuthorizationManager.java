@@ -9,10 +9,11 @@ import java.util.function.Supplier;
 
 public class CustomAuthorizationManager implements AuthorizationManager<RequestAuthorizationContext> {
     @Override
-    public AuthorizationDecision check(Supplier<Authentication> authentication, RequestAuthorizationContext object) {
+    public AuthorizationDecision check(Supplier<Authentication> authentication, RequestAuthorizationContext requestAuthorizationContext) {
         Object credentials = authentication.get().getCredentials();
         Object principal = authentication.get().getPrincipal();
         Object authorities = authentication.get().getAuthorities();
+        String request = requestAuthorizationContext.getRequest().getRequestURI();
         return new AuthorizationDecision(true);
     }
 }

@@ -1,6 +1,7 @@
 package com.eventmaster.backend.security.config;
 
 import com.eventmaster.backend.security.authorization.CustomAuthorizationManager;
+import com.eventmaster.backend.security.authorization.OrganizerAuthorizationManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -43,6 +44,7 @@ public class SecurityConfig{
                 .disable()
                 .authorizeHttpRequests()
                     .requestMatchers("/user/auth/**").permitAll()
+                    .requestMatchers("/organizer/**").access(new OrganizerAuthorizationManager())
                     .anyRequest().access(new CustomAuthorizationManager())
                 .and()
                     .sessionManagement()
