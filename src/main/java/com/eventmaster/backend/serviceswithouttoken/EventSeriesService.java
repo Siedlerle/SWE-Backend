@@ -1,5 +1,6 @@
 package com.eventmaster.backend.serviceswithouttoken;
 
+import com.eventmaster.backend.entities.EnumEventStatus;
 import com.eventmaster.backend.entities.Event;
 import com.eventmaster.backend.entities.EventSeries;
 import com.eventmaster.backend.repositories.EventSeriesRepository;
@@ -80,18 +81,22 @@ public class EventSeriesService {
     public String changeStatusOfEventSeries(long eventSeriesId, String newStatus) {
         try {
             EventSeries eventSeries = getEventSeriesById(eventSeriesId);
+            for (EnumEventStatus status : EnumEventStatus.values()) {
+                if(status.status.equals(newStatus)) {
+                    Set<Event> events = eventSeries.getEvents();
 
-            Set<Event> events = eventSeries.getEvents();
+                    for (Event event : events) {
+                        if (!event.getStatus().equals("abgeschlossen")) {
+                            event.setStatus(status);
+                            eventService.changeEvent(event);
+                        }
+                    }
 
-            for (Event event : events) {
-                if (!event.getStatus().equals("abgeschlossen")) {
-                    event.setStatus(newStatus);
-                    eventService.changeEvent(event);
+                    eventSeriesRepository.save(eventSeries);
+                    return LocalizedStringVariables.EVENTSERIESSTATUSCHANGESUCCESSMESSAGE;
                 }
             }
-
-            eventSeriesRepository.save(eventSeries);
-            return LocalizedStringVariables.EVENTSERIESSTATUSCHANGESUCCESSMESSAGE;
+            return LocalizedStringVariables.GIVENEVENTSTATUSNOTCORRECTMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
             return LocalizedStringVariables.EVENTSERIESSTATUSCHANGEFAILURESMESSAGE;

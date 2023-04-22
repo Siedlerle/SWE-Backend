@@ -1,5 +1,7 @@
 package com.eventmaster.backend.serviceswithouttoken;
 
+import com.eventmaster.backend.entities.EnumEventRole;
+import com.eventmaster.backend.entities.EnumEventStatus;
 import com.eventmaster.backend.entities.Event;
 import com.eventmaster.backend.entities.User;
 import com.eventmaster.backend.repositories.EventRepository;
@@ -101,11 +103,17 @@ public class EventService {
     public String changeStatusOfEvent(long eventId, String newStatus) {
         try {
             Event event = getEventById(eventId);
-            event.setStatus(newStatus);
+            for (EnumEventStatus status : EnumEventStatus.values()) {
+                if (status.status.equals(newStatus)) {
+                    event.setStatus(status);
 
-            this.eventRepository.save(event);
+                    this.eventRepository.save(event);
 
-            return LocalizedStringVariables.EVENTSTATUSCHANGEDSUCCESSMESSAGE;
+                    return LocalizedStringVariables.EVENTSTATUSCHANGEDSUCCESSMESSAGE;
+                }
+            }
+            return LocalizedStringVariables.GIVENEVENTSTATUSNOTCORRECTMESSAGE;
+
         } catch (Exception e) {
             e.printStackTrace();
             return LocalizedStringVariables.EVENTSTATUSCHANGEDFAILURESMESSAGE;
@@ -118,12 +126,18 @@ public class EventService {
      * @return Boolen as status for success
      */
     public String deleteEvent(Long eventId){
-        try {
-            eventRepository.deleteById(eventId);
-            return LocalizedStringVariables.EVENTDELETEDSUCCESSMESSAGE;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return LocalizedStringVariables.EVENTDELETEDFAILUREMESSAGE;
+        Event event = getEventById(eventId);
+        EnumEventStatus status = event.getStatus();
+        if (status.equals(EnumEventStatus.CANCELLED)) {
+            try {
+                eventRepository.deleteById(eventId);
+                return LocalizedStringVariables.EVENTDELETEDSUCCESSMESSAGE;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return LocalizedStringVariables.EVENTDELETEDFAILUREMESSAGE;
+            }
+        } else {
+            return LocalizedStringVariables.EVENTNOTCANCELLEDMESSAGE;
         }
     }
 
