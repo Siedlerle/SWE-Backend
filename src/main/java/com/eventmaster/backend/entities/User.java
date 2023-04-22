@@ -1,10 +1,20 @@
 package com.eventmaster.backend.entities;
 
 
+import com.eventmaster.backend.security.Token.Token;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -14,11 +24,30 @@ import java.util.Set;
  * @author Lars Holweger
  * @author Fabian Unger
  */
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-public class User {
+public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private long id;
+    private String firstname;
+    private String lastname;
+    private String emailAdress;
+    private String password;
+
+    private boolean enabled;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @OneToMany(mappedBy = "user")
+    private List<Token> tokens;
+
+    //---------------------------------------------------------------------------
 
     @JsonIgnore
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
@@ -46,18 +75,11 @@ public class User {
 
     //---------------------------------------------------------------------------
 
-    private String firstname;
-    private String lastname;
-    private String emailAdress;
-    private String password;
-
-    //---------------------------------------------------------------------------
-
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -132,12 +154,50 @@ public class User {
     public void setEmailAdress(String emailAdress) {
         this.emailAdress = emailAdress;
     }
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
+    //---------------------------------------------------------------------------
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    @Override
+    public String getUsername() {
+        return emailAdress;
     }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled( boolean enabled){
+        this.enabled = enabled;
+    }
+
+
 }

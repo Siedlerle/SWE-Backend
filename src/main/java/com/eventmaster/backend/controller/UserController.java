@@ -3,12 +3,17 @@ package com.eventmaster.backend.controller;
 //Todo import explizit definieren
 import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.serviceswithouttoken.UserService;
+import com.eventmaster.backend.security.auth.VerificationResponse;
 import com.eventmaster.backend.serviceswithouttoken.OrganisationService;
 import com.eventmaster.backend.serviceswithouttoken.UserInEventWithRoleService;
+import com.eventmaster.backend.serviceswithouttoken.UserService;
 import com.eventmaster.backend.serviceswithouttoken.UserInOrgaWithRoleService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 //Todo Version der ersten Erstellung und der letzten Änderung hinzufügen
@@ -42,37 +47,81 @@ public class UserController {
     }
 
 
-/*
+
     //Operations regarding user authentications
+
+    /**
+     * Endpoint to register a user
+     * @param user User object with userdata
+     * @return AuthenticationResponse with tokens
+     */
     @PostMapping("/auth/register")
     public ResponseEntity<?> register(@RequestBody User user){
         return ResponseEntity.ok(userService.register(user));
     }
+
+    /**
+     * Endpoint to verify a user after registering
+     * @param authToken jwt token which is valid for a certain time
+     * @return successmessage
+     */
     @PostMapping("/auth/verify")
-    public ResponseEntity<?> verify(String authToken) {
-        return
+    public ResponseEntity<VerificationResponse> verify(@RequestParam String authToken) {
+        return ResponseEntity.ok(userService.verify(authToken));
     }
 
+    /**
+     * Endpoint to login as a user
+     * @param user Userobject with neccesary information
+     * @return AuthenticationResponse with tokens
+     */
     @PostMapping("/auth/login")
-    public ResponseEntity<?> login (User user){
-        return
+    public ResponseEntity<?> login (@RequestBody User user){
+        return ResponseEntity.ok(userService.login(user));
     }
 
+
+    /**
+     * Endpoint to request to reset a users password
+     * @param emailAdress Mail of the corresponding user
+     * @return successmessage
+     */
     @PostMapping("/auth/pwd-reset-request")
-    public ResponseEntity<?> requestPasswordReset(String emailAdress){
-        return
+    public ResponseEntity<?> requestPasswordReset(@RequestParam String emailAdress){
+        return ResponseEntity.ok(userService.requestPasswordReset(emailAdress));
     }
 
+    /**
+     * Endpoint to change password
+     * @param user Userobject with new password
+     * @return Authenticationresponse with tokens
+     */
     @PostMapping("/auth/reset-pwd")
-    public ResponseEntity<?> resetPassword(User user, String authToken){
-        return
+    public ResponseEntity<?> resetPassword(@RequestBody User user){
+        return ResponseEntity.ok(userService.resetPassword(user));
     }
 
+    /**
+     * Endpoint to delete a user
+     * @param userId Id of the corresponding user
+     * @return success message
+     */
     @PostMapping("/auth/delete")
-    public ResponseEntity<?> delete(User user, String authToken){
-        return
+    public ResponseEntity<?> delete(@RequestParam long userId){
+        return ResponseEntity.ok(userService.deleteUser(userId));
     }
-*/
+
+    /**
+     * Endpoint to refresh jwt tokens and with that also the session
+     * @param request httpservlert request
+     * @param response httpservlet response
+     * @throws IOException
+     */
+    @PostMapping("auth/refresh")
+    public void refresh(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        userService.refreshToken(request, response);
+    }
+
 
     //Operations regarding user, orga connection
 

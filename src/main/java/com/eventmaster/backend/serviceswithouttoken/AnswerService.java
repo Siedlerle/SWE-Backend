@@ -4,7 +4,6 @@ import com.eventmaster.backend.entities.Answer;
 import com.eventmaster.backend.entities.Question;
 import com.eventmaster.backend.entities.QuestionAnsweredByUser;
 import com.eventmaster.backend.repositories.AnswerRepository;
-import com.eventmaster.backend.repositories.QuestionAnswerByUserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
