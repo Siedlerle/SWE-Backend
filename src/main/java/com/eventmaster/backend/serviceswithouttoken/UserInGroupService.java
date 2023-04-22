@@ -4,6 +4,7 @@ import com.eventmaster.backend.entities.Group;
 import com.eventmaster.backend.entities.User;
 import com.eventmaster.backend.entities.UserInGroup;
 import com.eventmaster.backend.repositories.UserInGroupRepository;
+import local.variables.LocalizedStringVariables;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -70,10 +71,10 @@ public class UserInGroupService {
         userInGroup.setGroup(group);
         try {
             userInGroupRepository.save(userInGroup);
-            return "success";
+            return LocalizedStringVariables.ADDEDUSERTOGROUPSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "failure";
+            return LocalizedStringVariables.ADDEDUSERTOGROUPFAILUREMESSAGE;
         }
     }
 
@@ -91,10 +92,10 @@ public class UserInGroupService {
 
         try {
             userInGroupRepository.delete(userInGroup);
-            return "success";
+            return LocalizedStringVariables.REMOVEDUSERFROMGROUPSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "failure";
+            return LocalizedStringVariables.REMOVEDUSERFROMGROUPFAILUREMESSAGE;
         }
     }
 }

@@ -2,6 +2,7 @@ package com.eventmaster.backend.serviceswithouttoken;
 
 import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.repositories.UserInOrgaWithRoleRepository;
+import local.variables.LocalizedStringVariables;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -59,21 +60,20 @@ public class UserInOrgaWithRoleService {
      * @return successmessage
      */
     public String requestJoin(long organisationId, String userMail){
+        User user = userService.getUserByMail(userMail);
+        Organisation organisation = organisationService.getOrganisationById(organisationId);
+        OrgaRole requestRole = orgaRoleService.findByRole(EnumOrgaRole.REQUESTED);
+
+        UserInOrgaWithRole userInOrgaWithRole = new UserInOrgaWithRole();
+        userInOrgaWithRole.setUser(user);
+        userInOrgaWithRole.setOrganisation(organisation);
+        userInOrgaWithRole.setOrgaRole(requestRole);
         try {
-            User user = userService.getUserByMail(userMail);
-            Organisation organisation = organisationService.getOrganisationById(organisationId);
-
-            UserInOrgaWithRole userInOrgaWithRole = new UserInOrgaWithRole();
-            userInOrgaWithRole.setUser(user);
-            userInOrgaWithRole.setOrganisation(organisation);
-
-            //Todo Rolle für Anfrage festlegen
-
             userInOrgaWithRoleRepository.save(userInOrgaWithRole);
-            return "Requested join successfully";
+            return LocalizedStringVariables.REQUESTORGAJOINSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "Request failed";
+            return LocalizedStringVariables.REQUESTORGAJOINFAILUREMESSAGE;
         }
     }
 
@@ -89,14 +89,14 @@ public class UserInOrgaWithRoleService {
             for (UserInOrgaWithRole deleteUserInOrgaWithRole: userInOrgaWithRole) {
                 if(deleteUserInOrgaWithRole.getOrganisation() == organisation){
                     userInOrgaWithRoleRepository.delete(deleteUserInOrgaWithRole);
-                    return "Removed successfully";
+                    return LocalizedStringVariables.LEAVEORGANISATIONSUCCESSMESSAGE;
                 }
             }
 
-            return "User has no matching organisation";
+            return LocalizedStringVariables.USERISNOTINORGANISATIONMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "Leaving organisation failed";
+            return LocalizedStringVariables.LEAVEORGANISATIONFAILUREMESSAGE;
         }
     }
 
@@ -117,14 +117,14 @@ public class UserInOrgaWithRoleService {
                 if (userInOrgaWithRole.getOrganisation().getId() == organisation.getId())
                 {
                     userInOrgaWithRoleRepository.delete(userInOrgaWithRole);
-                    return "Removed successfully";
+                    return LocalizedStringVariables.REMOVEDUSERFROMORGASUCCESSMESSAGE;
                 }
             }
 
-            return "User is not in organisation";
+            return LocalizedStringVariables.USERISNOTINORGANISATIONMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "Remove failed";
+            return LocalizedStringVariables.REMOVEDUSERFROMORGAFAILUREMESSAGE;
         }
     }
 
@@ -142,10 +142,10 @@ public class UserInOrgaWithRoleService {
         try {
             userInOrgaWithRole.setOrgaRole(newOrgaRole);
             userInOrgaWithRoleRepository.save(userInOrgaWithRole);
-            return "success";
+            return LocalizedStringVariables.SETPERSONADMININORGASUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "failure";
+            return LocalizedStringVariables.SETPERSONADMININORGAFAILUREMESSAGE;
         }
     }
 
@@ -163,10 +163,10 @@ public class UserInOrgaWithRoleService {
         try {
             userInOrgaWithRole.setOrgaRole(newOrgaRole);
             userInOrgaWithRoleRepository.save(userInOrgaWithRole);
-            return "success";
+            return LocalizedStringVariables.SETPERSONORGANIZERINORGASUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "failure";
+            return LocalizedStringVariables.SETPERSONORGANIZERINORGAFAILUREMESSAGE;
         }
     }
 
@@ -184,10 +184,10 @@ public class UserInOrgaWithRoleService {
         try {
             userInOrgaWithRole.setOrgaRole(newOrgaRole);
             userInOrgaWithRoleRepository.save(userInOrgaWithRole);
-            return "success";
+            return LocalizedStringVariables.SETPERSONUSERINORGASUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "failure";
+            return LocalizedStringVariables.SETPERSONUSERINORGAFAILUREMESSAGE;
         }
     }
 }

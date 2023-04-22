@@ -2,6 +2,8 @@ package com.eventmaster.backend.serviceswithouttoken;
 
 import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.repositories.UserInEventWithRoleRepository;
+import local.variables.LocalizedStringVariables;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -55,10 +57,10 @@ public class UserInEventWithRoleService {
             userInEventWithRole.setEventRole(eventRole);
             userInEventWithRoleRepository.save(userInEventWithRole);
 
-            return "Succesfully registered for Event";
+            return LocalizedStringVariables.USERREGISTERESFOREVENTSUCCESSMESSAGE;
         }catch (Exception e) {
             e.printStackTrace();
-            return "Error during registration";
+            return LocalizedStringVariables.USERREGISTERESFOREVENTFAILUREMESSAGE;
         }
     }
 
@@ -79,12 +81,11 @@ public class UserInEventWithRoleService {
             userInEventWithRole.setEventRole(eventRole);
             userInEventWithRoleRepository.save(userInEventWithRole);
 
-            //Todo return Strings nicht wie hier festlegen. Strings auslagern als resource
-            return "Succesfully accepted the invitation";
+            return LocalizedStringVariables.EVENTINVITATIONACCEPTEDSUCCESSMESSAGE;
         }catch (Exception e) {
             //Todo Exceptionhandling weiter ausbauen, sodass Nutzer weiß was genau passiert ist
             e.printStackTrace();
-            return "Error during registration";
+            return LocalizedStringVariables.EVENTINVITATIONACCEPTEDFAILUREMESSAGE;
         }
     }
 
@@ -106,10 +107,10 @@ public class UserInEventWithRoleService {
             // userInEventWithRole.setEventRole(eventRole);
             userInEventWithRoleRepository.save(userInEventWithRole);
 
-            return "Succesfully declined the invitation";
+            return LocalizedStringVariables.EVENTINVITATIONDECLINEDSUCCESSMESSAGE;
         }catch (Exception e) {
             e.printStackTrace();
-            return "Error during registration";
+            return LocalizedStringVariables.EVENTINVITATIONDECLINEDFAILUREMESSAGE;
         }
     }
 
@@ -174,10 +175,10 @@ public class UserInEventWithRoleService {
             UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(user, event);
             userInEventWithRoleRepository.delete(userInEventWithRole);
 
-            return "Unregister from event " + event.getName() + " was successfully" ;
+            return LocalizedStringVariables.USERUNREGISTERFROMEVENTSUCCESSMESSAGE;
         }catch (Exception e) {
             e.printStackTrace();
-            return "Unregister from event " + event.getName() +" was not successfully";
+            return LocalizedStringVariables.USERUNREGISTERFROMEVENTFAILUREMESSAGE;
         }
 
     }
@@ -201,11 +202,14 @@ public class UserInEventWithRoleService {
         try {
             Event event = eventService.getEventById(eventId);
             Set<UserInEventWithRole> userInEventWithRoleList = event.getEventUserRoles();
+            EventRole attendeeRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
             List<User> attendees = new ArrayList<>();
             for (UserInEventWithRole uer : userInEventWithRoleList) {
-                //TODO: Nur wenn Rolle Teilnehmer ist zur Liste hinzufügen.
-                User attendee = uer.getUser();
-                attendees.add(attendee);
+                if (uer.getEventRole().equals(attendeeRole)) {
+                    User attendee = uer.getUser();
+                    attendees.add(attendee);
+                }
+                //TODO: Gruppenhandhabung hinzufügen
             }
             return attendees;
         } catch (Exception e) {
@@ -252,10 +256,10 @@ public class UserInEventWithRoleService {
                 i++;
                 userInEventWithRoleRepository.save(userInEvent);
             }
-            return "success";
+            return LocalizedStringVariables.ATTENDINGSTATUSUPDATEDSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "failure";
+            return LocalizedStringVariables.ATTENDINGSTATUSUPDATEDFAILUREMESSAGE;
         }
     }
 
@@ -268,20 +272,20 @@ public class UserInEventWithRoleService {
     public String addUserToEvent(long eventId, String userMail) {
         Event event = eventService.getEventById(eventId);
         User user = userService.getUserByMail(userMail);
+        EventRole eventRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
         try {
             UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
             userInEventWithRole.setEvent(event);
             userInEventWithRole.setUser(user);
-            //TODO: Rolle Teilnehmer festlegen beim Hinzufügen eines Teilnehmers durch den Tutor.
-            // userInEventWithRole.setEventRole();
+            userInEventWithRole.setEventRole(eventRole);
             userInEventWithRole.setHasAttended(true);
 
             userInEventWithRoleRepository.save(userInEventWithRole);
 
-            return "success";
+            return LocalizedStringVariables.ADDEDUSERTOEVENTSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "failure";
+            return LocalizedStringVariables.ADDEDUSERTOEVENTFAILUREMESSAGE;
         }
     }
 
@@ -307,10 +311,10 @@ public class UserInEventWithRoleService {
 
         try {
             userInEventWithRoleRepository.save(userInEventWithRole);
-            return "success";
+            return LocalizedStringVariables.SETORGANIZEROFEVENTSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "failure";
+            return LocalizedStringVariables.SETORGANIZEROFEVENTFAILUREMESSAGE;
         }
     }
 
@@ -338,12 +342,12 @@ public class UserInEventWithRoleService {
             userInEventWithRole.setEventRole(newRole);
             try{
                 userInEventWithRoleRepository.save(userInEventWithRole);
-                return "success";
+                return LocalizedStringVariables.CHANGEDROLEINEVENTSUCCESSMESSAGE;
             } catch (Exception e) {
-                return "failure";
+                return LocalizedStringVariables.CHANGEDROLEINEVENTFAILUREMESSAGE;
             }
         } else {
-            return "The user must first be invited";
+            return LocalizedStringVariables.CHANGEDROLEINEVENTWITHOUTINVITATIONFAILUREMESSAGE;
         }
     }
 
@@ -367,7 +371,7 @@ public class UserInEventWithRoleService {
             userInEventWithRoleRepository.delete(oldUserInEventWithRole);
         } catch (Exception e) {
             e.printStackTrace();
-            return "Deletion failed";
+            return LocalizedStringVariables.USERINEVENTWITHROLEDELETIONFAILUREMESSAGE;
         }
 
         if (userInEventWithRoleRepository.findByUserAndEvent(newOrganizer, event) == null) {
@@ -379,7 +383,7 @@ public class UserInEventWithRoleService {
                 userInEventWithRoleRepository.save(newUserInEventWithRole);
             } catch (Exception e) {
                 e.printStackTrace();
-                return "failure";
+                return LocalizedStringVariables.NEWUSERASORGANIZERINEVENTFAILUREMESSAGE;
             }
         } else {
             UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(newOrganizer, event);
@@ -388,11 +392,11 @@ public class UserInEventWithRoleService {
                 userInEventWithRoleRepository.save(userInEventWithRole);
             } catch (Exception e) {
                 e.printStackTrace();
-                return "failure";
+                return LocalizedStringVariables.EXISTINGUSERASORGANIZERINEVENTSUCCESSMESSAGE;
             }
         }
 
-        return "success";
+        return LocalizedStringVariables.CHANGEDORGANIZEROFEVENTSUCCESSMESSAGE;
     }
 
     //endregion

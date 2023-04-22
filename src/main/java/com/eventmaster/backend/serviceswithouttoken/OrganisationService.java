@@ -90,7 +90,7 @@ public class OrganisationService {
             Organisation organisation = this.getOrganisationById(organisationId);
             this.organisationRepository.deleteById(organisationId);
 
-            return "Organisation " + organisation.getName() + " deleted successfully";
+            return LocalizedStringVariables.ORGADELETEDSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
             return LocalizedStringVariables.ORGADELETEDFAILUREMESSAGE;
