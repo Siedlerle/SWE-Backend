@@ -390,6 +390,65 @@ public class UserInEventWithRoleService {
         }
     }
 
+    /**
+     * Removes a user from an event and sends the user an email why.
+     * @param eventId ID of the event.
+     * @param userMail Mail of the user who will be removed.
+     * @param reason Reason why he will be removed.
+     * @return String about success or failure.
+     */
+    public String removeUserFromEvent(long eventId, String userMail, String reason) {
+        Event event = eventService.getEventById(eventId);
+        User user = userService.getUserByMail(userMail);
+
+        if (userInEventWithRoleRepository.existsByUserAndEvent(user, event)) {
+            UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(user, event);
+            try {
+                userInEventWithRoleRepository.delete(userInEventWithRole);
+                //TODO Mail mit reason senden
+                return LocalizedStringVariables.REMOVEUSERFROMEVENTSUCCESSMESSAGE;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return LocalizedStringVariables.REMOVEUSERFROMEVENTFAILUREMESSAGE;
+            }
+        } else {
+            return LocalizedStringVariables.USERNOTATTENDINGATEVENTMESSAGE;
+        }
+    }
+
+    /**
+     * Removes the users from an event if they were invited or attending by a group.
+     * @param eventId ID of the event.
+     * @param users List of the users who are part of the group.
+     * @param reason Reason why they will be removed.
+     * @return String about success or failure.
+     */
+    public String removeUsersOfGroupFromEvent(long eventId, List<User> users, String reason) {
+        Event event = eventService.getEventById(eventId);
+        EventRole groupAttending = eventRoleService.findByRole(EnumEventRole.GROUPATTENDEE);
+        EventRole groupInvited = eventRoleService.findByRole(EnumEventRole.GROUPINVITED);
+
+
+        try {
+            for (User user : users) {
+                if (userInEventWithRoleRepository.existsByUserAndEvent(user, event)) {
+                    UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(user, event);
+                    if (userInEventWithRole.getEventRole().equals(groupAttending)) {
+                        //TODO reason senden weil als gruppenmitglied teilnehmer
+                        userInEventWithRoleRepository.delete(userInEventWithRole);
+                    } else if (userInEventWithRole.getEventRole().equals(groupInvited)) {
+                        //TODO reason senden weil als gruppenmitglied eingeladen worden
+                        userInEventWithRoleRepository.delete(userInEventWithRole);
+                    }
+                }
+            }
+            return LocalizedStringVariables.REMOVEDUSERSOFGROUPFROMEVENTSUCCESSMESSAGE;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return LocalizedStringVariables.REMOVEDUSERSOFGROUPFROMEVENTFAILUREMESSAGE;
+        }
+    }
+
     //endregion
 
     //region AdminMethods

@@ -98,6 +98,11 @@ public final class LocalizedStringVariables {
         public static final String USERALREADYPARTOFEVENTMESSAGE = "User already invited or attending to event";
         public static final String INVITEUSERTOEVENTSUCCESSMESSAGE = "Invited user to event successfully";
         public static final String INVITEUSERTOEVENTFAILUREMESSAGE = "Invited user to event not successfully";
+        public static final String REMOVEUSERFROMEVENTSUCCESSMESSAGE = "Removed user from event successfully";
+        public static final String REMOVEUSERFROMEVENTFAILUREMESSAGE = "Removed user from event not successfully";
+        public static final String USERNOTATTENDINGATEVENTMESSAGE = "User is not invited or attending to event";
+        public static final String REMOVEDUSERSOFGROUPFROMEVENTSUCCESSMESSAGE = "Removed users in group from event successfully";
+        public static final String REMOVEDUSERSOFGROUPFROMEVENTFAILUREMESSAGE = "Removed users in group from event not successfully";
         public static final String USERINEVENTWITHROLEDELETIONFAILUREMESSAGE = "Deletion of old organizer failed";
         public static final String NEWUSERASORGANIZERINEVENTFAILUREMESSAGE = "Creation of new organizer in event failed";
         public static final String EXISTINGUSERASORGANIZERINEVENTSUCCESSMESSAGE = "Changing role of user in event to organizer failed";

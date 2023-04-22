@@ -39,8 +39,6 @@ public class GroupInEventService {
      */
     public String inviteGroupToEvent(long eventId, long groupId) {
         Event event = eventService.getEventById(eventId);
-        Group group = groupService.getGroupById(groupId);
-        EventRole eventRole = eventRoleService.findByRole(EnumEventRole.INVITED);
 
         List<User> usersOfGroup = userInGroupService.getUsersOfGroup(groupId);
 
@@ -54,5 +52,17 @@ public class GroupInEventService {
             return LocalizedStringVariables.INVITEDGROUPTOEVENTFAILUREMESSAGE;
         }
 
+    }
+
+    /**
+     * Gets the users of a group and calls the method to remove them from the event.
+     * @param eventId ID of the event.
+     * @param groupId ID of the group which will be removed.
+     * @param reason Reason why the group will be removed.
+     * @return String about success or failure.
+     */
+    public String removeGroupFromEvent(long eventId, long groupId, String reason) {
+        List<User> usersOfGroup = userInGroupService.getUsersOfGroup(groupId);
+        return userInEventWithRoleService.removeUsersOfGroupFromEvent(eventId, usersOfGroup, reason);
     }
 }

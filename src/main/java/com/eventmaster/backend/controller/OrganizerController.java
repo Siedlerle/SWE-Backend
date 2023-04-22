@@ -138,6 +138,34 @@ public class OrganizerController {
         return ResponseEntity.ok(groupInEventService.inviteGroupToEvent(eventId, groupId));
     }
 
+    /**
+     * Endpoint to remove a user from an event.
+     * @param eventId ID of the event.
+     * @param userMail Mail of the user who will be removed.
+     * @param reason Reason why user will be removed.
+     * @return String about success or failure.
+     */
+    @PostMapping("/event/{eventId}/attendee/remove")
+    public ResponseEntity<String> removeUserFromEvent(@PathVariable long eventId,
+                                                      @RequestBody String userMail,
+                                                      @RequestParam String reason) {
+        return ResponseEntity.ok(userInEventWithRoleService.removeUserFromEvent(eventId, userMail, reason));
+    }
+
+    /**
+     * Endpoint to remove a group from an event.
+     * @param eventId ID of the event.
+     * @param groupId ID of the group which will be removed.
+     * @param reason Reason why the group will be removed.
+     * @return String about success or failure.
+     */
+    @PostMapping("/event/{eventId}/group/remove")
+    public ResponseEntity<String> removeGroupFromEvent(@PathVariable long eventId,
+                                                       @RequestBody long groupId,
+                                                       @RequestParam String reason) {
+        return ResponseEntity.ok(groupInEventService.removeGroupFromEvent(eventId, groupId, reason));
+    }
+
     //endregion
 
 
