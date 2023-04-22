@@ -1,7 +1,7 @@
 package com.eventmaster.backend.entities;
 
 public enum EnumEventRole {
-    INVITED("invited"), ATTENDEE("attendee"), TUTOR("tutor"), ORGANIZER("organizer");
+    INVITED("invited"), GROUPINVITED("groupinvited"), ATTENDEE("attendee"), GROUPATTENDEE("groupattendee"), TUTOR("tutor"), ORGANIZER("organizer");
 
     public final String role;
 

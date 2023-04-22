@@ -351,6 +351,45 @@ public class UserInEventWithRoleService {
         }
     }
 
+    /**
+     * Invites a user to an event and sends an email.
+     * @param eventId ID of the event.
+     * @param userMail Mail of the user who will be invited.
+     * @param single Boolean if invitation is just for him or because his group was invited.
+     * @return String about success or failure.
+     */
+    public String inviteUserToEvent(long eventId, String userMail, boolean single) {
+        Event event = eventService.getEventById(eventId);
+        User user = userService.getUserByMail(userMail);
+
+        EventRole inviteRole;
+        if (single) {
+            inviteRole = eventRoleService.findByRole(EnumEventRole.INVITED);
+        } else {
+            inviteRole = eventRoleService.findByRole(EnumEventRole.GROUPINVITED);
+        }
+
+        if (userInEventWithRoleRepository.existsByUserAndEvent(user, event)) {
+            return LocalizedStringVariables.USERALREADYPARTOFEVENTMESSAGE;
+        } else {
+            //TODO Einladungsmail senden
+
+            UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
+            userInEventWithRole.setUser(user);
+            userInEventWithRole.setEvent(event);
+            userInEventWithRole.setEventRole(inviteRole);
+            userInEventWithRole.setHasAttended(true);
+
+            try {
+                userInEventWithRoleRepository.save(userInEventWithRole);
+                return LocalizedStringVariables.INVITEUSERTOEVENTSUCCESSMESSAGE;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return LocalizedStringVariables.INVITEUSERTOEVENTFAILUREMESSAGE;
+            }
+        }
+    }
+
     //endregion
 
     //region AdminMethods

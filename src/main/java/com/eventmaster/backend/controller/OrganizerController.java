@@ -24,17 +24,23 @@ public class OrganizerController {
     private final OrganisationService organisationService;
     private final PresetService presetService;
     private final UserInEventWithRoleService userInEventWithRoleService;
+    private final UserInOrgaWithRoleService userInOrgaWithRoleService;
+    private final GroupInEventService groupInEventService;
 
     public OrganizerController(EventService eventService,
                                EventSeriesService eventSeriesService,
                                OrganisationService organisationService,
                                PresetService presetService,
-                               UserInEventWithRoleService userInEventWithRoleService) {
+                               UserInEventWithRoleService userInEventWithRoleService,
+                               UserInOrgaWithRoleService userInOrgaWithRoleService,
+                               GroupInEventService groupInEventService) {
         this.eventService = eventService;
         this.eventSeriesService = eventSeriesService;
         this.organisationService = organisationService;
         this.presetService = presetService;
         this.userInEventWithRoleService = userInEventWithRoleService;
+        this.userInOrgaWithRoleService = userInOrgaWithRoleService;
+        this.groupInEventService = groupInEventService;
     }
 
     //region Event
@@ -107,6 +113,31 @@ public class OrganizerController {
                                                                @RequestBody String userMail) {
         return ResponseEntity.ok(userInEventWithRoleService.changeRoleOfPersonInEvent(eventId, userMail, true));
     }
+
+    /**
+     * Endpoint to invite a user to an event.
+     * @param eventId ID of the event.
+     * @param userMail Mail of the user who will be invited.
+     * @return String about success or failure.
+     */
+    @PostMapping("/event/{eventId}/user/invite")
+    public ResponseEntity<String> inviteUserToEvent(@PathVariable long eventId,
+                                                    @RequestBody String userMail) {
+        return ResponseEntity.ok(userInEventWithRoleService.inviteUserToEvent(eventId, userMail, true));
+    }
+
+    /**
+     * Endpoint to invite a group of users to an event.
+     * @param eventId ID of the event.
+     * @param groupId ID of the group which will be invited.
+     * @return String about success or failure.
+     */
+    @PostMapping("/event/{eventId}/group/invite")
+    public ResponseEntity<String> inviteGroupToEvent(@PathVariable long eventId,
+                                                     @RequestBody long groupId) {
+        return ResponseEntity.ok(groupInEventService.inviteGroupToEvent(eventId, groupId));
+    }
+
     //endregion
 
 
@@ -203,6 +234,24 @@ public class OrganizerController {
     @PostMapping("/preset/delete/{presetId}")
     public ResponseEntity<String> deletePreset(@PathVariable long presetId) {
         return ResponseEntity.ok(presetService.deletePreset(presetId));
+    }
+
+    //endregion
+
+    //region Organisation
+
+    /**
+     * Endpoint to invite a user to an organisation.
+     * @param orgaId ID of the organisation.
+     * @param userMail Mail of the user who will be invited.
+     * @param authToken Token to identify sender.
+     * @return String about success or failure.
+     */
+    @PostMapping("/organisation/{orgaId}/user/invite")
+    public ResponseEntity<String> inviteUserToOrganisation(@PathVariable long orgaId,
+                                                           @RequestBody String userMail,
+                                                           @RequestParam String authToken) {
+        return ResponseEntity.ok(userInOrgaWithRoleService.inviteUserToOrganisation(orgaId, userMail));
     }
 
     //endregion

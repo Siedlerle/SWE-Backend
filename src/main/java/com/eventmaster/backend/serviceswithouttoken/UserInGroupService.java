@@ -57,6 +57,27 @@ public class UserInGroupService {
     }
 
     /**
+     * Get all the users who are part of the group.
+     * @param groupId ID of the group.
+     * @return List of users
+     */
+    public List<User> getUsersOfGroup(long groupId) {
+        Group group = groupService.getGroupById(groupId);
+        try {
+            List<UserInGroup> userInGroupList = userInGroupRepository.findByGroup(group);
+            List<User> users = new ArrayList<>();
+            for (UserInGroup userInGroup : userInGroupList) {
+                User user = userInGroup.getUser();
+                users.add(user);
+            }
+            return users;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
      * Adds a user to a group.
      * @param groupId ID of the group.
      * @param userMail Mail address of the user who will be added to the group.

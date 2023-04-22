@@ -46,6 +46,10 @@ public final class LocalizedStringVariables {
         public static final String EVENTDELETEDFAILUREMESSAGE = "Event was not deleted";
 
 
+        //GROUPINEVENT
+        public static final String INVITEDGROUPTOEVENTSUCCESSMESSAGE = "Invited group to event successfully";
+        public static final String INVITEDGROUPTOEVENTFAILUREMESSAGE = "Invited group to event not successfully";
+
         //GROUP
         public static final String GROUPCREATEDSUCCESSMESSAGE = "Group created successfully";
         public static final String GROUPCREATEDFAILUREMESSAGE = "Group creation failed";
@@ -91,6 +95,9 @@ public final class LocalizedStringVariables {
         public static final String CHANGEDROLEINEVENTSUCCESSMESSAGE = "Changed role of person in event successfully";
         public static final String CHANGEDROLEINEVENTFAILUREMESSAGE = "Changed role of person in event not successfully";
         public static final String CHANGEDROLEINEVENTWITHOUTINVITATIONFAILUREMESSAGE = "User must first be invited to event";
+        public static final String USERALREADYPARTOFEVENTMESSAGE = "User already invited or attending to event";
+        public static final String INVITEUSERTOEVENTSUCCESSMESSAGE = "Invited user to event successfully";
+        public static final String INVITEUSERTOEVENTFAILUREMESSAGE = "Invited user to event not successfully";
         public static final String USERINEVENTWITHROLEDELETIONFAILUREMESSAGE = "Deletion of old organizer failed";
         public static final String NEWUSERASORGANIZERINEVENTFAILUREMESSAGE = "Creation of new organizer in event failed";
         public static final String EXISTINGUSERASORGANIZERINEVENTSUCCESSMESSAGE = "Changing role of user in event to organizer failed";
@@ -118,8 +125,9 @@ public final class LocalizedStringVariables {
         public static final String SETPERSONORGANIZERINORGAFAILUREMESSAGE = "Set role of person in organisation to organizer not successfully";
         public static final String SETPERSONUSERINORGASUCCESSMESSAGE = "Set role of person in organisation to user successfully";
         public static final String SETPERSONUSERINORGAFAILUREMESSAGE = "Set role of person in organisation to user not successfully";
-
-
+        public static final String INVITEDUSERALREADYPARTOFORGANISATIONMESSAGE = "User is already part of organisation";
+        public static final String INVITEUSERTOORGANISATIONSUCCESSMESSAGE = "Invited user to organisation successfully";
+        public static final String INVITEUSERTOORGANISATIONFAILUREMESSAGE = "Invited user to organisation not successfully";
 
 
 }

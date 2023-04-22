@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * A class which receives and processes the requests of the controller
+ * A class which receives and processes the requests of the controller concerning the management of events.
  *
  * @author Fabian Eilber
  * @author Fabian Unger

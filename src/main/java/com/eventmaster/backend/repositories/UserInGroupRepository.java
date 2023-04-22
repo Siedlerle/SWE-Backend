@@ -15,4 +15,5 @@ import java.util.List;
 public interface UserInGroupRepository extends JpaRepository<UserInGroup, Long> {
     UserInGroup findByUserAndGroup(User user, Group group);
     List<UserInGroup> findByUser(User user);
+    List<UserInGroup> findByGroup(Group group);
 }
