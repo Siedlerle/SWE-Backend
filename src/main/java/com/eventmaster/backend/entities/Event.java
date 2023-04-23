@@ -47,7 +47,8 @@ public class Event {
     //---------------------------------------------------------------------------
     String name;
     String type;
-    String status;
+    @Enumerated(EnumType.ORDINAL)
+    EnumEventStatus status;
     boolean isPublic;
     String description;
     File image;
@@ -140,11 +141,11 @@ public class Event {
         this.type = type;
     }
 
-    public String getStatus() {
+    public EnumEventStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(EnumEventStatus status) {
         this.status = status;
     }
 

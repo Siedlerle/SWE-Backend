@@ -1,6 +1,5 @@
 package com.eventmaster.backend.entities;
 
-import com.eventmaster.backend.serviceswithouttoken.UserInEventWithRoleService;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -11,32 +10,35 @@ import java.util.Set;
  *
  * @author Fabian Eilber
  */
+
 @Entity
 public class EventRole {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
 
-    @Column(unique = true)
-    private String Role;
+    @Id
+    private Long id;
+
+    @Enumerated(EnumType.ORDINAL)
+    private EnumEventRole role;
 
     @OneToMany(mappedBy = "eventRole",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<UserInEventWithRole> userInEventWithRoles  = new HashSet<>();
 
-    public long getId() {
-        return id;
-    }
+    //---------------------------------------------------------------------------
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getRole() {
-        return Role;
+    public Long getId() {
+        return id;
     }
 
-    public void setRole(String role) {
-        Role = role;
+    public EnumEventRole getRole() {
+        return role;
+    }
+
+    public void setRole(EnumEventRole role) {
+        this.role = role;
     }
 }
