@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class SystemAdminControllerTest extends TestEntities {
+public class SystemAdminControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -33,7 +33,7 @@ public class SystemAdminControllerTest extends TestEntities {
         this.mockMvc = mockMvc;
     }
 
-    public void testOrganisationManagement() throws Exception {
+    public long testOrganisationManagement(Organisation testOrganisation) throws Exception {
         String sysAdminPassword = "password";
 
         ObjectMapper mapper = new ObjectMapper();
@@ -45,12 +45,13 @@ public class SystemAdminControllerTest extends TestEntities {
                     .andExpect(status().isOk())
                     .andExpect(content().string(LocalizedStringVariables.ORGACREATEDSUCCESSMESSAGE));
 
+
         MvcResult ra = mockMvc.perform(post("/user/orga/get-all")
                         .content(asJsonString(mapper, testOrganisation))
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("sysAdminPassword", sysAdminPassword))
                 .andExpect(status().isOk())
-                .andReturn();;
+                .andReturn();
 
         String content = ra.getResponse().getContentAsString();
 
@@ -62,6 +63,7 @@ public class SystemAdminControllerTest extends TestEntities {
                 testOrganisation = orga;
             }
         }
+
 
         testOrganisation.setName("NewTestOrgaName");
 
@@ -80,6 +82,14 @@ public class SystemAdminControllerTest extends TestEntities {
                 .andExpect(status().isOk())
                 .andExpect(content().string(LocalizedStringVariables.ORGADELETEDSUCCESSMESSAGE));
          */
+        return testOrganisation.getId();
     }
 
+    protected static String asJsonString(ObjectMapper mapper, final Object obj) {
+        try {
+            return mapper.writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

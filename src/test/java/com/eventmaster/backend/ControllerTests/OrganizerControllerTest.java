@@ -1,5 +1,7 @@
 package com.eventmaster.backend.ControllerTests;
 
+import com.eventmaster.backend.entities.Event;
+import com.eventmaster.backend.entities.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import local.variables.LocalizedStringVariables;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class OrganizerControllerTest extends TestEntities {
+public class OrganizerControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -27,7 +29,7 @@ public class OrganizerControllerTest extends TestEntities {
     }
 
 
-    public void testCreateEvent() throws Exception {
+    public void testCreateEvent(Event testEvent, User testOrganizer) throws Exception {
         mockMvc.perform(post("/organizer/event/create")
                         .content(asJsonString(mapper, testEvent))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -36,8 +38,7 @@ public class OrganizerControllerTest extends TestEntities {
                         .andExpect(content().string(LocalizedStringVariables.EVENTCREATEDSUCCESSMESSAGE));
     }
 
-    public void testChangeEvent() throws Exception {
-        testEvent.setName("NeuerNameFürTestEvent");
+    public void testChangeEvent(Event testEvent) throws Exception {
         mockMvc.perform(post("/organizer/event/change")
                 .content(asJsonString(mapper, testEvent))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -55,4 +56,12 @@ public class OrganizerControllerTest extends TestEntities {
                 .andExpect(content().string(LocalizedStringVariables.EVENTDELETEDSUCCESSMESSAGE));
     }
     */
+
+    protected static String asJsonString(ObjectMapper mapper, final Object obj) {
+        try {
+            return mapper.writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

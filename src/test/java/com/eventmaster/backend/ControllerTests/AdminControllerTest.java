@@ -1,5 +1,8 @@
 package com.eventmaster.backend.ControllerTests;
 
+import com.eventmaster.backend.entities.Group;
+import com.eventmaster.backend.entities.Organisation;
+import com.eventmaster.backend.entities.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import local.variables.LocalizedStringVariables;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class AdminControllerTest extends TestEntities {
+public class AdminControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -26,24 +29,24 @@ public class AdminControllerTest extends TestEntities {
 
     private ObjectMapper mapper = new ObjectMapper();
 
-    public void testCreateGroup() throws Exception {
+    public long testCreateGroup(Organisation testOrganisation, Group testGroup) throws Exception {
         mockMvc.perform(post("/admin/orga/" + testOrganisation.getId() + "/group/add")
                 .content(asJsonString(mapper, testGroup))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(LocalizedStringVariables.GROUPCREATEDSUCCESSMESSAGE));
+        return testGroup.getId();
     }
 
-    public void testChangeGroup() throws Exception {
-        testGroup.setName("NeuerNameFürTestGruppe");
+    public void testChangeGroup(Group testGroup) throws Exception {
         mockMvc.perform(post("/admin/group/change")
                 .content(asJsonString(mapper, testGroup))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(LocalizedStringVariables.EVENTCHANGEDSUCCESSMESSAGE));
+                .andExpect(content().string(LocalizedStringVariables.GROUPCHANGEDSUCCESSMESSAGE));
     }
 
-    public void testAddUserToGroup() throws Exception {
+    public void testAddUserToGroup(User testOrganizer, Group testGroup) throws Exception {
         mockMvc.perform(post("/admin/group/" + testGroup.getId() + "/user/add")
                 .content(asJsonString(mapper, testOrganizer.getEmailAdress()))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -51,11 +54,19 @@ public class AdminControllerTest extends TestEntities {
                 .andExpect(content().string(LocalizedStringVariables.ADDEDUSERTOGROUPSUCCESSMESSAGE));
     }
 
-    public void testRemoveUserFromGroup() throws Exception {
+    public void testRemoveUserFromGroup(User testOrganizer, Group testGroup) throws Exception {
         mockMvc.perform(post("/admin/group/" + testGroup.getId() + "/user/remove")
                 .content(asJsonString(mapper, testOrganizer.getEmailAdress()))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(LocalizedStringVariables.REMOVEDUSERFROMGROUPSUCCESSMESSAGE));
+    }
+
+    protected static String asJsonString(ObjectMapper mapper, final Object obj) {
+        try {
+            return mapper.writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

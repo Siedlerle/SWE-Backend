@@ -12,7 +12,7 @@ import java.sql.Time;
 public class TestEntities {
 
 
-    protected Organisation testOrganisation = new Organisation();
+    protected static Organisation testOrganisation = new Organisation();
     protected Event testEvent = new Event();
     protected User testOrganizer = new User();
     protected Group testGroup = new Group();
@@ -26,8 +26,14 @@ public class TestEntities {
 
 
     private void initTestOrganisation() {
+        testOrganisation.setId(123);
         testOrganisation.setName("TestOrgaName");
         testOrganisation.setLocation("TestOrgaLocation");
+    }
+
+    public void setTestOrganisationId(long id) {
+        System.out.println(id);
+        testOrganisation.setId(id);
     }
 
     public void initTestEvent() {
@@ -56,13 +62,5 @@ public class TestEntities {
         testGroup.setOrganisation(testOrganisation);
         testGroup.setName("TestGruppe");
         //testOrganisation.addGroup(testGroup);
-    }
-
-    protected static String asJsonString(ObjectMapper mapper, final Object obj) {
-        try {
-            return mapper.writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 }
