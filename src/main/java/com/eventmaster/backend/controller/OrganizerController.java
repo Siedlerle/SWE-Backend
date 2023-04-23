@@ -48,14 +48,13 @@ public class OrganizerController {
     /**
      * Endpoint to create an event.
      * @param event Event which will be saved in the database.
-     * @param authToken Token to identify user.
+     * @param userMail Mail of user who created event and becomes organizer.
      * @return String about success or failure.
      */
     @PostMapping("/event/create")
     public ResponseEntity<String> createEvent(@RequestBody Event event,
-                                              @RequestParam String authToken) {
-        long userId = 0;
-        return ResponseEntity.ok(eventService.createEvent(event, userId));
+                                              @RequestParam String userMail) {
+        return ResponseEntity.ok(userInEventWithRoleService.createEventWithOrganizer(event, userMail));
     }
 
     /**
@@ -164,6 +163,18 @@ public class OrganizerController {
                                                        @RequestBody long groupId,
                                                        @RequestParam String reason) {
         return ResponseEntity.ok(groupInEventService.removeGroupFromEvent(eventId, groupId, reason));
+    }
+
+    /**
+     * Endpoint to set the status of an event to cancelled.
+     * @param eventId ID of the event.
+     * @param reason Reason why the event is cancelled.
+     * @return String about success or failure.
+     */
+    @PostMapping("event/{eventId}/cancel")
+    public ResponseEntity<String> cancelEvent(@PathVariable long eventId,
+                                              @RequestParam String reason) {
+        return ResponseEntity.ok(eventService.cancelEvent(eventId, reason));
     }
 
     //endregion

@@ -325,13 +325,29 @@ public class UserInEventWithRoleService {
     //region OrganizerMethods
 
     /**
+     * An event is added to the database
+     * @param event Event which is being added
+     * @return String about success or failure
+     */
+    public String createEventWithOrganizer(Event event, String userMail) {
+        try {
+            eventService.saveEvent(event);
+            setOrganizerOfEvent(userMail, event.getId());
+            return LocalizedStringVariables.EVENTCREATEDSUCCESSMESSAGE;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return LocalizedStringVariables.EVENTCREATEDFAILUREMESSAGE;
+        }
+    }
+
+    /**
      * Sets a user as organizer for an event.
-     * @param userId ID of the user who will be organizer.
+     * @param userMail ID of the user who will be organizer.
      * @param eventId ID of the event.
      * @return String about success or failure.
      */
-    public String setOrganizerOfEvent(long userId, long eventId) {
-        User user = userService.getUserById(userId);
+    public String setOrganizerOfEvent(String userMail, long eventId) {
+        User user = userService.getUserByMail(userMail);
         Event event = eventService.getEventById(eventId);
         EventRole role = eventRoleService.findByRole(EnumEventRole.ORGANIZER);
 

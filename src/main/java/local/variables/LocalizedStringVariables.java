@@ -48,6 +48,8 @@ public final class LocalizedStringVariables {
         public static final String EVENTDELETEDSUCCESSMESSAGE = "Event was deleted successfully";
         public static final String EVENTDELETEDFAILUREMESSAGE = "Event was not deleted";
         public static final String EVENTNOTCANCELLEDMESSAGE = "Event must first be cancelled before deletion";
+        public static final String EVENTCANCELLEDSUCCESSMESSAGE = "Event cancelled successfully";
+        public static final String EVENTCANCELLEDFAILUREMESSAGE = "Event cancelled not successfully";
 
 
         //GROUPINEVENT

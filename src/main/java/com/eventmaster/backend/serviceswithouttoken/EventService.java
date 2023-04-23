@@ -1,9 +1,6 @@
 package com.eventmaster.backend.serviceswithouttoken;
 
-import com.eventmaster.backend.entities.EnumEventRole;
-import com.eventmaster.backend.entities.EnumEventStatus;
-import com.eventmaster.backend.entities.Event;
-import com.eventmaster.backend.entities.User;
+import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.repositories.EventRepository;
 import local.variables.LocalizedStringVariables;
 import org.springframework.stereotype.Service;
@@ -21,11 +18,9 @@ import java.util.List;
 public class EventService {
 
     private final EventRepository eventRepository;
-    //private final UserInEventWithRoleService userInEventWithRoleService;
 
-    public EventService(EventRepository eventRepository/*, UserInEventWithRoleService userInEventWithRoleService*/) {
+    public EventService(EventRepository eventRepository) {
         this.eventRepository = eventRepository;
-        //this.userInEventWithRoleService = userInEventWithRoleService;
     }
 
     /**
@@ -59,24 +54,6 @@ public class EventService {
             return null;
         }
 
-    }
-
-    /**
-     * An event is added to the database
-     * @param event Event which is being added
-     * @return String about success or failure
-     */
-    public String createEvent(Event event, long userId) {
-
-        //TODO Ersteller des Events automatisch als Organizer setzen.
-        try {
-            eventRepository.save(event);
-            //userInEventWithRoleService.setOrganizerOfEvent(userId, event.getId());
-            return LocalizedStringVariables.EVENTCREATEDSUCCESSMESSAGE;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return LocalizedStringVariables.EVENTCREATEDFAILUREMESSAGE;
-        }
     }
 
     /**
@@ -152,4 +129,29 @@ public class EventService {
         return participants;
     }
 
+
+    /**
+     * Sets the status of the event to cancelled and sends the attendees and invitees a mail.
+     * @param eventId ID of the event which will be cancelled.
+     * @param reason Reason why the event will be cancelled.
+     * @return String about success or failure.
+     */
+    public String cancelEvent(long eventId, String reason) {
+        Event event = getEventById(eventId);
+        event.setStatus(EnumEventStatus.CANCELLED);
+
+
+        try {
+            eventRepository.save(event);
+            //TODO Mail an alle Teilnehmer und Eingeladene senden.
+            return LocalizedStringVariables.EVENTCANCELLEDSUCCESSMESSAGE;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return LocalizedStringVariables.EVENTCANCELLEDFAILUREMESSAGE;
+        }
+    }
+
+    protected void saveEvent(Event event) {
+        eventRepository.save(event);
+    }
 }
