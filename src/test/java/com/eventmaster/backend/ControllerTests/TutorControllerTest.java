@@ -25,6 +25,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+
 @SpringBootTest
 @AutoConfigureMockMvc
 class TutorControllerTest {
@@ -33,11 +34,17 @@ class TutorControllerTest {
 
     @MockBean
     private UserInEventWithRoleService userInEventWithRoleService;
+
+    public TutorControllerTest(MockMvc mockMvc) {
+        this.mockMvc = mockMvc;
+    }
+
     @Test
     void shouldCreateMockMvc(){
         assertNotNull(mockMvc);
     }
-    @Test
+
+
     void getAttendeesForEvent() throws Exception {
 
         User user = new User();

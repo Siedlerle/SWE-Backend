@@ -24,6 +24,14 @@ public class OrganisationService {
     }
 
     /**
+     * Saves the organisation in the database.
+     * @param organisation Organisation object which will be saved.
+     */
+    public void saveOrganisation(Organisation organisation) {
+        this.organisationRepository.save(organisation);
+    }
+
+    /**
      * Get all organisations in the database in a list.
      * @return List of organisations in the database.
      */

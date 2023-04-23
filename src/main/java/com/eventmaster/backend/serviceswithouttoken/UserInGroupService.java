@@ -86,7 +86,7 @@ public class UserInGroupService {
     public String addUserToGroup(long groupId, String userMail) {
         Group group = groupService.getGroupById(groupId);
         User user = userService.getUserByMail(userMail);
-
+        //TODO testen, ob user gleicher organisation angehört wie Gruppe
         UserInGroup userInGroup = new UserInGroup();
         userInGroup.setUser(user);
         userInGroup.setGroup(group);

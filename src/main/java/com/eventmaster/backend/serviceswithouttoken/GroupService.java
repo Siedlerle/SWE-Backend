@@ -1,6 +1,7 @@
 package com.eventmaster.backend.serviceswithouttoken;
 
 import com.eventmaster.backend.entities.Group;
+import com.eventmaster.backend.entities.Organisation;
 import com.eventmaster.backend.repositories.GroupRepository;
 import local.variables.LocalizedStringVariables;
 import org.springframework.stereotype.Service;
@@ -14,9 +15,11 @@ import org.springframework.stereotype.Service;
 public class GroupService {
 
     private final GroupRepository groupRepository;
+    private final OrganisationService organisationService;
 
-    public GroupService(GroupRepository groupRepository) {
+    public GroupService(GroupRepository groupRepository, OrganisationService organisationService) {
         this.groupRepository = groupRepository;
+        this.organisationService = organisationService;
     }
 
     /**
@@ -38,7 +41,11 @@ public class GroupService {
      * @param group Group object which will be saved.
      * @return String about success of failure.
      */
-    public String createGroup(Group group) {
+    public String createGroup(Group group, long orgaId) {
+        Organisation organisation = organisationService.getOrganisationById(orgaId);
+        group.setOrganisation(organisation);
+        organisation.addGroup(group);
+        organisationService.saveOrganisation(organisation);
         try {
             this.groupRepository.save(group);
             return LocalizedStringVariables.GROUPCREATEDSUCCESSMESSAGE;

@@ -62,6 +62,10 @@ public class Organisation {
         return groups;
     }
 
+    public void addGroup(Group group) {
+        groups.add(group);
+    }
+
     public Set<Preset> getPresets() {
         return presets;
     }

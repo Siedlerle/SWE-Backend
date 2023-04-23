@@ -99,9 +99,10 @@ public class AdminController {
      * @param group Group object which will be saved in the database.
      * @return String about success of failure.
      */
-    @PostMapping("/group/add")
-    public ResponseEntity<String> createGroup(@RequestBody Group group) {
-        return ResponseEntity.ok(groupService.createGroup(group));
+    @PostMapping("/orga/{orgaId}/group/add")
+    public ResponseEntity<String> createGroup(@PathVariable long orgaId,
+                                              @RequestBody Group group) {
+        return ResponseEntity.ok(groupService.createGroup(group, orgaId));
     }
 
     /**
