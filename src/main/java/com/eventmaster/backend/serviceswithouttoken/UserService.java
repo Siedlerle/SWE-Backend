@@ -53,6 +53,11 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    public String saveUser(User user) {
+        userRepository.save(user);
+        return "saved";
+    }
+
     public String register(User request){
         var user = User.builder()
                 .firstname(request.getFirstname())

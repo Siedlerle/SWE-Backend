@@ -2,6 +2,7 @@ package com.eventmaster.backend.controller;
 
 import com.eventmaster.backend.entities.Organisation;
 
+import com.eventmaster.backend.entities.User;
 import com.eventmaster.backend.serviceswithouttoken.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -74,4 +75,16 @@ public class SystemAdminController {
         return ResponseEntity.ok(userService.deleteUser(userId));
     }
 
+
+    /**
+     * Endpoint to add a user to the database directly.
+     * @param user User who will be saved.
+     * @param sysAdminPassword Password of the System-Admin to authorize him.
+     * @return success message
+     */
+    @PostMapping("/user/add")
+    public ResponseEntity<String> addUser(@RequestBody User user,
+                        @RequestParam String sysAdminPassword) {
+        return ResponseEntity.ok(userService.saveUser(user));
+    }
 }
