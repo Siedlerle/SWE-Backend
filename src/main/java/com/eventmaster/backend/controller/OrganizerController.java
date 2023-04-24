@@ -198,26 +198,27 @@ public class OrganizerController {
     /**
      * Endpoint to create a series of events.
      * @param eventSeries EventSeries with information about time interval between events.
-     * @param lastEvent Last event of the event series with event data.
+     * @param startEvent Last event of the event series with event data.
+     * @param userMail Mail of user who created the events and becomes organizers.
      * @return String about success or failure.
      */
     @PostMapping("/event-series/create")
     public ResponseEntity<String> createEventSeries(@RequestParam EventSeries eventSeries,
-                                                    @RequestParam Event lastEvent,
+                                                    @RequestParam Event startEvent,
                                                     @RequestParam String userMail) {
-        return ResponseEntity.ok(userInEventWithRoleService.createEventSeriesWithOrganizer(lastEvent, eventSeries, userMail));
+        return ResponseEntity.ok(userInEventWithRoleService.createEventSeriesWithOrganizer(startEvent, eventSeries, userMail));
     }
 
     /**
      * Endpoint to change a series of events.
      * @param eventSeries New EventSeries with information about time interval between events.
-     * @param lastEvent New last event of the series.
+     * @param startEvent New start event of the series.
      * @return String about success or failure.
      */
     @PostMapping("/event-series/change")
     public ResponseEntity<String> changeEventSeries(@RequestParam EventSeries eventSeries,
-                                                    @RequestParam Event lastEvent) {
-        return ResponseEntity.ok(eventSeriesService.changeEventSeries(lastEvent, eventSeries));
+                                                    @RequestParam Event startEvent) {
+        return ResponseEntity.ok(eventSeriesService.changeEventSeries(startEvent, eventSeries));
     }
 
     /**

@@ -45,11 +45,11 @@ public class EventSeriesService {
 
     /**
      * A series of events is being changed.
-     * @param lastEvent New event with the data for all other events and the last date of taking place.
+     * @param startEvent New event with the data for all other events and the last date of taking place.
      * @param eventSeries New eventSeries with info about time interval between the events.
      * @return String about success or failure.
      */
-    public String changeEventSeries(Event lastEvent, EventSeries eventSeries) {
+    public String changeEventSeries(Event startEvent, EventSeries eventSeries) {
         try {
             long eventSeriesId = eventSeries.getId();
 
@@ -57,13 +57,13 @@ public class EventSeriesService {
             Set<Event> events = oldEventSeries.getEvents();
 
             for (Event event : events) {
-                event.setName(lastEvent.getName());
-                event.setType(lastEvent.getType());
-                event.setDescription(lastEvent.getDescription());
-                event.setImage(lastEvent.getImage());
-                event.setLocation(lastEvent.getLocation());
-                event.setStartTime(lastEvent.getStartTime());
-                event.setEndTime(lastEvent.getEndTime());
+                event.setName(startEvent.getName());
+                event.setType(startEvent.getType());
+                event.setDescription(startEvent.getDescription());
+                event.setImage(startEvent.getImage());
+                event.setLocation(startEvent.getLocation());
+                event.setStartTime(startEvent.getStartTime());
+                event.setEndTime(startEvent.getEndTime());
             }
 
             return LocalizedStringVariables.EVENTSERIESCHANGEDSUCCESSMESAGE;

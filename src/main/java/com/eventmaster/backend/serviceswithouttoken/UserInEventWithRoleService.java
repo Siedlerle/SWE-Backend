@@ -344,48 +344,53 @@ public class UserInEventWithRoleService {
 
     /**
      * A series of events is being created by creating multiple events with a specific time interval.
-     * @param lastEvent Event with the data for all other events and the last date of taking place.
+     * @param startEvent Event with the data for all other events and the start date of taking place.
      * @param eventSeries EventSeries with info about time interval between the events.
      * @param userMail Mail of the user who created the series and will be organizer.
      * @return String about success or failure.
      */
-    public String createEventSeriesWithOrganizer(Event lastEvent, EventSeries eventSeries, String userMail) {
-        LocalDate currentDate = LocalDate.now();
-        Date startDateOfLastEvent = lastEvent.getStartDate();
+    public String createEventSeriesWithOrganizer(Event startEvent, EventSeries eventSeries, String userMail) {
         int intervalInMilliseconds = eventSeries.getDaysBetweenEvents() * 86400000;
 
-        Date startDateOfSecondLastEvent = startDateOfLastEvent;
-        startDateOfSecondLastEvent.setTime(startDateOfLastEvent.getTime() - intervalInMilliseconds);
-
         Set<Event> eventsOfSeries = new HashSet<>();
-        eventsOfSeries.add(lastEvent);
+        eventsOfSeries.add(startEvent);
 
-        long diffInMillies = Math.abs(lastEvent.getEndDate().getTime() - lastEvent.getStartDate().getTime());
+        Date startDate = startEvent.getStartDate();
+
+
+        long diffInMillies = Math.abs(startEvent.getEndDate().getTime() - startEvent.getStartDate().getTime());
         long lengthOfEventInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
 
 
-        for (Date startDate = startDateOfSecondLastEvent; startDate.before(Date.valueOf(currentDate)); startDate.setTime(startDate.getTime() - intervalInMilliseconds)) {
+        for (int i = 0; i < eventSeries.getAmount(); i++) {
+            //Hier StartDate berechnen
             Calendar calendar = Calendar.getInstance();
+            calendar.setTime(startDate);
+            calendar.add(Calendar.DAY_OF_MONTH, eventSeries.getDaysBetweenEvents());
+            startDate = new java.sql.Date(calendar.getTimeInMillis());
+
+            calendar = Calendar.getInstance();
             calendar.setTime(startDate);
             calendar.add(Calendar.DAY_OF_MONTH, (int) lengthOfEventInDays);
             Date newEndDate = new java.sql.Date(calendar.getTimeInMillis());
 
             Event event = new Event();
-            event.setName(lastEvent.getName());
-            event.setType(lastEvent.getType());
-            event.setStatus(lastEvent.getStatus());
-            event.setDescription(lastEvent.getDescription());
-            event.setImage(lastEvent.getImage());
-            event.setLocation(lastEvent.getLocation());
+            event.setName(startEvent.getName());
+            event.setType(startEvent.getType());
+            event.setStatus(startEvent.getStatus());
+            event.setDescription(startEvent.getDescription());
+            event.setImage(startEvent.getImage());
+            event.setLocation(startEvent.getLocation());
             event.setStartDate(startDate);
-            event.setStartTime(lastEvent.getStartTime());
+            event.setStartTime(startEvent.getStartTime());
             event.setEndDate(newEndDate);
-            event.setEndTime(lastEvent.getEndTime());
+            event.setEndTime(startEvent.getEndTime());
 
-            event.setOrganisation(lastEvent.getOrganisation());
+            event.setOrganisation(startEvent.getOrganisation());
             event.setEventSeries(eventSeries);
             setOrganizerOfEvent(userMail, event);
             eventService.saveEvent(event);
+            eventsOfSeries.add(event);
         }
         eventSeries.setEvents(eventsOfSeries);
 

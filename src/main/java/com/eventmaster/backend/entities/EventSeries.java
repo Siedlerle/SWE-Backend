@@ -24,7 +24,7 @@ public class EventSeries {
 
     private int daysBetweenEvents;
 
-    private Date lastEventDate;
+    private int amount;
 
 
     public long getId() {
@@ -51,11 +51,11 @@ public class EventSeries {
         this.daysBetweenEvents = daysBetweenEvents;
     }
 
-    public Date getLastEventDate() {
-        return lastEventDate;
+    public int getAmount() {
+        return amount;
     }
 
-    public void setLastEventDate(Date lastEventDate) {
-        this.lastEventDate = lastEventDate;
+    public void setAmount(int amount) {
+        this.amount = amount;
     }
 }
