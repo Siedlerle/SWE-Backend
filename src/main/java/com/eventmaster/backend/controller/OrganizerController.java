@@ -244,6 +244,30 @@ public class OrganizerController {
     }
 
     /**
+     * Endpoint to change an attendee of an eventseries to a tutor of the eventseries.
+     * @param eventSeriesId ID of the eventseries.
+     * @param userMail Mail of user who gets Attendee.
+     * @return String about success or failure.
+     */
+    @PostMapping("/event-series/{eventSeriesId}/attendee/set-tutor")
+    public ResponseEntity<String> changeAttendeeToTutorInEventSeries(@PathVariable long eventSeriesId,
+                                                                     @RequestBody String userMail) {
+        return ResponseEntity.ok(eventSeriesService.changeRoleOfPersonInEventSeries(eventSeriesId, userMail, false));
+    }
+
+    /**
+     * Endpoint to change a tutor of an eventseries to an attendee of the eventseries.
+     * @param eventSeriesId ID of the eventseries.
+     * @param userMail Mail of user who gets Attendee.
+     * @return String about success or failure.
+     */
+    @PostMapping("/event-series/{eventSeriesId}/attendee/set-attendee")
+    public ResponseEntity<String> changeTutorToAttendeeInEventSeries(@PathVariable long eventSeriesId,
+                                                                     @RequestBody String userMail) {
+        return ResponseEntity.ok(eventSeriesService.changeRoleOfPersonInEventSeries(eventSeriesId, userMail, true));
+    }
+
+    /**
      * Endpoint to invite a user to a series of events.
      * @param eventSeriesId ID of the eventseries.
      * @param userMail Mail of the user who will be invited.

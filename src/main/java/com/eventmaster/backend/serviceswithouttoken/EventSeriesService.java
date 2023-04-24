@@ -139,6 +139,27 @@ public class EventSeriesService {
     }
 
     /**
+     * Changes the role of a person in all events of a series.
+     * @param eventSeriesId ID of the eventseries.
+     * @param userMail Mail of the user whose role gets changed.
+     * @param toAttendee Boolean if role is changed to attendee or otherwise tutor.
+     * @return String about success or failure.
+     */
+    public String changeRoleOfPersonInEventSeries(long eventSeriesId, String userMail, boolean toAttendee) {
+        EventSeries eventSeries = getEventSeriesById(eventSeriesId);
+        Set<Event> events = eventSeries.getEvents();
+        try {
+            for (Event event : events) {
+                userInEventWithRoleService.changeRoleOfPersonInEvent(event.getId(), userMail, toAttendee);
+            }
+            return LocalizedStringVariables.CHANGEDROLEOFPERSONINEVENTSERIESSUCCESSMESSAGE;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return LocalizedStringVariables.CHANGEDROLEOFPERSONINEVENTSERIESFAILUREMESSAGE;
+        }
+    }
+
+    /**
      * Invites a user to a series of events by inviting him to the next event of the series.
      * @param eventSeriesId ID of the eventseries who contains the multiple events.
      * @param userMail Mail og the user who wille be invited.
