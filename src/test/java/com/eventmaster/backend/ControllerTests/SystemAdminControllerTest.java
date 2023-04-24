@@ -1,10 +1,9 @@
 package com.eventmaster.backend.ControllerTests;
 
 import com.eventmaster.backend.entities.Organisation;
+import com.eventmaster.backend.entities.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import local.variables.LocalizedStringVariables;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,15 +27,26 @@ public class SystemAdminControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
+    ObjectMapper mapper = new ObjectMapper();
     public SystemAdminControllerTest(MockMvc mockMvc) {
         this.mockMvc = mockMvc;
+    }
+
+    public void createUser(User user) throws Exception {
+        String sysAdminPassword = "password";
+        mockMvc.perform(post("/sys-admin/user/add")
+                        .content(asJsonString(mapper, user))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("sysAdminPassword", sysAdminPassword))
+
+                .andExpect(status().isOk())
+                .andExpect(content().string("saved"));
     }
 
     public long testOrganisationManagement(Organisation testOrganisation) throws Exception {
         String sysAdminPassword = "password";
 
-        ObjectMapper mapper = new ObjectMapper();
+
 
         mockMvc.perform(post("/sys-admin/organisation/create")
                         .content(asJsonString(mapper, testOrganisation))
