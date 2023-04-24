@@ -2,6 +2,7 @@ package com.eventmaster.backend.controller;
 
 import com.eventmaster.backend.entities.Event;
 import com.eventmaster.backend.entities.Group;
+import com.eventmaster.backend.entities.Organisation;
 import com.eventmaster.backend.serviceswithouttoken.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,15 +21,17 @@ import java.util.List;
 @RequestMapping("/admin")
 public class AdminController {
 
+    private final OrganisationService organisationService;
     private final EventService eventService;
     private final UserInOrgaWithRoleService userInOrgaWithRoleService;
     private final UserInEventWithRoleService userInEventWithRoleService;
     private final GroupService groupService;
     private final UserInGroupService userInGroupService;
 
-    public AdminController(EventService eventService,
+    public AdminController(OrganisationService organisationService, EventService eventService,
                            UserInOrgaWithRoleService userInOrgaWithRoleService,
                            UserInEventWithRoleService userInEventWithRoleService, GroupService groupService, UserInGroupService userInGroupService) {
+        this.organisationService = organisationService;
         this.eventService = eventService;
         this.userInOrgaWithRoleService = userInOrgaWithRoleService;
         this.userInEventWithRoleService = userInEventWithRoleService;
@@ -44,6 +47,16 @@ public class AdminController {
     @PostMapping("/orga/{orgaId}/events")
     public ResponseEntity<List<Event>> getEventsOfOrganisation(@PathVariable Long orgaId){
         return ResponseEntity.ok(eventService.getEventsOfOrganisation(orgaId));
+    }
+
+    /**
+     * Endpoint for the admin of an organisation to change her details.
+     * @param organisation New Organisation object with new data.
+     * @return String about success or failure.
+     */
+    @PostMapping("/orga/change")
+    public ResponseEntity<String> changeOrganisationDetails(@RequestBody Organisation organisation) {
+        return ResponseEntity.ok(organisationService.changeOrganisation(organisation));
     }
 
     /**
