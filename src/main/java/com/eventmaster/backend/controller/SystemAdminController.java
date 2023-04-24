@@ -64,15 +64,15 @@ public class SystemAdminController {
 
     /**
      * Endpoint to delete a user.
-     * @param userId ID of the user which will be deleted.
+     * @param emailAdress Email of the user which will be deleted.
      * @param sysAdminPassword Password of the System-Admin to authorize him.
      * @return success message
      */
     @PostMapping("/user/delete")
-    public ResponseEntity<String> deleteUser(@RequestParam long userId,
+    public ResponseEntity<String> deleteUser(@RequestParam String emailAdress,
                                              @RequestParam String sysAdminPassword) {
         //TODO passwort vom Sysadmin abfragen?
-        return ResponseEntity.ok(userService.deleteUser(userId));
+        return ResponseEntity.ok(userService.deleteUser(emailAdress));
     }
 
 

@@ -4,6 +4,7 @@ import com.eventmaster.backend.security.authorization.CustomAuthorizationManager
 import com.eventmaster.backend.security.authorization.OrganizerAuthorizationManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -52,10 +53,11 @@ public class SecurityConfig{
                 .and()
                     .authenticationProvider(authenticationProvider)
                     .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .logout()
-                    .logoutUrl("/logout")
-                    .addLogoutHandler(logoutHandler)
-                    .logoutSuccessHandler(((request, response, authentication) -> SecurityContextHolder.clearContext()));
+                .logout( logout -> logout
+                        .logoutUrl("/logout")
+                        .addLogoutHandler(logoutHandler)
+                        .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
+                );
 
         return http.build();
     }

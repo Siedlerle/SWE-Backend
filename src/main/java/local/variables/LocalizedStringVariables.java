@@ -15,6 +15,9 @@ public final class LocalizedStringVariables {
         //USER
         public static final String USERNOTDELETEDMESSAGE = "Benutzer konnte nicht gelöscht werden";
         public static final String USERDELETEDMESSAGE = "Benutzer wurde erfolgreich gelöscht:";
+        public static final String ORGANISATIONIVITEACCPETEDSUCCESS = "Anfrage wurde erfolgreich angenommen";
+        public static final String ORGANISATIONIVITEACCPETEDFAILURE = "Anfrage konnte nicht angenommen werden";
+        public static final String ORGANISATIONINVITEDECLINESUCCESS = "Anfrage wurder erfolgreich abgelehnt";
 
 
         //EVENTSERIES

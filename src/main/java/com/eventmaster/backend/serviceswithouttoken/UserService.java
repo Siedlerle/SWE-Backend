@@ -151,9 +151,9 @@ public class UserService {
 
             mailMessage.setFrom("ftb-solutions@outlook.de");
             mailMessage.setTo(emailAdress);
-            mailMessage.setSubject("Complete Registration!");
+            mailMessage.setSubject("Change your Password");
             mailMessage.setText("Hello " + resetUserPwd.getFirstname() + "," +
-                    "\nto confirm your account, please click here : \n"
+                    "\nto confirm the password change click the link below : \n"
                     +"Token to authenticate reset: " + jwtToken + "\n"
                     +"WARNING: The token is only valid up to 15 Minutes");
             //emailService.sendEmail(mailMessage);
@@ -204,11 +204,12 @@ public class UserService {
         return userRepository.findByEmailAdress(emailAdress);
     }
 
-    public String deleteUser(long userId) {
+    public String deleteUser(String emailAdress) {
         try {
-            User user = this.getUserById(userId);
+            System.out.println(emailAdress);
+            User user = userRepository.findByEmailAdress(emailAdress);
             tokenService.deleteToken(user.getId());
-            userRepository.delete(userRepository.findByEmailAdress(user.getEmailAdress()));
+            userRepository.delete(user);
 
             return LocalizedStringVariables.USERDELETEDMESSAGE + user.getFirstname() +" "+user.getLastname();
         }catch (Exception e) {

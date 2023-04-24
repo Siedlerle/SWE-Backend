@@ -5,6 +5,7 @@ import com.eventmaster.backend.repositories.UserInOrgaWithRoleRepository;
 import local.variables.LocalizedStringVariables;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,28 +20,36 @@ public class UserInOrgaWithRoleService {
     private final UserService userService;
     private final OrganisationService organisationService;
     private final OrgaRoleService orgaRoleService;
+    private final EventService eventService;
+    private final UserInEventWithRoleService userInEventWithRoleService;
 
     public UserInOrgaWithRoleService(
             UserInOrgaWithRoleRepository userInOrgaWithRoleRepository,
-            UserService userService, OrganisationService organisationService, OrgaRoleService orgaRoleService) {
+            UserService userService,
+            OrganisationService organisationService,
+            OrgaRoleService orgaRoleService,
+            EventService eventService,
+            UserInEventWithRoleService userInEventWithRoleService) {
         this.userInOrgaWithRoleRepository = userInOrgaWithRoleRepository;
         this.userService = userService;
         this.organisationService = organisationService;
         this.orgaRoleService = orgaRoleService;
+        this.eventService = eventService;
+        this.userInEventWithRoleService = userInEventWithRoleService;
     }
 
 
     /**
      * Retrieve information about orgas user is a part of
-     * @param userId Id of the corresponding user
+     * @param userMail Mail of the corresponding user
      * @return List of organisation objects
      */
-    public List<Organisation> getOrgaForUser(long userId) {
+    public List<Organisation> getOrgaForUser(String userMail) {
         try {
-            User user = userService.getUserById(userId);
+            User user = userService.getUserByMail(userMail);
             List <UserInOrgaWithRole> userInOrgaWithRoles = userInOrgaWithRoleRepository.findByUser(user);
 
-            List <Organisation> organisationsForUser = null;
+            List <Organisation> organisationsForUser = new ArrayList<Organisation>();
 
             for(UserInOrgaWithRole orgasForUser: userInOrgaWithRoles){
                 organisationsForUser.add(orgasForUser.getOrganisation());
@@ -52,6 +61,70 @@ public class UserInOrgaWithRoleService {
             return null;
         }
     }
+
+    /**
+     * Retrieve the role of a user inside an organisation
+     * @param organisationId Id of the corresponding organisation
+     * @param emailAdress Email of the corresponding user
+     * @return Role of the user in the Organsation
+     */
+    public UserInOrgaWithRole getRoleInOrganisation(long organisationId, String emailAdress){
+        try {
+            User user = userService.getUserByMail(emailAdress);
+
+            UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(),organisationId);
+
+            return userInOrgaWithRole;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    /**
+     * Retrieves all events for users in an organisation
+     * @param organisationId Id of the corresponding organisation
+     * @return List of events
+     */
+    public List<Event> getAllVisibleEventsOfOrganisationForUser(long organisationId){
+        try {
+             List<Event> events = eventService.getEventsOfOrganisation(organisationId);
+             return events;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    /**
+     * Retrieves the registered events for a user in an organisation
+     * @param organisationId Id of the corresponding organisation
+     * @param emailAdress Email of the corresponding user
+     * @return List of events
+     */
+    public List<Event> getRegisteredEventsForUserInOrganisation(long organisationId, String emailAdress){
+        try {
+            User user = userService.getUserByMail(emailAdress);
+
+            List<Event> userInEventWithRoles = userInEventWithRoleService.getAllEventsForUser(emailAdress);
+
+            List<Event> registeredEventsInOrga = new ArrayList<>();
+
+            for (Event check:userInEventWithRoles) {
+                if(check.getOrganisation().getId() == organisationId){
+                    registeredEventsInOrga.add(check);
+                }
+            }
+
+            return registeredEventsInOrga;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
     /**
      * Sets a new userInOrgaWithRole
@@ -77,6 +150,33 @@ public class UserInOrgaWithRoleService {
         }
     }
 
+
+    /**
+     * The user can accept an invitation and is added to the organisation
+     * @param organisationId Id of the corresponding orga
+     * @param emailAdress Email of the corresponding user
+     * @return success message
+     */
+    public String acceptOrganisationInvite(long organisationId, String emailAdress){
+        try {
+            User user = userService.getUserByMail(emailAdress);
+
+            UserInOrgaWithRole userInOrgaWithRole = new UserInOrgaWithRole();
+            userInOrgaWithRole.setOrganisation(organisationService.getOrganisationById(organisationId));
+            userInOrgaWithRole.setUser(user);
+            userInOrgaWithRole.setOrgaRole(orgaRoleService.findByRole(EnumOrgaRole.USER));
+
+            userInOrgaWithRoleRepository.save(userInOrgaWithRole);
+
+            return LocalizedStringVariables.ORGANISATIONIVITEACCPETEDSUCCESS;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return LocalizedStringVariables.ORGANISATIONIVITEACCPETEDFAILURE;
+        }
+    }
+
+
     /**
      * If the user is part of the organisation he will be removed from her.
      * @param organisationId ID of the organisation.
@@ -85,9 +185,8 @@ public class UserInOrgaWithRoleService {
      * @return String about success or failure.
      */
     public String leaveOrganisation(long organisationId, String userMail, String reason){
-        User user = userService.getUserByMail(userMail);
-        Organisation organisation = organisationService.getOrganisationById(organisationId);
         try {
+            User user = userService.getUserByMail(userMail);
             //Todo reason per mail an den admin o.ä. der Organisation
 
             UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId);
@@ -95,6 +194,7 @@ public class UserInOrgaWithRoleService {
             if(userInOrgaWithRole == null) {
                 return LocalizedStringVariables.USERISNOTINORGANISATIONMESSAGE;
             } else {
+                //Todo Löschen ist nicht funktional
                 userInOrgaWithRoleRepository.delete(userInOrgaWithRole);
                 return LocalizedStringVariables.LEAVEORGANISATIONSUCCESSMESSAGE;
             }

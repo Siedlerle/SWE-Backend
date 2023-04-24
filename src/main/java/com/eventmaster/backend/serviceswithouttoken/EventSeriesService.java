@@ -3,6 +3,7 @@ package com.eventmaster.backend.serviceswithouttoken;
 import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.repositories.EventSeriesRepository;
 import local.variables.LocalizedStringVariables;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -22,7 +23,11 @@ public class EventSeriesService {
     private final UserInGroupService userInGroupService;
     private final UserInEventWithRoleService userInEventWithRoleService;
 
-    public EventSeriesService(EventSeriesRepository eventSeriesRepository, EventService eventService, GroupService groupService, UserInGroupService userInGroupService, UserInEventWithRoleService userInEventWithRoleService) {
+    public EventSeriesService(EventSeriesRepository eventSeriesRepository,
+                              EventService eventService,
+                              GroupService groupService,
+                              UserInGroupService userInGroupService,
+                              @Lazy UserInEventWithRoleService userInEventWithRoleService) {
         this.eventSeriesRepository = eventSeriesRepository;
         this.eventService = eventService;
         this.groupService = groupService;

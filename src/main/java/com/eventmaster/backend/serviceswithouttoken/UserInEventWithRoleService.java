@@ -45,17 +45,17 @@ public class UserInEventWithRoleService {
     /**
      * A user is being registered for an event
      * @param eventId Id of the corresponding event
-     * @param userId Id of the corresponding user
+     * @param emailAdress Email of the corresponding user
      * @return success message
      */
-    public String registerForEvent(long eventId, long userId){
+    public String registerForEvent(long eventId, String emailAdress){
         try {
 
             EventRole eventRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
 
             UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
             userInEventWithRole.setEvent(eventService.getEventById(eventId));
-            userInEventWithRole.setUser(userService.getUserById(userId));
+            userInEventWithRole.setUser(userService.getUserByMail(emailAdress));
             userInEventWithRole.setEventRole(eventRole);
             userInEventWithRoleRepository.save(userInEventWithRole);
 
@@ -69,17 +69,17 @@ public class UserInEventWithRoleService {
     /**
      * A user can accept an invitation to an event
      * @param eventId Id of the event the user is invited to
-     * @param userId Id of the user who is being invited
+     * @param emailAdress Email of the user who is being invited
      * @return success message
      */
-    public String acceptEventInvitation(long eventId, long userId){
+    public String acceptEventInvitation(long eventId, String emailAdress){
         try {
             EventRole eventRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
 
             UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
             //Todo Abfragen von User oder Event in if-Abfragen "abfangen" im Fehlerfall
             userInEventWithRole.setEvent(eventService.getEventById(eventId));
-            userInEventWithRole.setUser(userService.getUserById(userId));
+            userInEventWithRole.setUser(userService.getUserByMail(emailAdress));
             userInEventWithRole.setEventRole(eventRole);
             userInEventWithRoleRepository.save(userInEventWithRole);
 
@@ -94,21 +94,19 @@ public class UserInEventWithRoleService {
     /**
      * A user can decline an invitation to an event
      * @param eventId Id of the event the user is invited to
-     * @param userId Id of the user who is being invited
+     * @param emailAdress Email of the user who is being invited
      * @return success message
      */
-    public String declineEventInvitation(long eventId, long userId){
+    public String declineEventInvitation(long eventId, String emailAdress){
         try {
+            User user = userService.getUserByMail(emailAdress);
+            Event event = eventService.getEventById(eventId);
 
-            //TODO hier einfach das userInEventWithRole Objekt löschen
+            UserInEventWithRole userInEventWithRole= userInEventWithRoleRepository.findByUserAndEvent(user, event);
 
-
-            UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
-            userInEventWithRole.setEvent(eventService.getEventById(eventId));
-            userInEventWithRole.setUser(userService.getUserById(userId));
-            // userInEventWithRole.setEventRole(eventRole);
-            userInEventWithRoleRepository.save(userInEventWithRole);
-
+            if(userInEventWithRole!=null) {
+                userInEventWithRoleRepository.delete(userInEventWithRole);
+            }
             return LocalizedStringVariables.EVENTINVITATIONDECLINEDSUCCESSMESSAGE;
         }catch (Exception e) {
             e.printStackTrace();
@@ -119,13 +117,13 @@ public class UserInEventWithRoleService {
     /**
      * For authorization purposes u can get your role corresponding to an event
      * @param eventId Id of the event the user is requesting his role for
-     * @param userId Id of the user who is requesting the role
+     * @param emailAdress Email of the user who is requesting the role
      * @return Role of the user
      */
-    public EventRole getRoleForEvent(long eventId, long userId){
+    public EventRole getRoleForEvent(long eventId, String emailAdress){
         try {
 
-            User user = userService.getUserById(userId);
+            User user = userService.getUserByMail(emailAdress);
             Event event = eventService.getEventById(eventId);
             UserInEventWithRole userInEvent = userInEventWithRoleRepository.findByUserAndEvent(user, event);
 
@@ -138,18 +136,44 @@ public class UserInEventWithRoleService {
         }
     }
 
+
+    /**
+     * Retrieving all events for a user
+     * @param emailAdress Email of the corresponding user
+     * @return List of Events
+     */
+    public List<Event> getAllEventsForUser(String emailAdress){
+        try {
+
+            User user = userService.getUserByMail(emailAdress);
+
+            List<UserInEventWithRole> userInEvents = userInEventWithRoleRepository.findByUser(user);
+
+            List<Event> userEvents = new ArrayList<>();
+
+            for (UserInEventWithRole event: userInEvents) {
+                userEvents.add(event.getEvent());
+            }
+            return userEvents;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
     /**
      * A user can get all events he is registered for
-     * @param userId Id of the user to get registered events for
+     * @param emailAdress Email of the user to get registered events for
      * @return List of events the user is registered for
      */
-    public List<Event> getRegisteredEventsForUser(long userId){
+    public List<Event> getRegisteredEventsForUser(String emailAdress){
         try {
             EventRole eventRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
-            User user = userService.getUserById(userId);
+            User user = userService.getUserByMail(emailAdress);
 
             List<UserInEventWithRole> eventsForUser =  userInEventWithRoleRepository.findByUser(user);
-            List<Event> registeredEventsForUser = null;
+            List<Event> registeredEventsForUser = new ArrayList<>();
             for(UserInEventWithRole event: eventsForUser){
                 if(event.getEventRole().equals(eventRole)) {
                     registeredEventsForUser.add(event.getEvent());
@@ -164,16 +188,17 @@ public class UserInEventWithRoleService {
 
     /**
      * A user can unregister from an event
-     * @param event Corresponding event
-     * @param userId Id of the user who is about to unregister
+     * @param eventId Corresponding event
+     * @param emailAdress Id of the user who is about to unregister
      * @param reason Reason for unregistering as a feedback for the organizer
      * @return success message
      */
-    public String unregisterFromEvent(Event event,long userId, String reason){
+    public String unregisterFromEvent(long eventId,String emailAdress, String reason){
         //Todo reason speichern
         try {
 
-            User user = userService.getUserById(userId);
+            User user = userService.getUserByMail(emailAdress);
+            Event event = eventService.getEventById(eventId);
             UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(user, event);
             userInEventWithRoleRepository.delete(userInEventWithRole);
 
@@ -334,7 +359,7 @@ public class UserInEventWithRoleService {
     public String createEventWithOrganizer(Event event, String userMail) {
         try {
             eventService.saveEvent(event);
-            setOrganizerOfEvent(userMail, event);
+            setOrganizerOfEvent(userMail, event.getId());
             return LocalizedStringVariables.EVENTCREATEDSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
@@ -388,7 +413,7 @@ public class UserInEventWithRoleService {
 
             event.setOrganisation(startEvent.getOrganisation());
             event.setEventSeries(eventSeries);
-            setOrganizerOfEvent(userMail, event);
+            setOrganizerOfEvent(userMail, event.getId());
             eventService.saveEvent(event);
             eventsOfSeries.add(event);
         }
@@ -407,11 +432,12 @@ public class UserInEventWithRoleService {
     /**
      * Sets a user as organizer for an event.
      * @param userMail ID of the user who will be organizer.
-     * @param event Event where the user will be organizer.
+     * @param eventId Id of event where the user will be organizer.
      * @return String about success or failure.
      */
-    public String setOrganizerOfEvent(String userMail, Event event) {
+    public String setOrganizerOfEvent(String userMail, long eventId) {
         User user = userService.getUserByMail(userMail);
+        Event event = eventService.getEventById(eventId);
         EventRole role = eventRoleService.findByRole(EnumEventRole.ORGANIZER);
 
         UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
@@ -615,6 +641,7 @@ public class UserInEventWithRoleService {
                     UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(user, event);
                     if (userInEventWithRole.getEventRole().equals(groupAttending)) {
                         //TODO reason senden weil als gruppenmitglied teilnehmer
+                        userInEventWithRoleRepository.delete(userInEventWithRole);
                     } else if (userInEventWithRole.getEventRole().equals(groupInvited)) {
                         //TODO reason senden weil als gruppenmitglied eingeladen worden
                     } else if (userInEventWithRole.getEventRole().equals(groupSeriesInvited)) {
