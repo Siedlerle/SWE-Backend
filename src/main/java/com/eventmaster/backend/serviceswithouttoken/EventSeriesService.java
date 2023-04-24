@@ -7,6 +7,7 @@ import com.eventmaster.backend.repositories.EventSeriesRepository;
 import local.variables.LocalizedStringVariables;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -51,9 +52,17 @@ public class EventSeriesService {
             long eventSeriesId = eventSeries.getId();
 
             EventSeries oldEventSeries = getEventSeriesById(eventSeriesId);
-            Set<Event> EventSeries = oldEventSeries.getEvents();
+            Set<Event> events = oldEventSeries.getEvents();
 
-            //TODO: Alle Events durchgehen und Daten abändern.
+            for (Event event : events) {
+                event.setName(lastEvent.getName());
+                event.setType(lastEvent.getType());
+                event.setDescription(lastEvent.getDescription());
+                event.setImage(lastEvent.getImage());
+                event.setLocation(lastEvent.getLocation());
+                event.setStartTime(lastEvent.getStartTime());
+                event.setEndTime(lastEvent.getEndTime());
+            }
 
             return LocalizedStringVariables.EVENTSERIESCHANGEDSUCCESSMESAGE;
         } catch (Exception e) {
@@ -154,6 +163,34 @@ public class EventSeriesService {
         }
         else {
             return LocalizedStringVariables.EVENTSERIESNONEXTEVENTFOUNDMESSAGE;
+        }
+    }
+
+    /**
+     * Sets the states of all upcoming events of the series to "cancelled".
+     * @param eventSeriesId ID of the eventseries.
+     * @return String about success or failure.
+     */
+    public String cancelEventSeries(long eventSeriesId) {
+        EventSeries eventSeries = getEventSeriesById(eventSeriesId);
+        LocalDate currentDate = LocalDate.now();
+
+        Set<Event> events = eventSeries.getEvents();
+
+        try {
+            for (Event event : events) {
+                LocalDate startDate = event.getStartDate().toLocalDate();
+                if (startDate.isAfter(currentDate)) {
+                    event.setStatus(EnumEventStatus.CANCELLED);
+                    eventService.saveEvent(event);
+                }
+            }
+            saveEventSeries(eventSeries);
+            //TODO Benachrichtigungsmail senden
+            return LocalizedStringVariables.EVENTSERIESCANCELLEDSUCCESSMESSAGE;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return LocalizedStringVariables.EVENTSERIESCANCELLEDFAILUREMESSAGE;
         }
     }
 }

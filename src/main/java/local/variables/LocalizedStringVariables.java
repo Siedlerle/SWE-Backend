@@ -22,6 +22,8 @@ public final class LocalizedStringVariables {
         public static final String EVENTSERIESDELETEDNOTALLMESSAGE = "Could not delete all events of series because of status";
         public static final String EVENTSERIESDELETEDFAILUREMESSAGE = "Eventseries deleted successfully";
         public static final String EVENTSERIESNONEXTEVENTFOUNDMESSAGE = "No next event found to invite user";
+        public static final String EVENTSERIESCANCELLEDSUCCESSMESSAGE = "Eventseries cancelled successfully";
+        public static final String EVENTSERIESCANCELLEDFAILUREMESSAGE = "Eventseries cancelled not successfully";
         public static final String EVENTSERIESCREATEDSUCCESSMESSAGE = "EventSeries created successfully";
         public static final String EVENTSERIESCREATEDFAILUREMESSAGE = "EventSeries was not created";
         public static final String EVENTSERIESCHANGEDSUCCESSMESAGE = "EventSeries changed successfully";

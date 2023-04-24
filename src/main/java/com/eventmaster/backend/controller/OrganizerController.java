@@ -242,6 +242,11 @@ public class OrganizerController {
         return ResponseEntity.ok(eventSeriesService.inviteUserToEventSeries(eventSeriesId, userMail));
     }
 
+    @PostMapping("/event-series/{eventSeriesId}/cancel")
+    public ResponseEntity<String> cancelEventSeries(@PathVariable long eventSeriesId) {
+        return ResponseEntity.ok(eventSeriesService.cancelEventSeries(eventSeriesId));
+    }
+
     //endregion
 
     //region Presets
