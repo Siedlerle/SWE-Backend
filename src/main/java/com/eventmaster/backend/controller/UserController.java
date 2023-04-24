@@ -282,7 +282,6 @@ public class UserController {
      */
     @PostMapping("/event/{eventId}/register/{emailAdress}")
     public ResponseEntity<String> registerForEvent( @PathVariable long eventId, @PathVariable String emailAdress){
-        long userId = 0;
         return ResponseEntity.ok(userInEventWithRoleService.registerForEvent(eventId, emailAdress));
     }
 
