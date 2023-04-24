@@ -169,6 +169,33 @@ public class EventSeriesService {
     }
 
     /**
+     * Removes a user from an eventseries.
+     * @param eventSeriesId ID of the eventseries.
+     * @param userMail Mail of the user who will be removed.
+     * @param reason Reason why the user will be removed.
+     * @return String about success or failure.
+     */
+    public String removeUserFromEventSeries(long eventSeriesId, String userMail, String reason) {
+        EventSeries eventSeries = getEventSeriesById(eventSeriesId);
+        LocalDate currentDate = LocalDate.now();
+
+        Set<Event> events = eventSeries.getEvents();
+        try {
+            for (Event event : events) {
+                LocalDate startDate = event.getStartDate().toLocalDate();
+                if (startDate.isAfter(currentDate)) {
+                    userInEventWithRoleService.removeUserFromEvent(event.getId(), userMail, reason);
+                }
+            }
+            saveEventSeries(eventSeries);
+            return LocalizedStringVariables.REMOVEUSERFROMEVENTSERIESSUCCESSMESSAGE;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return LocalizedStringVariables.REMOVEUSERFROMEVENTSERIESFAILUREMESSAGE;
+        }
+    }
+
+    /**
      * Invites a group to a series of events.
      * @param eventSeriesId ID of the eventseries.
      * @param groupId ID of the group which will be invited.
@@ -185,6 +212,34 @@ public class EventSeriesService {
         } catch (Exception e) {
             e.printStackTrace();
             return LocalizedStringVariables.INVITEDGROUPTOEVENTSERIESFAILUREMESSAGE;
+        }
+    }
+
+    /**
+     * Removes a group from the upcoming events of a series.
+     * @param eventSeriesId ID of the eventseries.
+     * @param groupId ID of the group which will be removed.
+     * @param reason Reason why the group will be removed.
+     * @return String about success or failure.
+     */
+    public String removeGroupFromEventSeries(long eventSeriesId, long groupId, String reason) {
+        EventSeries eventSeries = getEventSeriesById(eventSeriesId);
+        List<User> usersOfGroup = userInGroupService.getUsersOfGroup(groupId);
+        LocalDate currentDate = LocalDate.now();
+
+        Set<Event> events = eventSeries.getEvents();
+        try {
+            for (Event event : events) {
+                LocalDate startDate = event.getStartDate().toLocalDate();
+                if (startDate.isAfter(currentDate)) {
+                    userInEventWithRoleService.removeUsersOfGroupFromEvent(event.getId(), usersOfGroup, reason);
+                }
+            }
+            saveEventSeries(eventSeries);
+            return LocalizedStringVariables.REMOVEGROUPFROMEVENTSERIESSUCCESSMESSAGE;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return LocalizedStringVariables.REMOVEGROUPFROMEVENTSERIESFAILUREMESSAGE;
         }
     }
 

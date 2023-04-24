@@ -601,6 +601,7 @@ public class UserInEventWithRoleService {
         Event event = eventService.getEventById(eventId);
         EventRole groupAttending = eventRoleService.findByRole(EnumEventRole.GROUPATTENDEE);
         EventRole groupInvited = eventRoleService.findByRole(EnumEventRole.GROUPINVITED);
+        EventRole groupSeriesInvited = eventRoleService.findByRole(EnumEventRole.GROUPSERIESINVITED);
 
 
         try {
@@ -609,11 +610,12 @@ public class UserInEventWithRoleService {
                     UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(user, event);
                     if (userInEventWithRole.getEventRole().equals(groupAttending)) {
                         //TODO reason senden weil als gruppenmitglied teilnehmer
-                        userInEventWithRoleRepository.delete(userInEventWithRole);
                     } else if (userInEventWithRole.getEventRole().equals(groupInvited)) {
                         //TODO reason senden weil als gruppenmitglied eingeladen worden
-                        userInEventWithRoleRepository.delete(userInEventWithRole);
+                    } else if (userInEventWithRole.getEventRole().equals(groupSeriesInvited)) {
+                        //TODO reason senden weil als gruppenmitgied zu serie eingeladen worden
                     }
+                    userInEventWithRoleRepository.delete(userInEventWithRole);
                 }
             }
             return LocalizedStringVariables.REMOVEDUSERSOFGROUPFROMEVENTSUCCESSMESSAGE;

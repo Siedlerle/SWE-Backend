@@ -178,7 +178,7 @@ public class OrganizerController {
     }
 
     /**
-     * Endpoint to set the status of an event to cancelled.
+     * Endpoint to set the status of an event to "cancelled".
      * @param eventId ID of the event.
      * @param reason Reason why the event is cancelled.
      * @return String about success or failure.
@@ -267,6 +267,34 @@ public class OrganizerController {
     }
 
     /**
+     * Endpoint to remove a user from an eventseries.
+     * @param eventSeriesId ID of the eventseries.
+     * @param userMail Mail of the user who will be removed.
+     * @param reason Reason why the user will be removed.
+     * @return String about success or failure.
+     */
+    @PostMapping("/event-series/{eventSeriesId}/user/remove")
+    public ResponseEntity<String> removeUserFromEventSeries(@PathVariable long eventSeriesId,
+                                                            @RequestBody String userMail,
+                                                            @RequestParam String reason) {
+        return ResponseEntity.ok(eventSeriesService.removeUserFromEventSeries(eventSeriesId, userMail, reason));
+    }
+
+    /**
+     * Endpoint to remove a group from an eventseries.
+     * @param eventSeriesId ID of the eventseries.
+     * @param groupId ID of the group which will be removed from eventseries.
+     * @param reason Reason why the group will be removed.
+     * @return String about success or failure.
+     */
+    @PostMapping("/event-series/{eventSeriesId}/group/remove")
+    public ResponseEntity<String> removeGroupFromEventSeries(@PathVariable long eventSeriesId,
+                                                             @RequestBody long groupId,
+                                                             @RequestParam String reason) {
+        return ResponseEntity.ok(eventSeriesService.removeGroupFromEventSeries(eventSeriesId, groupId, reason));
+    }
+
+    /**
      * Endpoint to cancel an eventseries.
      * @param eventSeriesId ID of the eventseries which will be cancelled.
      * @return String about success or failure.
@@ -330,13 +358,11 @@ public class OrganizerController {
      * Endpoint to invite a user to an organisation.
      * @param orgaId ID of the organisation.
      * @param userMail Mail of the user who will be invited.
-     * @param authToken Token to identify sender.
      * @return String about success or failure.
      */
     @PostMapping("/organisation/{orgaId}/user/invite")
     public ResponseEntity<String> inviteUserToOrganisation(@PathVariable long orgaId,
-                                                           @RequestBody String userMail,
-                                                           @RequestParam String authToken) {
+                                                           @RequestBody String userMail) {
         return ResponseEntity.ok(userInOrgaWithRoleService.inviteUserToOrganisation(orgaId, userMail));
     }
 
