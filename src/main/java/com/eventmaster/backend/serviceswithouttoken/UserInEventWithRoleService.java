@@ -3,12 +3,12 @@ package com.eventmaster.backend.serviceswithouttoken;
 import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.repositories.UserInEventWithRoleRepository;
 import local.variables.LocalizedStringVariables;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A class which receives and processes the requests of multiple controllers concerning the management of events
@@ -23,6 +23,7 @@ public class UserInEventWithRoleService {
     private final UserInEventWithRoleRepository userInEventWithRoleRepository;
     private final UserService userService;
     private final EventService eventService;
+    private final EventSeriesService eventSeriesService;
     private final EventRoleService eventRoleService;
 
 
@@ -30,10 +31,11 @@ public class UserInEventWithRoleService {
             UserInEventWithRoleRepository userInEventWithRoleRepository,
             UserService userService,
             EventService eventService,
-            EventRoleService eventRoleService) {
+            EventSeriesService eventSeriesService, EventRoleService eventRoleService) {
         this.userInEventWithRoleRepository = userInEventWithRoleRepository;
         this.eventService = eventService;
         this.userService = userService;
+        this.eventSeriesService = eventSeriesService;
         this.eventRoleService = eventRoleService;
     }
 
@@ -332,7 +334,7 @@ public class UserInEventWithRoleService {
     public String createEventWithOrganizer(Event event, String userMail) {
         try {
             eventService.saveEvent(event);
-            setOrganizerOfEvent(userMail, event.getId());
+            setOrganizerOfEvent(userMail, event);
             return LocalizedStringVariables.EVENTCREATEDSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
@@ -341,14 +343,70 @@ public class UserInEventWithRoleService {
     }
 
     /**
-     * Sets a user as organizer for an event.
-     * @param userMail ID of the user who will be organizer.
-     * @param eventId ID of the event.
+     * A series of events is being created by creating multiple events with a specific time interval.
+     * @param lastEvent Event with the data for all other events and the last date of taking place.
+     * @param eventSeries EventSeries with info about time interval between the events.
+     * @param userMail Mail of the user who created the series and will be organizer.
      * @return String about success or failure.
      */
-    public String setOrganizerOfEvent(String userMail, long eventId) {
+    public String createEventSeriesWithOrganizer(Event lastEvent, EventSeries eventSeries, String userMail) {
+        LocalDate currentDate = LocalDate.now();
+        Date startDateOfLastEvent = lastEvent.getStartDate();
+        int intervalInMilliseconds = eventSeries.getDaysBetweenEvents() * 86400000;
+
+        Date startDateOfSecondLastEvent = startDateOfLastEvent;
+        startDateOfSecondLastEvent.setTime(startDateOfLastEvent.getTime() - intervalInMilliseconds);
+
+        Set<Event> eventsOfSeries = new HashSet<>();
+        eventsOfSeries.add(lastEvent);
+
+        long diffInMillies = Math.abs(lastEvent.getEndDate().getTime() - lastEvent.getStartDate().getTime());
+        long lengthOfEventInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+
+
+        for (Date startDate = startDateOfSecondLastEvent; startDate.before(Date.valueOf(currentDate)); startDate.setTime(startDate.getTime() - intervalInMilliseconds)) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(startDate);
+            calendar.add(Calendar.DAY_OF_MONTH, (int) lengthOfEventInDays);
+            Date newEndDate = new java.sql.Date(calendar.getTimeInMillis());
+
+            Event event = new Event();
+            event.setName(lastEvent.getName());
+            event.setType(lastEvent.getType());
+            event.setStatus(lastEvent.getStatus());
+            event.setDescription(lastEvent.getDescription());
+            event.setImage(lastEvent.getImage());
+            event.setLocation(lastEvent.getLocation());
+            event.setStartDate(startDate);
+            event.setStartTime(lastEvent.getStartTime());
+            event.setEndDate(newEndDate);
+            event.setEndTime(lastEvent.getEndTime());
+
+            event.setOrganisation(lastEvent.getOrganisation());
+            event.setEventSeries(eventSeries);
+            setOrganizerOfEvent(userMail, event);
+            eventService.saveEvent(event);
+        }
+        eventSeries.setEvents(eventsOfSeries);
+
+
+        try {
+            eventSeriesService.saveEventSeries(eventSeries);
+            return LocalizedStringVariables.EVENTSERIESCREATEDSUCCESSMESSAGE;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return LocalizedStringVariables.EVENTSERIESCREATEDFAILUREMESSAGE;
+        }
+    }
+
+    /**
+     * Sets a user as organizer for an event.
+     * @param userMail ID of the user who will be organizer.
+     * @param event Event where the user will be organizer.
+     * @return String about success or failure.
+     */
+    public String setOrganizerOfEvent(String userMail, Event event) {
         User user = userService.getUserByMail(userMail);
-        Event event = eventService.getEventById(eventId);
         EventRole role = eventRoleService.findByRole(EnumEventRole.ORGANIZER);
 
         UserInEventWithRole userInEventWithRole = new UserInEventWithRole();

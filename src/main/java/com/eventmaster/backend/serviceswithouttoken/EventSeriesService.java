@@ -36,20 +36,8 @@ public class EventSeriesService {
         }
     }
 
-    /**
-     * A series of events is being created by creating multiple events with a specific time interval.
-     * @param lastEvent Event with the data for all other events and the last date of taking place.
-     * @param eventSeries EventSeries with info about time interval between the events.
-     * @return String about success or failure.
-     */
-    public String createEventSeries(Event lastEvent, EventSeries eventSeries) {
-        try {
-            //TODO: Von heute an bis zum lastEvent in dem Abstand aus eventSeries die Events erstellen und zur Liste in eventSeries hinzufügen
-            return LocalizedStringVariables.EVENTSERIESCREATEDSUCCESSMESSAGE;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return LocalizedStringVariables.EVENTSERIESCREATEDFAILUREMESSAGE;
-        }
+    protected void saveEventSeries(EventSeries eventSeries) {
+        eventSeriesRepository.save(eventSeries);
     }
 
     /**

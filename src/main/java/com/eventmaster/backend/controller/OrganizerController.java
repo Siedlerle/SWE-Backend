@@ -191,8 +191,9 @@ public class OrganizerController {
      */
     @PostMapping("/event-series/create")
     public ResponseEntity<String> createEventSeries(@RequestParam EventSeries eventSeries,
-                                                    @RequestParam Event lastEvent) {
-        return ResponseEntity.ok(eventSeriesService.createEventSeries(lastEvent, eventSeries));
+                                                    @RequestParam Event lastEvent,
+                                                    @RequestParam String userMail) {
+        return ResponseEntity.ok(userInEventWithRoleService.createEventSeriesWithOrganizer(lastEvent, eventSeries, userMail));
     }
 
     /**
