@@ -496,17 +496,53 @@ public class UserInEventWithRoleService {
     }
 
     /**
+     * Invites a tutor to an event.
+     * @param eventId ID of the event.
+     * @param userMail Mail of the user who will be invited as tutor.
+     * @return String about success or failure.
+     */
+    public String inviteTutorToEvent(long eventId, String userMail) {
+        Event event = eventService.getEventById(eventId);
+        User tutor = userService.getUserByMail(userMail);
+        EventRole inviteRole = eventRoleService.findByRole(EnumEventRole.TUTORINVITED);
+
+        if (userInEventWithRoleRepository.existsByUserAndEvent(tutor, event)) {
+            return LocalizedStringVariables.USERALREADYPARTOFEVENTMESSAGE;
+        } else {
+            //TODO Einladungsmail senden
+            UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
+            userInEventWithRole.setUser(tutor);
+            userInEventWithRole.setEvent(event);
+            userInEventWithRole.setEventRole(inviteRole);
+            userInEventWithRole.setHasAttended(false);
+            try {
+                userInEventWithRoleRepository.save(userInEventWithRole);
+                return LocalizedStringVariables.INVITETUTORTOEVENTSUCCESSMESSAGE;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return LocalizedStringVariables.INVITETUTORTOEVENTFAILUREMESSAGE;
+            }
+        }
+    }
+
+    /**
      * Invites a user to the first event of a series.
      * @param eventSeries Series of events from which the event is the first one.
      * @param eventId ID of the event which is the first of the series.
      * @param userMail Mail of the user who will be invited.
      * @return String about success or failure.
      */
-    public String inviteUserToFirstEventFromSeries(EventSeries eventSeries, long eventId, String userMail) {
+    public String inviteUserToFirstEventFromSeries(EventSeries eventSeries, long eventId, String userMail, boolean byGroup) {
         Event event = eventService.getEventById(eventId);
         User user = userService.getUserByMail(userMail);
 
-        EventRole eventRole = eventRoleService.findByRole(EnumEventRole.SERIESINVITED);
+        EventRole eventRole;
+        if (byGroup) {
+            eventRole = eventRoleService.findByRole(EnumEventRole.GROUPSERIESINVITED);
+        } else  {
+            eventRole = eventRoleService.findByRole(EnumEventRole.SERIESINVITED);
+        }
+
 
         if (userInEventWithRoleRepository.existsByUserAndEvent(user, event)) {
             return LocalizedStringVariables.USERALREADYPARTOFEVENTMESSAGE;

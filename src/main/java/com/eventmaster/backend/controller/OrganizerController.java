@@ -126,6 +126,18 @@ public class OrganizerController {
     }
 
     /**
+     * Endpoint to invite a tutor to an event.
+     * @param eventId ID of the event.
+     * @param userMail Mail of the tutor.
+     * @return String about success or failure.
+     */
+    @PostMapping("/event/{eventId}/tutor/invite")
+    public ResponseEntity<String> inviteTutorToEvent(@PathVariable long eventId,
+                                                     @RequestBody String userMail) {
+        return ResponseEntity.ok(userInEventWithRoleService.inviteTutorToEvent(eventId, userMail));
+    }
+
+    /**
      * Endpoint to invite a group of users to an event.
      * @param eventId ID of the event.
      * @param groupId ID of the group which will be invited.
@@ -239,9 +251,26 @@ public class OrganizerController {
     @PostMapping("/event-series/{eventSeriesId}/user/invite")
     public ResponseEntity<String> inviteUserToEventSeries(@PathVariable long eventSeriesId,
                                                           @RequestBody String userMail) {
-        return ResponseEntity.ok(eventSeriesService.inviteUserToEventSeries(eventSeriesId, userMail));
+        return ResponseEntity.ok(eventSeriesService.inviteUserToEventSeries(eventSeriesId, userMail, false));
     }
 
+    /**
+     * Endpoint to invite a group to a series of events.
+     * @param eventSeriesId ID of the eventseries.
+     * @param groupId ID of the group which will be invited.
+     * @return String about success or failure.
+     */
+    @PostMapping("/event-series/{eventSeriesId}/group/invite")
+    public ResponseEntity<String> inviteGroupToEventSeries(@PathVariable long eventSeriesId,
+                                                           @RequestBody long groupId) {
+        return ResponseEntity.ok(eventSeriesService.inviteGroupToEventSeries(eventSeriesId, groupId));
+    }
+
+    /**
+     * Endpoint to cancel an eventseries.
+     * @param eventSeriesId ID of the eventseries which will be cancelled.
+     * @return String about success or failure.
+     */
     @PostMapping("/event-series/{eventSeriesId}/cancel")
     public ResponseEntity<String> cancelEventSeries(@PathVariable long eventSeriesId) {
         return ResponseEntity.ok(eventSeriesService.cancelEventSeries(eventSeriesId));

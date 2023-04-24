@@ -1,14 +1,12 @@
 package com.eventmaster.backend.serviceswithouttoken;
 
-import com.eventmaster.backend.entities.EnumEventStatus;
-import com.eventmaster.backend.entities.Event;
-import com.eventmaster.backend.entities.EventSeries;
+import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.repositories.EventSeriesRepository;
 import local.variables.LocalizedStringVariables;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -20,11 +18,15 @@ import java.util.Set;
 public class EventSeriesService {
     private final EventSeriesRepository eventSeriesRepository;
     private final EventService eventService;
+    private final GroupService groupService;
+    private final UserInGroupService userInGroupService;
     private final UserInEventWithRoleService userInEventWithRoleService;
 
-    public EventSeriesService(EventSeriesRepository eventSeriesRepository, EventService eventService, UserInEventWithRoleService userInEventWithRoleService) {
+    public EventSeriesService(EventSeriesRepository eventSeriesRepository, EventService eventService, GroupService groupService, UserInGroupService userInGroupService, UserInEventWithRoleService userInEventWithRoleService) {
         this.eventSeriesRepository = eventSeriesRepository;
         this.eventService = eventService;
+        this.groupService = groupService;
+        this.userInGroupService = userInGroupService;
         this.userInEventWithRoleService = userInEventWithRoleService;
     }
 
@@ -142,7 +144,7 @@ public class EventSeriesService {
      * @param userMail Mail og the user who wille be invited.
      * @return String about success or failure.
      */
-    public String inviteUserToEventSeries(long eventSeriesId, String userMail) {
+    public String inviteUserToEventSeries(long eventSeriesId, String userMail, boolean byGroup) {
         EventSeries eventSeries = getEventSeriesById(eventSeriesId);
         Set<Event> events = eventSeries.getEvents();
 
@@ -159,10 +161,30 @@ public class EventSeriesService {
             }
         }
         if (nextEvent != null) {
-            return userInEventWithRoleService.inviteUserToFirstEventFromSeries(eventSeries, nextEvent.getId(), userMail);
+            return userInEventWithRoleService.inviteUserToFirstEventFromSeries(eventSeries, nextEvent.getId(), userMail, byGroup);
         }
         else {
             return LocalizedStringVariables.EVENTSERIESNONEXTEVENTFOUNDMESSAGE;
+        }
+    }
+
+    /**
+     * Invites a group to a series of events.
+     * @param eventSeriesId ID of the eventseries.
+     * @param groupId ID of the group which will be invited.
+     * @return String about success or failure.
+     */
+    public String inviteGroupToEventSeries(long eventSeriesId, long groupId) {
+        List<User> usersOfGroup = userInGroupService.getUsersOfGroup(groupId);
+
+        try {
+            for (User user : usersOfGroup) {
+                inviteUserToEventSeries(eventSeriesId, user.getEmailAdress(), true);
+            }
+            return LocalizedStringVariables.INVITEDGROUPTOEVENTSERIESSUCCESSMESSAGE;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return LocalizedStringVariables.INVITEDGROUPTOEVENTSERIESFAILUREMESSAGE;
         }
     }
 
