@@ -3,6 +3,7 @@ package com.eventmaster.backend.serviceswithouttoken;
 import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.repositories.EventRepository;
 import local.variables.LocalizedStringVariables;
+import org.aspectj.bridge.Message;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -61,13 +62,17 @@ public class EventService {
      * @param event New event with the new data.
      * @return String about success or failure.
      */
-    public String changeEvent(Event event) {
+    public MessageResponse changeEvent(Event event) {
         try {
             eventRepository.save(event);
-            return LocalizedStringVariables.EVENTCHANGEDSUCCESSMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.EVENTCHANGEDSUCCESSMESSAGE)
+                    .build();
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.EVENTCHANGEDFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.EVENTCHANGEDFAILUREMESSAGE)
+                    .build();
         }
     }
 
@@ -77,7 +82,7 @@ public class EventService {
      * @param newStatus New status of the event.
      * @return String about success or failure.
      */
-    public String changeStatusOfEvent(long eventId, String newStatus) {
+    public MessageResponse changeStatusOfEvent(long eventId, String newStatus) {
         try {
             Event event = getEventById(eventId);
             for (EnumEventStatus status : EnumEventStatus.values()) {
@@ -86,14 +91,20 @@ public class EventService {
 
                     this.eventRepository.save(event);
 
-                    return LocalizedStringVariables.EVENTSTATUSCHANGEDSUCCESSMESSAGE;
+                    return MessageResponse.builder()
+                            .message(LocalizedStringVariables.EVENTSTATUSCHANGEDSUCCESSMESSAGE)
+                            .build();
                 }
             }
-            return LocalizedStringVariables.GIVENEVENTSTATUSNOTCORRECTMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.GIVENEVENTSTATUSNOTCORRECTMESSAGE)
+                    .build();
 
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.EVENTSTATUSCHANGEDFAILURESMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.EVENTSTATUSCHANGEDFAILURESMESSAGE)
+                    .build();
         }
     }
 

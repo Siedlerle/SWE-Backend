@@ -2,6 +2,7 @@ package com.eventmaster.backend.controller;
 
 import com.eventmaster.backend.entities.Event;
 import com.eventmaster.backend.entities.EventSeries;
+import com.eventmaster.backend.entities.MessageResponse;
 import com.eventmaster.backend.entities.Preset;
 import com.eventmaster.backend.serviceswithouttoken.*;
 import org.springframework.http.ResponseEntity;
@@ -51,9 +52,9 @@ public class OrganizerController {
      * @param userMail Mail of user who created event and becomes organizer.
      * @return String about success or failure.
      */
-    @PostMapping("/event/create")
-    public ResponseEntity<String> createEvent(@RequestBody Event event,
-                                              @RequestParam String userMail) {
+    @PostMapping("/event/create/{userMail}")
+    public ResponseEntity<MessageResponse> createEvent(@RequestBody Event event,
+                                                       @PathVariable String userMail) {
         return ResponseEntity.ok(userInEventWithRoleService.createEventWithOrganizer(event, userMail));
     }
 
@@ -63,7 +64,7 @@ public class OrganizerController {
      * @return String about success or failure.
      */
     @PostMapping("/event/change")
-    public ResponseEntity<String> changeEvent(@RequestBody Event event) {
+    public ResponseEntity<MessageResponse> changeEvent(@RequestBody Event event) {
         return ResponseEntity.ok(eventService.changeEvent(event));
     }
 
@@ -74,7 +75,7 @@ public class OrganizerController {
      * @return String about success or failure.
      */
     @PostMapping("/event/{eventId}/status/change")
-    public ResponseEntity<String> changeStatusOfEvent(@PathVariable long eventId,
+    public ResponseEntity<MessageResponse> changeStatusOfEvent(@PathVariable long eventId,
                                                       @RequestBody String status) {
         return ResponseEntity.ok(eventService.changeStatusOfEvent(eventId, status));
     }

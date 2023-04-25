@@ -14,7 +14,7 @@ import java.util.List;
  * @author Fabian Eilber
  */
 public interface UserInEventWithRoleRepository extends JpaRepository<UserInEventWithRole, Long> {
-    List<UserInEventWithRole> findByUser(User user);
+    List<UserInEventWithRole> findByUser_Id(long userId);
     UserInEventWithRole findByUserAndEvent(User user, Event event);
     UserInEventWithRole findByUser_IdAndEvent_Id(long userId, long eventId);
     UserInEventWithRole findByEventAndEventRole(Event event, EventRole eventRole);

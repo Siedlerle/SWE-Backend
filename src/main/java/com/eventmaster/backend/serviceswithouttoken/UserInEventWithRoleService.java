@@ -2,6 +2,7 @@ package com.eventmaster.backend.serviceswithouttoken;
 
 import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.repositories.UserInEventWithRoleRepository;
+import com.eventmaster.backend.security.authentification.VerificationResponse;
 import local.variables.LocalizedStringVariables;
 import org.springframework.stereotype.Service;
 
@@ -144,12 +145,19 @@ public class UserInEventWithRoleService {
      */
     public List<Event> getAllEventsForUser(String emailAdress){
         try {
-
             User user = userService.findByEmailAdress(emailAdress);
-            //Todo findByUser wirft error
-            //List<UserInEventWithRole> userInEvents = userInEventWithRoleRepository.findByUser(user);
+
+            List<UserInEventWithRole> userInEvents = userInEventWithRoleRepository.findByUser_Id(user.getId());
 
             List<Event> userEvents = new ArrayList<>();
+
+            for (UserInEventWithRole event: userInEvents) {
+                if(event != null){
+                    userEvents.add(event.getEvent());
+                }
+            }
+
+
             return userEvents;
         }catch (Exception e) {
             e.printStackTrace();
@@ -168,7 +176,7 @@ public class UserInEventWithRoleService {
             EventRole eventRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
             User user = userService.findByEmailAdress(emailAdress);
 
-            List<UserInEventWithRole> eventsForUser =  userInEventWithRoleRepository.findByUser(user);
+            List<UserInEventWithRole> eventsForUser =  userInEventWithRoleRepository.findByUser_Id(user.getId());
 
             List<Event> registeredEventsForUser = new ArrayList<>();
             for(UserInEventWithRole event: eventsForUser){
@@ -353,14 +361,19 @@ public class UserInEventWithRoleService {
      * @param event Event which is being added
      * @return String about success or failure
      */
-    public String createEventWithOrganizer(Event event, String userMail) {
+    public MessageResponse createEventWithOrganizer(Event event, String userMail) {
         try {
             eventService.saveEvent(event);
             setOrganizerOfEvent(userMail, event.getId());
-            return LocalizedStringVariables.EVENTCREATEDSUCCESSMESSAGE;
+            return  MessageResponse.builder()
+                    .message(LocalizedStringVariables.EVENTCREATEDSUCCESSMESSAGE)
+                    .build();
+
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.EVENTCREATEDFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.EVENTCREATEDFAILUREMESSAGE)
+                    .build();
         }
     }
 
