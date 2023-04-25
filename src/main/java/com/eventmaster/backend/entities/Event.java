@@ -56,8 +56,8 @@ public class Event {
     String location;
     Date startDate;
     Date endDate;
-    Time startTime;
-    Time endTime;
+    String startTime;
+    String endTime;
     //---------------------------------------------------------------------------
 
 
@@ -149,12 +149,12 @@ public class Event {
         this.status = status;
     }
 
-    public boolean isPublic() {
-        return isPublic;
+    public boolean getIsPublic() {
+        return this.isPublic;
     }
 
-    public void setPublic(boolean aPublic) {
-        isPublic = aPublic;
+    public void setIsPublic(boolean isPublic) {
+        this.isPublic = isPublic;
     }
 
     public String getDescription() {
@@ -197,19 +197,19 @@ public class Event {
         this.endDate = endDate;
     }
 
-    public Time getStartTime() {
+    public String getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Time startTime) {
+    public void setStartTime(String startTime) {
         this.startTime = startTime;
     }
 
-    public Time getEndTime() {
+    public String getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Time endTime) {
+    public void setEndTime(String endTime) {
         this.endTime = endTime;
     }
 }

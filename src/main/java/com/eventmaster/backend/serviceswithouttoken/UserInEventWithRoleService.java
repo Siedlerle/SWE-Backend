@@ -363,6 +363,7 @@ public class UserInEventWithRoleService {
      */
     public MessageResponse createEventWithOrganizer(Event event, String userMail) {
         try {
+            event.setStatus(EnumEventStatus.SCHEDULED);
             eventService.saveEvent(event);
             setOrganizerOfEvent(userMail, event.getId());
             return  MessageResponse.builder()
@@ -387,6 +388,14 @@ public class UserInEventWithRoleService {
     public String createEventSeriesWithOrganizer(Event startEvent, EventSeries eventSeries, String userMail) {
         int intervalInMilliseconds = eventSeries.getDaysBetweenEvents() * 86400000;
 
+
+
+        eventSeriesService.saveEventSeries(eventSeries);
+
+        startEvent.setEventSeries(eventSeries);
+        setOrganizerOfEvent(userMail, startEvent.getId());
+        eventService.saveEvent(startEvent);
+
         Set<Event> eventsOfSeries = new HashSet<>();
         eventsOfSeries.add(startEvent);
 
@@ -397,8 +406,8 @@ public class UserInEventWithRoleService {
         long lengthOfEventInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
 
 
+
         for (int i = 0; i < eventSeries.getAmount(); i++) {
-            //Hier StartDate berechnen
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(startDate);
             calendar.add(Calendar.DAY_OF_MONTH, eventSeries.getDaysBetweenEvents());
@@ -431,7 +440,7 @@ public class UserInEventWithRoleService {
 
 
         try {
-            eventSeriesService.saveEventSeries(eventSeries);
+            //eventSeriesService.saveEventSeries(eventSeries);
             return LocalizedStringVariables.EVENTSERIESCREATEDSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();

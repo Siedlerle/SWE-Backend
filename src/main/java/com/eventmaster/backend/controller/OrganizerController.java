@@ -5,6 +5,10 @@ import com.eventmaster.backend.entities.EventSeries;
 import com.eventmaster.backend.entities.MessageResponse;
 import com.eventmaster.backend.entities.Preset;
 import com.eventmaster.backend.serviceswithouttoken.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -198,16 +202,23 @@ public class OrganizerController {
 
     /**
      * Endpoint to create a series of events.
-     * @param eventSeries EventSeries with information about time interval between events.
-     * @param startEvent Last event of the event series with event data.
+     * @param params Includes the startEvent and the eventseries data.
      * @param userMail Mail of user who created the events and becomes organizers.
      * @return String about success or failure.
      */
-    @PostMapping("/event-series/create")
-    public ResponseEntity<String> createEventSeries(@RequestParam EventSeries eventSeries,
-                                                    @RequestParam Event startEvent,
-                                                    @RequestParam String userMail) {
-        return ResponseEntity.ok(userInEventWithRoleService.createEventSeriesWithOrganizer(startEvent, eventSeries, userMail));
+    @PostMapping(value = "/event-series/create/{userMail}", produces = "application/json")
+    public ResponseEntity<String> createEventSeries(@RequestBody JsonNode params,
+                                                    @PathVariable String userMail) {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode startEventJson = params.get("startEvent");
+        Event startEvent = mapper.convertValue(startEventJson, Event.class);
+
+        JsonNode eventSeriesJson = params.get("eventSeries");
+        EventSeries eventSeries = mapper.convertValue(eventSeriesJson, EventSeries.class);
+
+        ObjectNode response = mapper.createObjectNode();
+        response.put("message", userInEventWithRoleService.createEventSeriesWithOrganizer(startEvent, eventSeries, userMail));
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response.toString());
     }
 
     /**

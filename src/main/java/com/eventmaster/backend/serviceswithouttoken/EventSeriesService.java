@@ -45,7 +45,11 @@ public class EventSeriesService {
     }
 
     protected void saveEventSeries(EventSeries eventSeries) {
-        eventSeriesRepository.save(eventSeries);
+        try {
+            eventSeriesRepository.save(eventSeries);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

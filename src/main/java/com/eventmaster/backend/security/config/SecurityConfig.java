@@ -46,7 +46,7 @@ public class SecurityConfig{
                 .authorizeHttpRequests()
                     .requestMatchers("/user/auth/**").permitAll()
                     .requestMatchers("/user/orga/**").permitAll()
-                    .requestMatchers("/organizer/event/**").permitAll()
+                    .requestMatchers("/organizer/**").permitAll()
                     .requestMatchers("/user/event/**").permitAll()
                     //.requestMatchers("/organizer/**").access(new OrganizerAuthorizationManager())
                     //.anyRequest().access(new CustomAuthorizationManager())

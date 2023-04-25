@@ -47,8 +47,8 @@ public class CompleteTest {
         testEvent.setLocation("Besprechungsraum");
         testEvent.setStartDate(Date.valueOf("2023-05-11"));
         testEvent.setEndDate(Date.valueOf("2023-05-14"));
-        testEvent.setStartTime(new Time(11,30,0));
-        testEvent.setEndTime(new Time(19,30,0));
+        testEvent.setStartTime((new Time(11,30,0)).toString());
+        testEvent.setEndTime((new Time(19,30,0)).toString());
     }
 
     public void initTestOrganizer() {
