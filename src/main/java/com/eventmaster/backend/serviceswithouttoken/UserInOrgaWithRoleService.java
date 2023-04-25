@@ -68,13 +68,13 @@ public class UserInOrgaWithRoleService {
      * @param emailAdress Email of the corresponding user
      * @return Role of the user in the Organsation
      */
-    public UserInOrgaWithRole getRoleInOrganisation(long organisationId, String emailAdress){
+    public OrgaRole getRoleInOrganisation(long organisationId, String emailAdress){
         try {
             User user = userService.getUserByMail(emailAdress);
 
             UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(),organisationId);
 
-            return userInOrgaWithRole;
+            return userInOrgaWithRole.getOrgaRole();
         }catch (Exception e) {
             e.printStackTrace();
             return null;

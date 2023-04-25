@@ -163,7 +163,7 @@ public class UserController {
      * @return organisation role
      */
     @PostMapping("/orga/{organisationId}/get-role-for-user/{emailAdress}")
-    public ResponseEntity<UserInOrgaWithRole> getRoleInOrganisation(@PathVariable long organisationId, @PathVariable String emailAdress){
+    public ResponseEntity<OrgaRole> getRoleInOrganisation(@PathVariable long organisationId, @PathVariable String emailAdress){
         return ResponseEntity.ok(userInOrgaWithRoleService.getRoleInOrganisation(organisationId, emailAdress));
     }
 
