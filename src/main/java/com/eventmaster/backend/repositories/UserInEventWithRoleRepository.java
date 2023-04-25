@@ -14,10 +14,10 @@ import java.util.List;
  * @author Fabian Eilber
  */
 public interface UserInEventWithRoleRepository extends JpaRepository<UserInEventWithRole, Long> {
+    List<UserInEventWithRole> findByUser(User user);
     UserInEventWithRole findByUserAndEvent(User user, Event event);
     UserInEventWithRole findByUser_IdAndEvent_Id(long userId, long eventId);
     UserInEventWithRole findByEventAndEventRole(Event event, EventRole eventRole);
-    List<UserInEventWithRole> findByEvent_Id(long eventId);
-    List<UserInEventWithRole> findByUser(User user);
+    //List<UserInEventWithRole> findByEvent_Id(long eventId);
     Boolean existsByUserAndEvent(User user, Event event);
 }

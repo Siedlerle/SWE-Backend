@@ -145,15 +145,11 @@ public class UserInEventWithRoleService {
     public List<Event> getAllEventsForUser(String emailAdress){
         try {
 
-            User user = userService.getUserByMail(emailAdress);
-
-            List<UserInEventWithRole> userInEvents = userInEventWithRoleRepository.findByUser(user);
+            User user = userService.findByEmailAdress(emailAdress);
+            //Todo findByUser wirft error
+            //List<UserInEventWithRole> userInEvents = userInEventWithRoleRepository.findByUser(user);
 
             List<Event> userEvents = new ArrayList<>();
-
-            for (UserInEventWithRole event: userInEvents) {
-                userEvents.add(event.getEvent());
-            }
             return userEvents;
         }catch (Exception e) {
             e.printStackTrace();
@@ -170,9 +166,10 @@ public class UserInEventWithRoleService {
     public List<Event> getRegisteredEventsForUser(String emailAdress){
         try {
             EventRole eventRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
-            User user = userService.getUserByMail(emailAdress);
+            User user = userService.findByEmailAdress(emailAdress);
 
             List<UserInEventWithRole> eventsForUser =  userInEventWithRoleRepository.findByUser(user);
+
             List<Event> registeredEventsForUser = new ArrayList<>();
             for(UserInEventWithRole event: eventsForUser){
                 if(event.getEventRole().equals(eventRole)) {
