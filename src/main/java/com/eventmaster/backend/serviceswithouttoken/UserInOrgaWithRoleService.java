@@ -52,7 +52,9 @@ public class UserInOrgaWithRoleService {
             List <Organisation> organisationsForUser = new ArrayList<Organisation>();
 
             for(UserInOrgaWithRole orgasForUser: userInOrgaWithRoles){
-                organisationsForUser.add(orgasForUser.getOrganisation());
+                if(!orgasForUser.getOrgaRole().getRole().equals(EnumOrgaRole.INVITED) && !orgasForUser.getOrgaRole().getRole().equals(EnumOrgaRole.REQUESTED)){
+                    organisationsForUser.add(orgasForUser.getOrganisation());
+                }
             }
 
             return organisationsForUser;
