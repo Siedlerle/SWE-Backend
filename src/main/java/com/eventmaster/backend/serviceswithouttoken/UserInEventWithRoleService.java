@@ -161,18 +161,21 @@ public class UserInEventWithRoleService {
         try {
             User user = userService.findByEmailAdress(emailAdress);
 
-            List<UserInEventWithRole> userInEvents = userInEventWithRoleRepository.findByUser_Id(user.getId());
+            List<Event> allEvents = eventService.getAllEvents();
 
-            List<Event> userEvents = new ArrayList<>();
+            List<Event> returnEvents = new ArrayList<>();
 
-            for (UserInEventWithRole event: userInEvents) {
-                if(event != null){
-                    userEvents.add(event.getEvent());
+            for (Event event:allEvents) {
+                if(userInEventWithRoleRepository.findByUser_IdAndEvent_Id(user.getId(), event.getId()) == null){
+                    returnEvents.add(event);
+                }else{
+                    if(!userInEventWithRoleRepository.findByUser_IdAndEvent_Id(user.getId(), event.getId()).getEventRole().getRole().equals(EnumEventRole.TUTOR)&&!userInEventWithRoleRepository.findByUser_IdAndEvent_Id(user.getId(), event.getId()).getEventRole().getRole().equals(EnumEventRole.ORGANIZER)&&!userInEventWithRoleRepository.findByUser_IdAndEvent_Id(user.getId(), event.getId()).getEventRole().getRole().equals(EnumEventRole.ATTENDEE)&&!userInEventWithRoleRepository.findByUser_IdAndEvent_Id(user.getId(),event.getId()).getEventRole().getRole().equals(EnumEventRole.GROUPATTENDEE)){
+                        returnEvents.add(event);
+                    }
                 }
             }
 
-
-            return userEvents;
+            return returnEvents;
         }catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -187,19 +190,23 @@ public class UserInEventWithRoleService {
      */
     public List<Event> getRegisteredEventsForUser(String emailAdress){
         try {
-            EventRole attendeeRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
-            EventRole groupAttendeeRole = eventRoleService.findByRole(EnumEventRole.GROUPATTENDEE);
+
             User user = userService.findByEmailAdress(emailAdress);
 
-            List<UserInEventWithRole> eventsForUser =  userInEventWithRoleRepository.findByUser_Id(user.getId());
+            List<UserInEventWithRole> userInEvents = userInEventWithRoleRepository.findByUser_Id(user.getId());
 
-            List<Event> registeredEventsForUser = new ArrayList<>();
-            for(UserInEventWithRole userInEventWithRole: eventsForUser){
-                if(userInEventWithRole.getEventRole().equals(attendeeRole) || userInEventWithRole.getEventRole().equals(groupAttendeeRole)) {
-                    registeredEventsForUser.add(userInEventWithRole.getEvent());
+            List<Event> userEvents = new ArrayList<>();
+
+            for (UserInEventWithRole event: userInEvents) {
+                if(event != null){
+                    if(event.getEventRole().getRole().equals(EnumEventRole.ATTENDEE) || event.getEventRole().getRole().equals(EnumEventRole.GROUPATTENDEE)){
+                        userEvents.add(event.getEvent());
+                    }
                 }
             }
-            return registeredEventsForUser;
+
+
+            return userEvents;
         }catch (Exception e) {
             e.printStackTrace();
             return null;
