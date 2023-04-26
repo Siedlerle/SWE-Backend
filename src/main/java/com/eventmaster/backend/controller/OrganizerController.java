@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,15 +52,29 @@ public class OrganizerController {
     //region Event
 
     /**
+     * Endpoint to get all managing events in a organisation.
+     * @param userMail Mail of the organizer.
+     * @param orgaId ID of the organisation.
+     * @return List of events.
+     */
+    @PostMapping("/event/managing/get/{userMail}")
+    public ResponseEntity<List<Event>> getManagingEventsInOrga(@PathVariable String userMail,
+                                                               @RequestBody long orgaId) {
+        return ResponseEntity.ok(userInEventWithRoleService.getManagingEvents(userMail, orgaId));
+    }
+
+    /**
      * Endpoint to create an event.
      * @param event Event which will be saved in the database.
      * @param userMail Mail of user who created event and becomes organizer.
+     * @param orgaId Organisation which will contain the event.
      * @return String about success or failure.
      */
-    @PostMapping("/event/create/{userMail}")
+    @PostMapping("/event/create/{userMail}/{orgaId}")
     public ResponseEntity<MessageResponse> createEvent(@RequestBody Event event,
-                                                       @PathVariable String userMail) {
-        return ResponseEntity.ok(userInEventWithRoleService.createEventWithOrganizer(event, userMail));
+                                                       @PathVariable String userMail,
+                                                       @PathVariable long orgaId) {
+        return ResponseEntity.ok(userInEventWithRoleService.createEventWithOrganizer(event, userMail, orgaId));
     }
 
     /**
@@ -204,11 +219,13 @@ public class OrganizerController {
      * Endpoint to create a series of events.
      * @param params Includes the startEvent and the eventseries data.
      * @param userMail Mail of user who created the events and becomes organizers.
+     * @param orgaId ID of the organisation.
      * @return String about success or failure.
      */
-    @PostMapping(value = "/event-series/create/{userMail}", produces = "application/json")
+    @PostMapping(value = "/event-series/create/{userMail}/{orgaId}", produces = "application/json")
     public ResponseEntity<String> createEventSeries(@RequestBody JsonNode params,
-                                                    @PathVariable String userMail) {
+                                                    @PathVariable String userMail,
+                                                    @PathVariable long orgaId) {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode startEventJson = params.get("startEvent");
         Event startEvent = mapper.convertValue(startEventJson, Event.class);
@@ -217,7 +234,7 @@ public class OrganizerController {
         EventSeries eventSeries = mapper.convertValue(eventSeriesJson, EventSeries.class);
 
         ObjectNode response = mapper.createObjectNode();
-        response.put("message", userInEventWithRoleService.createEventSeriesWithOrganizer(startEvent, eventSeries, userMail));
+        response.put("message", userInEventWithRoleService.createEventSeriesWithOrganizer(startEvent, eventSeries, userMail, orgaId));
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response.toString());
     }
 

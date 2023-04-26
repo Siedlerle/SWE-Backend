@@ -97,6 +97,7 @@ public final class LocalizedStringVariables {
 
 
         //USERINEVENTWITHROLE
+        public static final String USERALREADYATTENDTINGTOEVENT = "User is already attending to event";
         public static final String USERREGISTERESFOREVENTSUCCESSMESSAGE = "Registration for event was successful";
         public static final String USERREGISTERESFOREVENTFAILUREMESSAGE = "Registration for event failed";
         public static final String EVENTINVITATIONACCEPTEDSUCCESSMESSAGE = "Event invitation accepted successfully";

@@ -2,12 +2,10 @@ package com.eventmaster.backend.serviceswithouttoken;
 
 import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.repositories.UserInEventWithRoleRepository;
-import com.eventmaster.backend.security.authentification.VerificationResponse;
 import local.variables.LocalizedStringVariables;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -24,6 +22,7 @@ public class UserInEventWithRoleService {
     private final UserInEventWithRoleRepository userInEventWithRoleRepository;
     private final UserService userService;
     private final EventService eventService;
+    private final OrganisationService organisationService;
     private final EventSeriesService eventSeriesService;
     private final EventRoleService eventRoleService;
 
@@ -32,10 +31,11 @@ public class UserInEventWithRoleService {
             UserInEventWithRoleRepository userInEventWithRoleRepository,
             UserService userService,
             EventService eventService,
-            EventSeriesService eventSeriesService, EventRoleService eventRoleService) {
+            OrganisationService organisationService, EventSeriesService eventSeriesService, EventRoleService eventRoleService) {
         this.userInEventWithRoleRepository = userInEventWithRoleRepository;
         this.eventService = eventService;
         this.userService = userService;
+        this.organisationService = organisationService;
         this.eventSeriesService = eventSeriesService;
         this.eventRoleService = eventRoleService;
     }
@@ -46,24 +46,38 @@ public class UserInEventWithRoleService {
     /**
      * A user is being registered for an event
      * @param eventId Id of the corresponding event
-     * @param emailAdress Email of the corresponding user
+     * @param emailAddress Email of the corresponding user
      * @return success message
      */
-    public String registerForEvent(long eventId, String emailAdress){
-        try {
+    public String registerForEvent(long eventId, String emailAddress){
+        User user = userService.getUserByMail(emailAddress);
+        Event event = eventService.getEventById(eventId);
+        if(userInEventWithRoleRepository.existsByUserAndEvent(user, event)) {
+            UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(user, event);
+            EventRole attendeeRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
+            EventRole groupAttendeeRole = eventRoleService.findByRole(EnumEventRole.GROUPATTENDEE);
+            if (userInEventWithRole.getEventRole().equals(attendeeRole) || userInEventWithRole.getEventRole().equals(groupAttendeeRole)) {
+                return LocalizedStringVariables.USERALREADYATTENDTINGTOEVENT;
+            } else {
+                userInEventWithRole.setEventRole(attendeeRole);
+                return LocalizedStringVariables.USERREGISTERESFOREVENTSUCCESSMESSAGE;
+            }
+        } else {
+            try {
 
-            EventRole eventRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
+                EventRole eventRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
 
-            UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
-            userInEventWithRole.setEvent(eventService.getEventById(eventId));
-            userInEventWithRole.setUser(userService.getUserByMail(emailAdress));
-            userInEventWithRole.setEventRole(eventRole);
-            userInEventWithRoleRepository.save(userInEventWithRole);
+                UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
+                userInEventWithRole.setEvent(eventService.getEventById(eventId));
+                userInEventWithRole.setUser(userService.getUserByMail(emailAddress));
+                userInEventWithRole.setEventRole(eventRole);
+                userInEventWithRoleRepository.save(userInEventWithRole);
 
-            return LocalizedStringVariables.USERREGISTERESFOREVENTSUCCESSMESSAGE;
-        }catch (Exception e) {
-            e.printStackTrace();
-            return LocalizedStringVariables.USERREGISTERESFOREVENTFAILUREMESSAGE;
+                return LocalizedStringVariables.USERREGISTERESFOREVENTSUCCESSMESSAGE;
+            }catch (Exception e) {
+                e.printStackTrace();
+                return LocalizedStringVariables.USERREGISTERESFOREVENTFAILUREMESSAGE;
+            }
         }
     }
 
@@ -173,15 +187,16 @@ public class UserInEventWithRoleService {
      */
     public List<Event> getRegisteredEventsForUser(String emailAdress){
         try {
-            EventRole eventRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
+            EventRole attendeeRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
+            EventRole groupAttendeeRole = eventRoleService.findByRole(EnumEventRole.GROUPATTENDEE);
             User user = userService.findByEmailAdress(emailAdress);
 
             List<UserInEventWithRole> eventsForUser =  userInEventWithRoleRepository.findByUser_Id(user.getId());
 
             List<Event> registeredEventsForUser = new ArrayList<>();
-            for(UserInEventWithRole event: eventsForUser){
-                if(event.getEventRole().equals(eventRole)) {
-                    registeredEventsForUser.add(event.getEvent());
+            for(UserInEventWithRole userInEventWithRole: eventsForUser){
+                if(userInEventWithRole.getEventRole().equals(attendeeRole) || userInEventWithRole.getEventRole().equals(groupAttendeeRole)) {
+                    registeredEventsForUser.add(userInEventWithRole.getEvent());
                 }
             }
             return registeredEventsForUser;
@@ -216,6 +231,39 @@ public class UserInEventWithRoleService {
     }
 
     /**
+     * Gets all events of a user where he is invited to.
+     * @param userMail Mail of the user.
+     * @return List of events.
+     */
+    public List<Event> getEventInvitationsForUser(String userMail) {
+        User user = userService.getUserByMail(userMail);
+
+        List<Event> eventInvitations = new ArrayList<>();
+
+        EventRole invitedRole = eventRoleService.findByRole(EnumEventRole.INVITED);
+        EventRole seriesInvitedRole = eventRoleService.findByRole(EnumEventRole.SERIESINVITED);
+        EventRole groupInvitedRole = eventRoleService.findByRole(EnumEventRole.GROUPINVITED);
+        EventRole groupSeriesInvitedRole = eventRoleService.findByRole(EnumEventRole.GROUPSERIESINVITED);
+
+        try {
+            List<UserInEventWithRole> userInEventWithRoleList = userInEventWithRoleRepository.findByUser_Id(user.getId());
+            for (UserInEventWithRole userInEventWithRole : userInEventWithRoleList) {
+                Event event = userInEventWithRole.getEvent();
+                if (isUserInvitedToEvent(event.getId(), userMail)) {
+                    eventInvitations.add(event);
+                }
+            }
+            return eventInvitations;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+
+
+    }
+
+    /**
      * Checks if a user is invited to an event.
      * @param eventId ID of the event.
      * @param userMail Mail of the user.
@@ -233,6 +281,35 @@ public class UserInEventWithRoleService {
                 UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(user, event);
                 EventRole roleOfUser = userInEventWithRole.getEventRole();
                 if (roleOfUser.equals(invitedSingleRole) || roleOfUser.equals(invitedGroupRole) || roleOfUser.equals(invitedSeriesRole)) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Checks if user is already registered for event.
+     * @param eventId ID of the event.
+     * @param userMail Mail of the user.
+     * @return True if attending, false if not
+     */
+    public Boolean isUserRegisteredToEvent(long eventId, String userMail) {
+        Event event = eventService.getEventById(eventId);
+        User user = userService.getUserByMail(userMail);
+        EventRole attendeeRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
+        EventRole groupAttendeeRole = eventRoleService.findByRole(EnumEventRole.GROUPATTENDEE);
+        EventRole organizerRole = eventRoleService.findByRole(EnumEventRole.ORGANIZER);
+        EventRole tutorRole = eventRoleService.findByRole(EnumEventRole.TUTOR);
+
+        try {
+            if (userInEventWithRoleRepository.existsByUserAndEvent(user, event)) {
+                UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(user, event);
+                EventRole roleOfUser = userInEventWithRole.getEventRole();
+                if (roleOfUser.equals(attendeeRole) || roleOfUser.equals(groupAttendeeRole) || roleOfUser.equals(organizerRole) || roleOfUser.equals(tutorRole)) {
                     return true;
                 }
             }
@@ -357,13 +434,46 @@ public class UserInEventWithRoleService {
     //region OrganizerMethods
 
     /**
+     * Gets all events where a specific user is organizer in a specific organisation.
+     * @param userMail Mail of the organizer.
+     * @param orgaId ID of the organisation.
+     * @return List of the organizing events.
+     */
+    public List<Event> getManagingEvents(String userMail, long orgaId) {
+        User organizer = userService.getUserByMail(userMail);
+        EventRole organizerRole = eventRoleService.findByRole(EnumEventRole.ORGANIZER);
+
+        List<Event> managingEvents = new ArrayList<>();
+
+        try {
+            List<UserInEventWithRole> userInEventWithRoleList = userInEventWithRoleRepository.findByUser_Id(organizer.getId());
+            for (UserInEventWithRole userInEventWithRole : userInEventWithRoleList) {
+                if (userInEventWithRole.getEventRole().equals(organizerRole)) {
+                    Event managingEvent = userInEventWithRole.getEvent();
+                    if (managingEvent.getOrganisation().getId() == orgaId) {
+                        managingEvents.add(managingEvent);
+                    }
+                }
+            }
+            return managingEvents;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
      * An event is added to the database
      * @param event Event which is being added
+     * @param userMail Mailaddress of the organizer.
+     * @param orgaId ID of the organisation where the event belongs to.
      * @return String about success or failure
      */
-    public MessageResponse createEventWithOrganizer(Event event, String userMail) {
+    public MessageResponse createEventWithOrganizer(Event event, String userMail, long orgaId) {
         try {
+            Organisation organisation = organisationService.getOrganisationById(orgaId);
             event.setStatus(EnumEventStatus.SCHEDULED);
+            event.setOrganisation(organisation);
             eventService.saveEvent(event);
             setOrganizerOfEvent(userMail, event.getId());
             return  MessageResponse.builder()
@@ -383,16 +493,18 @@ public class UserInEventWithRoleService {
      * @param startEvent Event with the data for all other events and the start date of taking place.
      * @param eventSeries EventSeries with info about time interval between the events.
      * @param userMail Mail of the user who created the series and will be organizer.
+     * @param orgaId ID of the organisation.
      * @return String about success or failure.
      */
-    public String createEventSeriesWithOrganizer(Event startEvent, EventSeries eventSeries, String userMail) {
+    public String createEventSeriesWithOrganizer(Event startEvent, EventSeries eventSeries, String userMail, long orgaId) {
         int intervalInMilliseconds = eventSeries.getDaysBetweenEvents() * 86400000;
-
+        Organisation organisation = organisationService.getOrganisationById(orgaId);
 
 
         eventSeriesService.saveEventSeries(eventSeries);
 
         startEvent.setEventSeries(eventSeries);
+        startEvent.setOrganisation(organisation);
         setOrganizerOfEvent(userMail, startEvent.getId());
         eventService.saveEvent(startEvent);
 
@@ -430,7 +542,7 @@ public class UserInEventWithRoleService {
             event.setEndDate(newEndDate);
             event.setEndTime(startEvent.getEndTime());
 
-            event.setOrganisation(startEvent.getOrganisation());
+            event.setOrganisation(organisation);
             event.setEventSeries(eventSeries);
             setOrganizerOfEvent(userMail, event.getId());
             eventService.saveEvent(event);

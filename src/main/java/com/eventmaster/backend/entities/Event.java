@@ -1,5 +1,6 @@
 package com.eventmaster.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.io.File;
@@ -29,18 +30,23 @@ public class Event {
     @JoinColumn(name = "eventSeriesId",referencedColumnName = "id")
     private EventSeries eventSeries;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Chat> chats = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Document> documents = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Question> questions = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<UserInEventWithRole> eventUserRoles = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<GroupInEvent> eventGroups = new HashSet<>();
 

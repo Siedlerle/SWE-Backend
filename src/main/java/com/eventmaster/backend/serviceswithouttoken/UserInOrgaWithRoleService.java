@@ -83,14 +83,23 @@ public class UserInOrgaWithRoleService {
 
 
     /**
-     * Retrieves all events for users in an organisation
+     * Retrieves all visible events for a user in an organisation
      * @param organisationId Id of the corresponding organisation
+     * @param userMail Mail of the user.
      * @return List of events
      */
-    public List<Event> getAllVisibleEventsOfOrganisationForUser(long organisationId){
+    public List<Event> getAllVisibleEventsOfOrganisationForUser(long organisationId, String userMail){
+        List<Event> organisationEvents = eventService.getEventsOfOrganisation(organisationId);
+        List<Event> visibleEventsForUser = new ArrayList<>();
         try {
-             List<Event> events = eventService.getEventsOfOrganisation(organisationId);
-             return events;
+            for (Event organisationEvent : organisationEvents) {
+                if (organisationEvent.getIsPublic()) {
+                    if (!userInEventWithRoleService.isUserRegisteredToEvent(organisationEvent.getId(), userMail)) {
+                        visibleEventsForUser.add(organisationEvent);
+                    }
+                }
+            }
+            return visibleEventsForUser;
         }catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -108,11 +117,10 @@ public class UserInOrgaWithRoleService {
         try {
             User user = userService.getUserByMail(emailAdress);
 
-            List<Event> userInEventWithRoles = userInEventWithRoleService.getAllEventsForUser(emailAdress);
+            List<Event> userInEventWithRoles = userInEventWithRoleService.getRegisteredEventsForUser(emailAdress);
 
             List<Event> registeredEventsInOrga = new ArrayList<>();
-
-            for (Event check:userInEventWithRoles) {
+            for (Event check : userInEventWithRoles) {
                 if(check.getOrganisation().getId() == organisationId){
                     registeredEventsInOrga.add(check);
                 }
