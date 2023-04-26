@@ -48,6 +48,7 @@ public class SecurityConfig{
                     .requestMatchers("/user/orga/**").permitAll()
                     .requestMatchers("/organizer/**").permitAll()
                     .requestMatchers("/user/event/**").permitAll()
+                    .requestMatchers("/tutor/**").permitAll()
                     //.requestMatchers("/organizer/**").access(new OrganizerAuthorizationManager())
                     //.anyRequest().access(new CustomAuthorizationManager())
                 .and()

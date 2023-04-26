@@ -343,9 +343,10 @@ public class UserInEventWithRoleService {
             Event event = eventService.getEventById(eventId);
             Set<UserInEventWithRole> userInEventWithRoleList = event.getEventUserRoles();
             EventRole attendeeRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
+            EventRole groupAttendeeRole = eventRoleService.findByRole(EnumEventRole.GROUPATTENDEE);
             List<User> attendees = new ArrayList<>();
             for (UserInEventWithRole uer : userInEventWithRoleList) {
-                if (uer.getEventRole().equals(attendeeRole)) {
+                if (uer.getEventRole().equals(attendeeRole) || uer.getEventRole().equals(groupAttendeeRole)) {
                     User attendee = uer.getUser();
                     attendees.add(attendee);
                 }

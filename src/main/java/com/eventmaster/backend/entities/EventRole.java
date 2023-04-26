@@ -1,5 +1,6 @@
 package com.eventmaster.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -21,6 +22,7 @@ public class EventRole {
     @Enumerated(EnumType.ORDINAL)
     private EnumEventRole role;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "eventRole",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<UserInEventWithRole> userInEventWithRoles  = new HashSet<>();
 
