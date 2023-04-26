@@ -51,15 +51,15 @@ public class OrganizerController {
 
     //region Event
 
-    /**
+   /**
      * Endpoint to get all managing events in a organisation.
      * @param userMail Mail of the organizer.
      * @param orgaId ID of the organisation.
      * @return List of events.
      */
-    @PostMapping("/event/managing/get/{userMail}")
+    @PostMapping("/orga/{orgaId}/event/managing/get/{userMail}")
     public ResponseEntity<List<Event>> getManagingEventsInOrga(@PathVariable String userMail,
-                                                               @RequestBody long orgaId) {
+                                                               @PathVariable long orgaId) {
         return ResponseEntity.ok(userInEventWithRoleService.getManagingEvents(userMail, orgaId));
     }
 

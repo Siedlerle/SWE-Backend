@@ -238,6 +238,16 @@ public class UserController {
         return ResponseEntity.ok(userInOrgaWithRoleService.getRegisteredEventsForUserInOrganisation(organisationId, emailAdress));
     }
 
+    /**
+     * Endpoint for a user to get his invitations to organisations.
+     * @param emailAddress Mail of the user.
+     * @return List of organisations.
+     */
+    @PostMapping("/orga/get-invitations/{emailAddress}")
+    public ResponseEntity<List<Organisation>> getOrganisationInvitationsForUser(@PathVariable String emailAddress) {
+        return ResponseEntity.ok(userInOrgaWithRoleService.getOrganisationInvitationsForUser(emailAddress));
+    }
+
 
     //Operations regarding user, event connection
     /**

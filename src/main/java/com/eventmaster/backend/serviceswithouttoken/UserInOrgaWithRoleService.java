@@ -332,4 +332,32 @@ public class UserInOrgaWithRoleService {
             }
         }
     }
+
+    /**
+     * Gets all organisations where a user is invited to.
+     * @param userMail Mail of the user.
+     * @return List of organisations.
+     */
+    public List<Organisation> getOrganisationInvitationsForUser(String userMail) {
+        User user = userService.getUserByMail(userMail);
+
+        List<Organisation> invitations = new ArrayList<>();
+
+        OrgaRole invitedRole = orgaRoleService.findByRole(EnumOrgaRole.INVITED);
+
+        try {
+            List<UserInOrgaWithRole> userInOrgaWithRoleList = userInOrgaWithRoleRepository.findByUser(user);
+
+            for (UserInOrgaWithRole userInOrgaWithRole : userInOrgaWithRoleList) {
+                if (userInOrgaWithRole.getOrgaRole().equals(invitedRole)) {
+                    Organisation organisation = userInOrgaWithRole.getOrganisation();
+                    invitations.add(organisation);
+                }
+            }
+            return invitations;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
