@@ -168,13 +168,8 @@ public class UserInEventWithRoleService {
                     returnEvents.add(userInEventWithRole.getEvent());
                 }
             }
-
             /*
             List<Event> allEvents = eventService.getAllEvents();
-
-
-
-
             for (Event event:allEvents) {
                 if(userInEventWithRoleRepository.findByUser_IdAndEvent_Id(user.getId(), event.getId()) == null){
                     returnEvents.add(event);
