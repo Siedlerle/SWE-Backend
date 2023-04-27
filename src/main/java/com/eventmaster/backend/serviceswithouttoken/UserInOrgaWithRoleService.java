@@ -143,17 +143,21 @@ public class UserInOrgaWithRoleService {
      * @return successmessage
      */
     public String requestJoin(long organisationId, String userMail){
-        User user = userService.getUserByMail(userMail);
-        Organisation organisation = organisationService.getOrganisationById(organisationId);
-        OrgaRole requestRole = orgaRoleService.findByRole(EnumOrgaRole.REQUESTED);
-
-        UserInOrgaWithRole userInOrgaWithRole = new UserInOrgaWithRole();
-        userInOrgaWithRole.setUser(user);
-        userInOrgaWithRole.setOrganisation(organisation);
-        userInOrgaWithRole.setOrgaRole(requestRole);
         try {
-            userInOrgaWithRoleRepository.save(userInOrgaWithRole);
-            return LocalizedStringVariables.REQUESTORGAJOINSUCCESSMESSAGE;
+            User user = userService.getUserByMail(userMail);
+            Organisation organisation = organisationService.getOrganisationById(organisationId);
+            OrgaRole requestRole = orgaRoleService.findByRole(EnumOrgaRole.REQUESTED);
+
+            if(userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId) == null){
+                UserInOrgaWithRole userInOrgaWithRole = new UserInOrgaWithRole();
+                userInOrgaWithRole.setUser(user);
+                userInOrgaWithRole.setOrganisation(organisation);
+                userInOrgaWithRole.setOrgaRole(requestRole);
+
+                userInOrgaWithRoleRepository.save(userInOrgaWithRole);
+                return LocalizedStringVariables.REQUESTORGAJOINSUCCESSMESSAGE;
+            }
+            return LocalizedStringVariables.REQUESTORGAJOINALREADYEXISTSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
             return LocalizedStringVariables.REQUESTORGAJOINFAILUREMESSAGE;

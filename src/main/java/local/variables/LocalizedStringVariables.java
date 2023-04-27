@@ -142,6 +142,7 @@ public final class LocalizedStringVariables {
 
         //USERINORGAWITHROLE
         public static final String REQUESTORGAJOINSUCCESSMESSAGE = "Request to join organisation was successful";
+        public static final String REQUESTORGAJOINALREADYEXISTSMESSAGE = "Request to join was rejected, because user is already in organisation";
         public static final String REQUESTORGAJOINFAILUREMESSAGE = "Request to join organisation failed";
         public static final String LEAVEORGANISATIONSUCCESSMESSAGE = "User left organisation successfully";
         public static final String LEAVEORGANISATIONFAILUREMESSAGE = "User left organisation not successfully";

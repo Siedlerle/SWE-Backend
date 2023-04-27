@@ -142,9 +142,7 @@ public class UserInEventWithRoleService {
             Event event = eventService.getEventById(eventId);
             UserInEventWithRole userInEvent = userInEventWithRoleRepository.findByUserAndEvent(user, event);
 
-            EventRole eventRole = userInEvent.getEventRole();
-
-            return eventRole;
+            return userInEvent.getEventRole();
         }catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -161,9 +159,21 @@ public class UserInEventWithRoleService {
         try {
             User user = userService.findByEmailAdress(emailAdress);
 
-            List<Event> allEvents = eventService.getAllEvents();
+            List<UserInEventWithRole> userInEventWithRoles = userInEventWithRoleRepository.findByUser_Id(user.getId());
 
             List<Event> returnEvents = new ArrayList<>();
+
+            for (UserInEventWithRole userInEventWithRole: userInEventWithRoles) {
+                if(!userInEventWithRole.getEventRole().getRole().equals(EnumEventRole.TUTOR) && !userInEventWithRole.getEventRole().getRole().equals(EnumEventRole.ORGANIZER) && !userInEventWithRole.getEventRole().getRole().equals(EnumEventRole.ATTENDEE) && !userInEventWithRole.getEventRole().getRole().equals(EnumEventRole.GROUPATTENDEE)){
+                    returnEvents.add(userInEventWithRole.getEvent());
+                }
+            }
+
+            /*
+            List<Event> allEvents = eventService.getAllEvents();
+
+
+
 
             for (Event event:allEvents) {
                 if(userInEventWithRoleRepository.findByUser_IdAndEvent_Id(user.getId(), event.getId()) == null){
@@ -174,7 +184,7 @@ public class UserInEventWithRoleService {
                     }
                 }
             }
-
+            */
             return returnEvents;
         }catch (Exception e) {
             e.printStackTrace();
