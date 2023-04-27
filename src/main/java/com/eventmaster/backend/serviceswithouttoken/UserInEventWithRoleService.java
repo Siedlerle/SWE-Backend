@@ -4,6 +4,7 @@ import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.repositories.UserInEventWithRoleRepository;
 import local.variables.LocalizedStringVariables;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Date;
 import java.util.*;
@@ -270,9 +271,15 @@ public class UserInEventWithRoleService {
             e.printStackTrace();
             return null;
         }
+    }
 
 
+    public List<UserInEventWithRole> getUsersInEvent (long evenId){
+        return userInEventWithRoleRepository.findByEvent_Id(evenId);
+    }
 
+    public void deleteUserInEventWithRole(UserInEventWithRole userInEventWithRole){
+        userInEventWithRoleRepository.delete(userInEventWithRole);
     }
 
     /**
@@ -489,6 +496,7 @@ public class UserInEventWithRoleService {
             event.setOrganisation(organisation);
             eventService.saveEvent(event);
             setOrganizerOfEvent(userMail, event.getId());
+
             return  MessageResponse.builder()
                     .message(LocalizedStringVariables.EVENTCREATEDSUCCESSMESSAGE)
                     .build();

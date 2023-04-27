@@ -4,6 +4,7 @@ import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.repositories.EventRepository;
 import local.variables.LocalizedStringVariables;
 import org.aspectj.bridge.Message;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,9 +20,13 @@ import java.util.List;
 public class EventService {
 
     private final EventRepository eventRepository;
+    private final UserInEventWithRoleService userInEventWithRoleService;
 
-    public EventService(EventRepository eventRepository) {
+    public EventService(EventRepository eventRepository,
+                        @Lazy UserInEventWithRoleService userInEventWithRoleService
+    ) {
         this.eventRepository = eventRepository;
+        this.userInEventWithRoleService = userInEventWithRoleService;
     }
 
     /**
@@ -102,7 +107,7 @@ public class EventService {
         try {
             Event event = getEventById(eventId);
             for (EnumEventStatus status : EnumEventStatus.values()) {
-                if (status.status.equals(newStatus)) {
+                if (status.status.toUpperCase().equals(newStatus)) {
                     event.setStatus(status);
 
                     this.eventRepository.save(event);
@@ -129,19 +134,30 @@ public class EventService {
      * @param eventId ID of the event which will be deleted.
      * @return Boolen as status for success
      */
-    public String deleteEvent(Long eventId){
+    public MessageResponse deleteEvent(Long eventId){
         Event event = getEventById(eventId);
         EnumEventStatus status = event.getStatus();
         if (status.equals(EnumEventStatus.CANCELLED)) {
             try {
+
+                List<UserInEventWithRole> userInEventWithRoles = userInEventWithRoleService.getUsersInEvent(eventId);
+                for (UserInEventWithRole userInEventWithRole: userInEventWithRoles) {
+                    userInEventWithRoleService.deleteUserInEventWithRole(userInEventWithRole);
+                }
                 eventRepository.deleteById(eventId);
-                return LocalizedStringVariables.EVENTDELETEDSUCCESSMESSAGE;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.EVENTDELETEDSUCCESSMESSAGE)
+                        .build();
             } catch (Exception e) {
                 e.printStackTrace();
-                return LocalizedStringVariables.EVENTDELETEDFAILUREMESSAGE;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.EVENTDELETEDFAILUREMESSAGE)
+                        .build();
             }
         } else {
-            return LocalizedStringVariables.EVENTNOTCANCELLEDMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.EVENTSTATUSCHANGEDFAILURESMESSAGE)
+                    .build();
         }
     }
 
@@ -163,7 +179,7 @@ public class EventService {
      * @param reason Reason why the event will be cancelled.
      * @return String about success or failure.
      */
-    public String cancelEvent(long eventId, String reason) {
+    public MessageResponse cancelEvent(long eventId, String reason) {
         Event event = getEventById(eventId);
         event.setStatus(EnumEventStatus.CANCELLED);
 
@@ -171,10 +187,14 @@ public class EventService {
         try {
             eventRepository.save(event);
             //TODO Mail an alle Teilnehmer und Eingeladene senden.
-            return LocalizedStringVariables.EVENTCANCELLEDSUCCESSMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.EVENTCANCELLEDSUCCESSMESSAGE)
+                    .build();
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.EVENTCANCELLEDFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.EVENTCANCELLEDFAILUREMESSAGE)
+                    .build();
         }
     }
 
