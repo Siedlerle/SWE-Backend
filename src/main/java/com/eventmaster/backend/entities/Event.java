@@ -57,7 +57,7 @@ public class Event {
     EnumEventStatus status;
     boolean isPublic;
     String description;
-    File image;
+    String image;
     //@TODO brauchen wir hier eine Adress Tabelle oder wollen wir location als String speichern? (Falls ja, kann man auch jeder Organiazion Adresse(n) zuweisen)
     String location;
     Date startDate;
@@ -171,11 +171,11 @@ public class Event {
         this.description = description;
     }
 
-    public File getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(File image) {
+    public void setImage(String image) {
         this.image = image;
     }
 

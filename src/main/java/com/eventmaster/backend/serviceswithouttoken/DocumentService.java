@@ -158,12 +158,36 @@ public class DocumentService {
         }
 
         try (InputStream inputStream = multipartFile.getInputStream()) {
-            Path filePath = uploadPath.resolve(String.valueOf(documentId));//fileCode
+            Path filePath = uploadPath.resolve(String.valueOf(documentId)); //fileCode
             Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException ioe) {
             throw new IOException("Could not save file: " + fileName, ioe);
         }
 
         return String.valueOf(documentId);
+    }
+
+    /**
+     * Saves the image for an event in the resources and returns the filepath.
+     * @param eventId ID of the event which the image is belonging to.
+     * @param image Image of the event.
+     * @return FilePath of the image.
+     * @throws IOException
+     */
+    public String saveEventImage(long eventId, MultipartFile image) throws IOException {
+        String fileExtension = StringUtils.getFilenameExtension(image.getOriginalFilename());
+        Path uploadPath = Paths.get("src/main/resources/eventimages/");
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        try (InputStream inputStream = image.getInputStream()) {
+            Path filePath = uploadPath.resolve(String.valueOf(eventId)+"."+fileExtension);
+            String fileName = "http://localhost:8080/eventimages/" + String.valueOf(eventId)+"."+fileExtension;
+            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+            return fileName;
+        } catch (IOException ioe) {
+            throw new IOException("Could not save file: " + eventId, ioe);
+        }
     }
 }

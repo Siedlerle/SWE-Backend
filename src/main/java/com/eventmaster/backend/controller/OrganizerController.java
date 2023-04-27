@@ -2,6 +2,7 @@ package com.eventmaster.backend.controller;
 
 import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.serviceswithouttoken.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -9,7 +10,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -62,16 +65,21 @@ public class OrganizerController {
 
     /**
      * Endpoint to create an event.
-     * @param event Event which will be saved in the database.
+     * @param eventJson Data of the event
+     * @param image Image of the event
      * @param userMail Mail of user who created event and becomes organizer.
      * @param orgaId Organisation which will contain the event.
      * @return String about success or failure.
      */
     @PostMapping("/event/create/{userMail}/{orgaId}")
-    public ResponseEntity<MessageResponse> createEvent(@RequestBody Event event,
+    public ResponseEntity<MessageResponse> createEvent(@RequestParam("event") String eventJson,
+                                                       @RequestParam(value = "image", required = false) MultipartFile image,
                                                        @PathVariable String userMail,
-                                                       @PathVariable long orgaId) {
-        return ResponseEntity.ok(userInEventWithRoleService.createEventWithOrganizer(event, userMail, orgaId));
+                                                       @PathVariable long orgaId) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        Event event = mapper.readValue(eventJson, Event.class);
+
+        return ResponseEntity.ok(userInEventWithRoleService.createEventWithOrganizer(event, userMail, orgaId, image));
     }
 
     /**
@@ -226,24 +234,26 @@ public class OrganizerController {
 
     /**
      * Endpoint to create a series of events.
-     * @param params Includes the startEvent and the eventseries data.
+     * @param eventJson Data of the first Event of the series
+     * @param eventSeriesJson Data of the eventseries
+     * @param image Image of the events.
      * @param userMail Mail of user who created the events and becomes organizers.
      * @param orgaId ID of the organisation.
      * @return String about success or failure.
      */
     @PostMapping(value = "/event-series/create/{userMail}/{orgaId}", produces = "application/json")
-    public ResponseEntity<String> createEventSeries(@RequestBody JsonNode params,
+    public ResponseEntity<String> createEventSeries(@RequestParam("event") String eventJson,
+                                                    @RequestParam("eventseries") String eventSeriesJson,
+                                                    @RequestParam(value = "image", required = false) MultipartFile image,
                                                     @PathVariable String userMail,
-                                                    @PathVariable long orgaId) {
+                                                    @PathVariable long orgaId) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode startEventJson = params.get("startEvent");
-        Event startEvent = mapper.convertValue(startEventJson, Event.class);
+        Event startEvent = mapper.readValue(eventJson, Event.class);
 
-        JsonNode eventSeriesJson = params.get("eventSeries");
-        EventSeries eventSeries = mapper.convertValue(eventSeriesJson, EventSeries.class);
+        EventSeries eventSeries = mapper.readValue(eventSeriesJson, EventSeries.class);
 
         ObjectNode response = mapper.createObjectNode();
-        response.put("message", userInEventWithRoleService.createEventSeriesWithOrganizer(startEvent, eventSeries, userMail, orgaId));
+        response.put("message", userInEventWithRoleService.createEventSeriesWithOrganizer(startEvent, eventSeries, userMail, orgaId, image));
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response.toString());
     }
 

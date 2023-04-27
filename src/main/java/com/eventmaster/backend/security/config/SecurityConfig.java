@@ -44,6 +44,7 @@ public class SecurityConfig{
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
+                    .requestMatchers("/eventimages/**").permitAll()
                     .requestMatchers("/user/auth/**").permitAll()
                     .requestMatchers("/user/orga/**").permitAll()
                     .requestMatchers("/organizer/**").permitAll()

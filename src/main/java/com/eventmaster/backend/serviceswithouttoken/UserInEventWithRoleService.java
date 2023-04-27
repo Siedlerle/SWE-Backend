@@ -5,7 +5,9 @@ import com.eventmaster.backend.repositories.UserInEventWithRoleRepository;
 import local.variables.LocalizedStringVariables;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.sql.Date;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -27,6 +29,7 @@ public class UserInEventWithRoleService {
     private final EventSeriesService eventSeriesService;
     private final EventRoleService eventRoleService;
     private final UserInOrgaWithRoleService userInOrgaWithRoleService;
+    private final DocumentService documentService;
 
 
     public UserInEventWithRoleService(
@@ -36,6 +39,7 @@ public class UserInEventWithRoleService {
             OrganisationService organisationService,
             EventSeriesService eventSeriesService,
             EventRoleService eventRoleService,
+            DocumentService documentService,
             @Lazy UserInOrgaWithRoleService userInOrgaWithRoleService) {
         this.userInEventWithRoleRepository = userInEventWithRoleRepository;
         this.eventService = eventService;
@@ -44,6 +48,7 @@ public class UserInEventWithRoleService {
         this.eventSeriesService = eventSeriesService;
         this.eventRoleService = eventRoleService;
         this.userInOrgaWithRoleService = userInOrgaWithRoleService;
+        this.documentService = documentService;
     }
 
 
@@ -488,12 +493,16 @@ public class UserInEventWithRoleService {
      * @param orgaId ID of the organisation where the event belongs to.
      * @return String about success or failure
      */
-    public MessageResponse createEventWithOrganizer(Event event, String userMail, long orgaId) {
+    public MessageResponse createEventWithOrganizer(Event event, String userMail, long orgaId, MultipartFile image) {
         try {
             Organisation organisation = organisationService.getOrganisationById(orgaId);
             event.setStatus(EnumEventStatus.SCHEDULED);
             event.setOrganisation(organisation);
             eventService.saveEvent(event);
+            if (image != null) {
+                String imageUrl = documentService.saveEventImage(event.getId(), image);
+                event.setImage(imageUrl);
+            }
             setOrganizerOfEvent(userMail, event.getId());
 
             return  MessageResponse.builder()
@@ -516,7 +525,7 @@ public class UserInEventWithRoleService {
      * @param orgaId ID of the organisation.
      * @return String about success or failure.
      */
-    public String createEventSeriesWithOrganizer(Event startEvent, EventSeries eventSeries, String userMail, long orgaId) {
+    public String createEventSeriesWithOrganizer(Event startEvent, EventSeries eventSeries, String userMail, long orgaId, MultipartFile image) throws IOException {
         int intervalInMilliseconds = eventSeries.getDaysBetweenEvents() * 86400000;
         Organisation organisation = organisationService.getOrganisationById(orgaId);
 
@@ -525,9 +534,13 @@ public class UserInEventWithRoleService {
 
         startEvent.setEventSeries(eventSeries);
         startEvent.setOrganisation(organisation);
-        setOrganizerOfEvent(userMail, startEvent.getId());
+        startEvent.setStatus(EnumEventStatus.SCHEDULED);
         eventService.saveEvent(startEvent);
-
+        setOrganizerOfEvent(userMail, startEvent.getId());
+        if (image != null) {
+            String imageUrl = documentService.saveEventImage(startEvent.getId(), image);
+            startEvent.setImage(imageUrl);
+        }
         Set<Event> eventsOfSeries = new HashSet<>();
         eventsOfSeries.add(startEvent);
 
@@ -539,7 +552,7 @@ public class UserInEventWithRoleService {
 
 
 
-        for (int i = 0; i < eventSeries.getAmount(); i++) {
+        for (int i = 0; i < eventSeries.getAmount() - 1; i++) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(startDate);
             calendar.add(Calendar.DAY_OF_MONTH, eventSeries.getDaysBetweenEvents());
@@ -564,8 +577,8 @@ public class UserInEventWithRoleService {
 
             event.setOrganisation(organisation);
             event.setEventSeries(eventSeries);
-            setOrganizerOfEvent(userMail, event.getId());
             eventService.saveEvent(event);
+            setOrganizerOfEvent(userMail, event.getId());
             eventsOfSeries.add(event);
         }
         eventSeries.setEvents(eventsOfSeries);
