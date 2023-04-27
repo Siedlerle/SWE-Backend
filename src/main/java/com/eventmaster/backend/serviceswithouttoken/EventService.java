@@ -64,7 +64,23 @@ public class EventService {
      */
     public MessageResponse changeEvent(Event event) {
         try {
-            eventRepository.save(event);
+            Event updatedEvent = eventRepository.findById(event.getId());
+            updatedEvent.setId(event.getId());
+            updatedEvent.setName(event.getName());
+            updatedEvent.setDescription(event.getDescription());
+            updatedEvent.setStartDate(event.getStartDate());
+            updatedEvent.setStartTime(event.getStartTime());
+            updatedEvent.setEndDate(event.getEndDate());
+            updatedEvent.setEndTime(event.getEndTime());
+            updatedEvent.setLocation(event.getLocation());
+            updatedEvent.setIsPublic(event.getIsPublic());
+            updatedEvent.setStatus(event.getStatus());
+            updatedEvent.setType(event.getType());
+            updatedEvent.setImage(event.getImage());
+            updatedEvent.setEventSeries(event.getEventSeries());
+            updatedEvent.setOrganisation(event.getOrganisation());
+
+            eventRepository.save(updatedEvent);
             return MessageResponse.builder()
                     .message(LocalizedStringVariables.EVENTCHANGEDSUCCESSMESSAGE)
                     .build();

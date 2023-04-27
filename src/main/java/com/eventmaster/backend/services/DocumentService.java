@@ -24,7 +24,7 @@ public class DocumentService {
     }
 
     public void createDocument(long eventId, MultipartFile multipartFile) throws IOException {
-        Event event = eventRepository.findById(eventId).get();
+        Event event = eventRepository.findById(eventId);
 
         String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
         long size = multipartFile.getSize();

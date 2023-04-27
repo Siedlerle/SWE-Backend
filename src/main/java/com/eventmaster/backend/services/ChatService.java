@@ -22,7 +22,7 @@ public class ChatService {
     }
 
     public void createChat(long eventId, Chat chat) {
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event not found"));
+        Event event = eventRepository.findById(eventId);
         chat.setEvent(event);
         chatRepository.save(chat);
     }
