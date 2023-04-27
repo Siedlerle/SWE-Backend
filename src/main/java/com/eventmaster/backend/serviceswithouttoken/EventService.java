@@ -102,7 +102,7 @@ public class EventService {
         try {
             Event event = getEventById(eventId);
             for (EnumEventStatus status : EnumEventStatus.values()) {
-                if (status.status.equals(newStatus)) {
+                if (status.status.toUpperCase().equals(newStatus)) {
                     event.setStatus(status);
 
                     this.eventRepository.save(event);
@@ -163,7 +163,7 @@ public class EventService {
      * @param reason Reason why the event will be cancelled.
      * @return String about success or failure.
      */
-    public String cancelEvent(long eventId, String reason) {
+    public MessageResponse cancelEvent(long eventId, String reason) {
         Event event = getEventById(eventId);
         event.setStatus(EnumEventStatus.CANCELLED);
 
@@ -171,10 +171,14 @@ public class EventService {
         try {
             eventRepository.save(event);
             //TODO Mail an alle Teilnehmer und Eingeladene senden.
-            return LocalizedStringVariables.EVENTCANCELLEDSUCCESSMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.EVENTCANCELLEDSUCCESSMESSAGE)
+                    .build();
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.EVENTCANCELLEDFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.EVENTCANCELLEDFAILUREMESSAGE)
+                    .build();
         }
     }
 

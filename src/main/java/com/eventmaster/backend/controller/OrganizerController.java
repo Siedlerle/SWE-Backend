@@ -203,9 +203,9 @@ public class OrganizerController {
      * @param reason Reason why the event is cancelled.
      * @return String about success or failure.
      */
-    @PostMapping("event/{eventId}/cancel")
-    public ResponseEntity<String> cancelEvent(@PathVariable long eventId,
-                                              @RequestParam String reason) {
+    @PostMapping("/event/{eventId}/cancel")
+    public ResponseEntity<MessageResponse> cancelEvent(@PathVariable long eventId,
+                                              @RequestBody String reason) {
         return ResponseEntity.ok(eventService.cancelEvent(eventId, reason));
     }
 
