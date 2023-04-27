@@ -801,11 +801,11 @@ public class UserInEventWithRoleService {
         }
     }
     /** Method to get all affiliated users for the event
-     * @param event Event to be checked.
+     * @param eventId EventId to be checked.
      * @return List of UserInEventWithRole that are affiliated with the event.
      */
-    public List<UserInEventWithRole> getUserInEventWithRoleForEvent(Event event){
-        return userInEventWithRoleRepository.findByEvent_Id(event.getId());
+    public List<UserInEventWithRole> findByEventId(long eventId){
+        return userInEventWithRoleRepository.findByEvent_Id(eventId);
     }
     //endregion
 

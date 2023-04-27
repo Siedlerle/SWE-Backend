@@ -373,20 +373,25 @@ public class UserInOrgaWithRoleService {
      * @return List of Users that aren't affiliated.
      */
     public List<User> getUnaffiliatedUsersForEvent(Event event) {
+        long eventID = event.getId();
         List<User> unaffiliatedUsers = new ArrayList<>();
         List<User> allUsersInOrga = userInOrgaWithRoleRepository
                 .findByOrganisation_Id(event.getOrganisation().getId())
                 .stream()
                 .map(UserInOrgaWithRole::getUser).toList();
+        //List<UserInEventWithRole> uEWR = userInEventWithRoleService.findByEventId(15);
+        //System.out.println("SDASDASD");
         List<User> affiliated = userInEventWithRoleService
-                .getUserInEventWithRoleForEvent(event)
+                .findByEventId(eventID)
                 .stream()
                 .map(UserInEventWithRole::getUser)
                 .toList();
         unaffiliatedUsers = allUsersInOrga
                 .stream()
-                .map(all-> affiliated.contains(all) ? null : all)
+                .filter(user -> !affiliated.contains(user))
+                //.map(all-> affiliated.contains(all) ? all : null)
                 .toList();
+        System.out.println("Hallo");
         return unaffiliatedUsers;
     }
 }
