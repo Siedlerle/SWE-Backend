@@ -105,7 +105,7 @@ public class OrganizerController {
      * @return String about success or failure.
      */
     @PostMapping("/event/delete/{eventId}")
-    public ResponseEntity<String> deleteEvent(@PathVariable long eventId) {
+    public ResponseEntity<MessageResponse> deleteEvent(@PathVariable long eventId) {
         return ResponseEntity.ok(eventService.deleteEvent(eventId));
     }
 

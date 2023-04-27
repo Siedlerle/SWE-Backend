@@ -271,9 +271,15 @@ public class UserInEventWithRoleService {
             e.printStackTrace();
             return null;
         }
+    }
 
 
+    public List<UserInEventWithRole> getUsersInEvent (long evenId){
+        return userInEventWithRoleRepository.findByEvent_Id(evenId);
+    }
 
+    public void deleteUserInEventWithRole(UserInEventWithRole userInEventWithRole){
+        userInEventWithRoleRepository.delete(userInEventWithRole);
     }
 
     /**
