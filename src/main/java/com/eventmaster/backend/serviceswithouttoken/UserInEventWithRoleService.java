@@ -263,10 +263,20 @@ public class UserInEventWithRoleService {
     }
 
 
+    /**
+     * Retrieves all the users for a specific event
+     * @param evenId Id of the corresponding event
+     * @return List of UserInEventWithRole
+     */
     public List<UserInEventWithRole> getUsersInEvent (long evenId){
         return userInEventWithRoleRepository.findByEvent_Id(evenId);
     }
 
+
+    /**
+     * Deletes a specific UserInEventWithRole
+     * @param userInEventWithRole Object which is being deleted
+     */
     public void deleteUserInEventWithRole(UserInEventWithRole userInEventWithRole){
         userInEventWithRoleRepository.delete(userInEventWithRole);
     }
