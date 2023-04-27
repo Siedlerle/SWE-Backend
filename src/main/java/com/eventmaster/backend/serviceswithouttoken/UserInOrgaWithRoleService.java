@@ -40,11 +40,18 @@ public class UserInOrgaWithRoleService {
 
 
     /**
-     * Retrieve information about orgas user is a part of
-     * @param userMail Mail of the corresponding user
-     * @return List of organisation objects
+     * Retrieve the organisations that the user is part of.
+     * @param userMail Mail of the corresponding user.
+     * @return List of Organisations.
      */
-    public List<Organisation> getOrgaForUser(String userMail) {
+    public List<Organisation> getOrgasForUser(String userMail) {
+        /*User user = userService.getUserByMail(userMail);
+        List<Organisation> organisations = userInOrgaWithRoleRepository
+                .findByUser(user)
+                .stream()
+                .filter(uiOwR -> uiOwR.getOrgaRole().getRole().ordinal() >= 2)//Checks if the tested user is user or above in the organisation
+                .map(UserInOrgaWithRole::getOrganisation)
+                .toList();*/
         try {
             User user = userService.getUserByMail(userMail);
             List <UserInOrgaWithRole> userInOrgaWithRoles = userInOrgaWithRoleRepository.findByUser(user);

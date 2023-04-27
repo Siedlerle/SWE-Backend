@@ -152,7 +152,7 @@ public class UserController {
      */
     @PostMapping("/orga/get-for-user/{emailAdress}")
     public ResponseEntity<List<Organisation>> getOrganisationsForUser(@PathVariable String emailAdress){
-        return ResponseEntity.ok(userInOrgaWithRoleService.getOrgaForUser(emailAdress));
+        return ResponseEntity.ok(userInOrgaWithRoleService.getOrgasForUser(emailAdress));
     }
 
     /**
@@ -318,13 +318,13 @@ public class UserController {
 
 
     /**
-     * Endpoint to get all events for a user
-     * @param emailAdress Email of the corresponding user
-     * @return List of events
+     * Endpoint to get all available Events for a user, which he hasn't joined yet.
+     * @param emailAdress Email of the corresponding user.
+     * @return List of events.
      */
     @PostMapping("/event/get-all/{emailAdress}")
-    public ResponseEntity<List<Event>> getAllEventsForUser(@PathVariable String emailAdress){
-        return ResponseEntity.ok(userInEventWithRoleService.getAllEventsForUser(emailAdress));
+    public ResponseEntity<List<Event>> getAllAvailableEventsForUser(@PathVariable String emailAdress){
+        return ResponseEntity.ok(userInEventWithRoleService.getAllAvailableEventsForUser(emailAdress));
     }
 
     /**

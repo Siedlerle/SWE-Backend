@@ -3,8 +3,8 @@ package com.eventmaster.backend.serviceswithouttoken;
 import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.repositories.UserInEventWithRoleRepository;
 import local.variables.LocalizedStringVariables;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Date;
 import java.util.*;
@@ -26,19 +26,24 @@ public class UserInEventWithRoleService {
     private final OrganisationService organisationService;
     private final EventSeriesService eventSeriesService;
     private final EventRoleService eventRoleService;
+    private final UserInOrgaWithRoleService userInOrgaWithRoleService;
 
 
     public UserInEventWithRoleService(
             UserInEventWithRoleRepository userInEventWithRoleRepository,
             UserService userService,
             EventService eventService,
-            OrganisationService organisationService, EventSeriesService eventSeriesService, EventRoleService eventRoleService) {
+            OrganisationService organisationService,
+            EventSeriesService eventSeriesService,
+            EventRoleService eventRoleService,
+            @Lazy UserInOrgaWithRoleService userInOrgaWithRoleService) {
         this.userInEventWithRoleRepository = userInEventWithRoleRepository;
         this.eventService = eventService;
         this.userService = userService;
         this.organisationService = organisationService;
         this.eventSeriesService = eventSeriesService;
         this.eventRoleService = eventRoleService;
+        this.userInOrgaWithRoleService = userInOrgaWithRoleService;
     }
 
 
@@ -152,40 +157,25 @@ public class UserInEventWithRoleService {
 
 
     /**
-     * Retrieving all events for a user
-     * @param emailAdress Email of the corresponding user
+     * Retrieving all events where user is not affiliated in his organisations
+     * @param emailAddress Email of the corresponding user
      * @return List of Events
      */
-    public List<Event> getAllEventsForUser(String emailAdress){
-        try {
-            User user = userService.findByEmailAdress(emailAdress);
-
-            List<UserInEventWithRole> userInEventWithRoles = userInEventWithRoleRepository.findByUser_Id(user.getId());
-
-            List<Event> returnEvents = new ArrayList<>();
-
-            for (UserInEventWithRole userInEventWithRole: userInEventWithRoles) {
-                if(!userInEventWithRole.getEventRole().getRole().equals(EnumEventRole.TUTOR) && !userInEventWithRole.getEventRole().getRole().equals(EnumEventRole.ORGANIZER) && !userInEventWithRole.getEventRole().getRole().equals(EnumEventRole.ATTENDEE) && !userInEventWithRole.getEventRole().getRole().equals(EnumEventRole.GROUPATTENDEE)){
-                    returnEvents.add(userInEventWithRole.getEvent());
-                }
-            }
-            /*
-            List<Event> allEvents = eventService.getAllEvents();
-            for (Event event:allEvents) {
-                if(userInEventWithRoleRepository.findByUser_IdAndEvent_Id(user.getId(), event.getId()) == null){
-                    returnEvents.add(event);
-                }else{
-                    if(!userInEventWithRoleRepository.findByUser_IdAndEvent_Id(user.getId(), event.getId()).getEventRole().getRole().equals(EnumEventRole.TUTOR)&&!userInEventWithRoleRepository.findByUser_IdAndEvent_Id(user.getId(), event.getId()).getEventRole().getRole().equals(EnumEventRole.ORGANIZER)&&!userInEventWithRoleRepository.findByUser_IdAndEvent_Id(user.getId(), event.getId()).getEventRole().getRole().equals(EnumEventRole.ATTENDEE)&&!userInEventWithRoleRepository.findByUser_IdAndEvent_Id(user.getId(),event.getId()).getEventRole().getRole().equals(EnumEventRole.GROUPATTENDEE)){
-                        returnEvents.add(event);
-                    }
-                }
-            }
-            */
-            return returnEvents;
-        }catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    public List<Event> getAllAvailableEventsForUser(String emailAddress){
+        User user = userService.findByEmailAdress(emailAddress);
+        List<Event> userEvents = userInEventWithRoleRepository.
+                findByUser_Id(user.getId())
+                .stream()
+                .map(UserInEventWithRole::getEvent)
+                .toList();
+        List<Organisation> organisation = userInOrgaWithRoleService.getOrgasForUser(user.getEmailAdress());
+        return organisation
+                .stream()
+                .map(orga->eventService.getEventsOfOrganisation(orga.getId()))
+                .flatMap(List::stream)
+                .filter(Event::getIsPublic)
+                .filter(event->!userEvents.contains(event))
+                .toList();
     }
 
 
@@ -196,7 +186,6 @@ public class UserInEventWithRoleService {
      */
     public List<Event> getRegisteredEventsForUser(String emailAdress){
         try {
-
             User user = userService.findByEmailAdress(emailAdress);
 
             List<UserInEventWithRole> userInEvents = userInEventWithRoleRepository.findByUser_Id(user.getId());
