@@ -366,4 +366,27 @@ public class UserInOrgaWithRoleService {
             return null;
         }
     }
+
+    /**
+     * Gets all unaffiliated users of organisation for this event.
+     * @param event Event to be checked.
+     * @return List of Users that aren't affiliated.
+     */
+    public List<User> getUnaffiliatedUsersForEvent(Event event) {
+        List<User> unaffiliatedUsers = new ArrayList<>();
+        List<User> allUsersInOrga = userInOrgaWithRoleRepository
+                .findByOrganisation_Id(event.getOrganisation().getId())
+                .stream()
+                .map(UserInOrgaWithRole::getUser).toList();
+        List<User> affiliated = userInEventWithRoleService
+                .getUserInEventWithRoleForEvent(event)
+                .stream()
+                .map(UserInEventWithRole::getUser)
+                .toList();
+        unaffiliatedUsers = allUsersInOrga
+                .stream()
+                .map(all-> affiliated.contains(all) ? null : all)
+                .toList();
+        return unaffiliatedUsers;
+    }
 }

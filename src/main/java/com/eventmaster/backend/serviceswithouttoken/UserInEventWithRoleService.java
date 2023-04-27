@@ -800,7 +800,13 @@ public class UserInEventWithRoleService {
             return LocalizedStringVariables.REMOVEDUSERSOFGROUPFROMEVENTFAILUREMESSAGE;
         }
     }
-
+    /** Method to get all affiliated users for the event
+     * @param event Event to be checked.
+     * @return List of UserInEventWithRole that are affiliated with the event.
+     */
+    public List<UserInEventWithRole> getUserInEventWithRoleForEvent(Event event){
+        return userInEventWithRoleRepository.findByEvent_Id(event.getId());
+    }
     //endregion
 
     //region AdminMethods

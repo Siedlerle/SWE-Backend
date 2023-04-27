@@ -1,9 +1,6 @@
 package com.eventmaster.backend.controller;
 
-import com.eventmaster.backend.entities.Event;
-import com.eventmaster.backend.entities.EventSeries;
-import com.eventmaster.backend.entities.MessageResponse;
-import com.eventmaster.backend.entities.Preset;
+import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.serviceswithouttoken.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -108,6 +105,18 @@ public class OrganizerController {
     public ResponseEntity<String> deleteEvent(@PathVariable long eventId) {
         return ResponseEntity.ok(eventService.deleteEvent(eventId));
     }
+
+    /**
+     * Endpoint to get all Users of an organisation, not affiliated with the event.
+     * @param event The event to be checked.
+     * @return List of users that aren't affiliated.
+     */
+    @PostMapping("/event/get/unaffiliated-users")
+    public ResponseEntity<List<User>> getUnaffiliatedUsersForEvent(@RequestBody Event event){
+        return ResponseEntity.ok(userInOrgaWithRoleService.getUnaffiliatedUsersForEvent(event));
+    }
+
+
 
     /**
      * Endpoint to change an attendee to a tutor in an event.

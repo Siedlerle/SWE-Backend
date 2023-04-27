@@ -15,4 +15,6 @@ public interface UserInOrgaWithRoleRepository extends JpaRepository<UserInOrgaWi
     List<UserInOrgaWithRole> findByUser(User user);
     UserInOrgaWithRole findByUser_IdAndOrganisation_Id(long userId, long orgaId);
     Boolean existsByUser_IdAndOrganisation_Id(long userId, long orgaId);
+
+    List<UserInOrgaWithRole> findByOrganisation_Id(long organisationId);
 }
