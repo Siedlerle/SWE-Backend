@@ -167,7 +167,7 @@ public class UserInEventWithRoleService {
      * @return List of Events
      */
     public List<Event> getAllAvailableEventsForUser(String emailAddress){
-        User user = userService.findByEmailAdress(emailAddress);
+        User user = userService.getUserByMail(emailAddress);
         List<Event> userEvents = userInEventWithRoleRepository.
                 findByUser_Id(user.getId())
                 .stream()
@@ -191,7 +191,7 @@ public class UserInEventWithRoleService {
      */
     public List<Event> getRegisteredEventsForUser(String emailAdress){
         try {
-            User user = userService.findByEmailAdress(emailAdress);
+            User user = userService.getUserByMail(emailAdress);
 
             List<UserInEventWithRole> userInEvents = userInEventWithRoleRepository.findByUser_Id(user.getId());
 

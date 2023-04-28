@@ -1,6 +1,4 @@
 package com.eventmaster.backend.serviceswithouttoken;
-import com.eventmaster.backend.EmailService.EmailService;
-import com.eventmaster.backend.entities.Role;
 import com.eventmaster.backend.entities.User;
 import com.eventmaster.backend.repositories.UserRepository;
 import local.variables.LocalizedStringVariables;
@@ -13,7 +11,6 @@ import com.eventmaster.backend.security.config.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -35,23 +32,29 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
-    @Autowired
-    private  PasswordEncoder passwordEncoder;
-    @Autowired
-    private  JwtService jwtService;
-    @Autowired
-    private  TokenService tokenService;
-    @Autowired
-    private  AuthenticationManager authenticationManager;
-    @Autowired
-    private EmailService emailService;
+
+    private final PasswordEncoder passwordEncoder;
+
+    private final JwtService jwtService;
+
+    private final TokenService tokenService;
+
+    private final AuthenticationManager authenticationManager;
 
     private final SimpleMailMessage mailMessage = new SimpleMailMessage();
 
 
     public UserService(
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder,
+            JwtService jwtService,
+            TokenService tokenService,
+            AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+        this.tokenService = tokenService;
+        this.authenticationManager = authenticationManager;
     }
 
     public String saveUser(User user) {
@@ -59,6 +62,11 @@ public class UserService {
         return "saved";
     }
 
+    /**
+     * Creates a new user and sends an Email
+     * @param request Userobject
+     * @return success message
+     */
     public String register(User request){
         var user = User.builder()
                 .firstname(request.getFirstname())
@@ -84,6 +92,11 @@ public class UserService {
         return "Successfully registered";
     }
 
+    /**
+     * Verifying a user after registration
+     * @param authToken jwt Token
+     * @return VerificationResponse
+     */
     public VerificationResponse verify(String authToken) {
         String emailAdress = jwtService.extractUsername(authToken);
         User verifyUser = userRepository.findByEmailAdress(emailAdress);
@@ -106,6 +119,11 @@ public class UserService {
                 .build();
     }
 
+    /**
+     * Creates a new Token for the corresponding user
+     * @param request Userobject
+     * @return AuthenticationResponse
+     */
     public AuthenticationResponse login(User request){
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -113,9 +131,17 @@ public class UserService {
                         request.getPassword()
                 )
         );
+        User requestinUserg = userRepository.findByEmailAdress(request.getEmailAdress());
 
-        User revokeUserTokens = userRepository.findByEmailAdress(request.getEmailAdress());
-        revokeAllUserTokens(revokeUserTokens);
+        List<Token> allTokens = tokenService.findAllTokensByUser(requestinUserg.getId());
+
+        for (Token token:allTokens) {
+            if(token.isExpired() && token.isRevoked()){
+                tokenService.deleteToken(token);
+            }
+        }
+
+        revokeAllUserTokens(requestinUserg);
 
         var user = userRepository.findByEmailAdress(request.getEmailAdress());
         var jwtToken = jwtService.generateToken(user);
@@ -127,6 +153,11 @@ public class UserService {
                 .build();
     }
 
+    /**
+     * Saves the tokens for the corresponding user
+     * @param user Userobject
+     * @param jwtToken Token
+     */
     private void saveUserToken(User user, String jwtToken) {
         var token = Token.builder()
                 .user(user)
@@ -139,6 +170,12 @@ public class UserService {
     }
 
     //Todo Link für Änderungsfeld anpassen
+
+    /**
+     * Sends a mail to user to verify password reset request
+     * @param emailAdress EMail of the corresponding user
+     * @return success message
+     */
     public String requestPasswordReset(String emailAdress){
         try{
             User resetUserPwd = userRepository.findByEmailAdress(emailAdress);
@@ -166,6 +203,11 @@ public class UserService {
         }
     }
 
+    /**
+     * Resets the users password
+     * @param user Userobject of the corresponding user
+     * @return AuthenticationResponse
+     */
     public AuthenticationResponse resetPassword(User user){
         try{
             User changedUser = userRepository.findByEmailAdress(user.getEmailAdress());
@@ -189,9 +231,20 @@ public class UserService {
         }
     }
 
+    /**
+     * Retrieves a user by his Id
+     * @param userId Id of the corresponding user
+     * @return Userobject
+     */
     public User getUserById(long userId) {
         return userRepository.findUserById(userId);
     }
+
+    /**
+     * Retrieves a user by his EMail
+     * @param userMail EMail of the corresponding user
+     * @return Userobject
+     */
     public User getUserByMail(String userMail) {
         try {
             return userRepository.findByEmailAdress(userMail);
@@ -201,15 +254,16 @@ public class UserService {
         }
     }
 
-    public User findByEmailAdress(String emailAdress){
-        return userRepository.findByEmailAdress(emailAdress);
-    }
-
+    /**
+     * Deletes a user
+     * @param emailAdress EMail of the corresponding user
+     * @return success message
+     */
     public String deleteUser(String emailAdress) {
         try {
             System.out.println(emailAdress);
             User user = userRepository.findByEmailAdress(emailAdress);
-            tokenService.deleteToken(user.getId());
+            tokenService.deleteTokens(user.getId());
             userRepository.delete(user);
 
             return LocalizedStringVariables.USERDELETEDMESSAGE + user.getFirstname() +" "+user.getLastname();
@@ -220,7 +274,13 @@ public class UserService {
     }
 
 
-
+    /**
+     * Refreshes the jwt token for a user
+     * @param request HttpServletRequest
+     * @param response HttpServletResponse
+     * @return refreshed token
+     * @throws IOException
+     */
     public ResponseEntity<?> refreshToken(
             HttpServletRequest request,
             HttpServletResponse response
@@ -250,6 +310,10 @@ public class UserService {
         return null;
     }
 
+    /**
+     * Revokes all active tokens for user
+     * @param user Userobject of corresponding user
+     */
     private void revokeAllUserTokens(User user) {
         List<Token> validUserTokens = tokenService.findAllValidTokensByUser(user);
         if (validUserTokens.isEmpty()) {
