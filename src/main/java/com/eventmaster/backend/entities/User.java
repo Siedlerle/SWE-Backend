@@ -2,7 +2,6 @@ package com.eventmaster.backend.entities;
 
 
 import com.eventmaster.backend.security.Token.Token;
-import com.eventmaster.backend.serviceswithouttoken.UserService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

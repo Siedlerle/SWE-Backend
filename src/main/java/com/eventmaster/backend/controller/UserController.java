@@ -2,11 +2,11 @@ package com.eventmaster.backend.controller;
 
 //Todo import explizit definieren
 import com.eventmaster.backend.entities.*;
-import com.eventmaster.backend.serviceswithouttoken.UserService;
+import com.eventmaster.backend.services.UserService;
 import com.eventmaster.backend.security.authentification.VerificationResponse;
-import com.eventmaster.backend.serviceswithouttoken.OrganisationService;
-import com.eventmaster.backend.serviceswithouttoken.UserInEventWithRoleService;
-import com.eventmaster.backend.serviceswithouttoken.UserInOrgaWithRoleService;
+import com.eventmaster.backend.services.OrganisationService;
+import com.eventmaster.backend.services.UserInEventWithRoleService;
+import com.eventmaster.backend.services.UserInOrgaWithRoleService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import local.variables.LocalizedStringVariables;

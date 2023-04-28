@@ -1,24 +1,31 @@
 package com.eventmaster.backend.services;
 
-import com.eventmaster.backend.entities.User;
-import com.eventmaster.backend.entities.Event;
+import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.repositories.EventRepository;
+import local.variables.LocalizedStringVariables;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
- * A class which receives and processes the requests of the controller
+ * A class which receives and processes the requests of the controller concerning the management of events.
  *
  * @author Fabian Eilber
+ * @author Fabian Unger
  */
 
+@Service
 public class EventService {
 
     private final EventRepository eventRepository;
+    private final UserInEventWithRoleService userInEventWithRoleService;
 
-    public EventService(EventRepository eventRepository) {
+    public EventService(EventRepository eventRepository,
+                        @Lazy UserInEventWithRoleService userInEventWithRoleService
+    ) {
         this.eventRepository = eventRepository;
+        this.userInEventWithRoleService = userInEventWithRoleService;
     }
 
     /**
@@ -30,42 +37,126 @@ public class EventService {
     }
 
     /**
+     * The database is searched for all events of an organisation
+     * @param orgaId Id of the corresponding organisation
+     * @return List of events
+     */
+    public List<Event> getEventsOfOrganisation(long orgaId){
+        return eventRepository.findByOrganisationId(orgaId);
+    }
+
+
+    /**
      * The database is searched for events with the corresponding ID
      * @param eventId ID of the event which will be searched.
      * @return Event Object
      */
     public Event getEventById(Long eventId) {
-        return eventRepository.findById(eventId).orElse(null);
+        try {
+            return eventRepository.findById(eventId).orElse(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
     }
 
     /**
-     * An event is added to the databse
-     * @param event Event which is being added
-     * @return Boolen as status for succes
+     * An existing event in the database is being changed.
+     * @param event New event with the new data.
+     * @return String about success or failure.
      */
-    public boolean createEvent(Event event) {
+    public MessageResponse changeEvent(Event event) {
         try {
-            System.out.println("hello World");
-            eventRepository.save(event);
-            return true;
+            Event updatedEvent = eventRepository.findById(event.getId());
+            updatedEvent.setId(event.getId());
+            updatedEvent.setName(event.getName());
+            updatedEvent.setDescription(event.getDescription());
+            updatedEvent.setStartDate(event.getStartDate());
+            updatedEvent.setStartTime(event.getStartTime());
+            updatedEvent.setEndDate(event.getEndDate());
+            updatedEvent.setEndTime(event.getEndTime());
+            updatedEvent.setLocation(event.getLocation());
+            updatedEvent.setIsPublic(event.getIsPublic());
+            updatedEvent.setStatus(event.getStatus());
+            updatedEvent.setType(event.getType());
+            updatedEvent.setImage(event.getImage());
+            updatedEvent.setEventSeries(event.getEventSeries());
+            updatedEvent.setOrganisation(event.getOrganisation());
+
+            eventRepository.save(updatedEvent);
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.EVENTCHANGEDSUCCESSMESSAGE)
+                    .build();
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.EVENTCHANGEDFAILUREMESSAGE)
+                    .build();
+        }
+    }
+
+    /**
+     * Changing the status of an event.
+     * @param eventId ID of the event from which the status will be changed.
+     * @param newStatus New status of the event.
+     * @return String about success or failure.
+     */
+    public MessageResponse changeStatusOfEvent(long eventId, String newStatus) {
+        try {
+            Event event = getEventById(eventId);
+            for (EnumEventStatus status : EnumEventStatus.values()) {
+                if (status.status.toUpperCase().equals(newStatus)) {
+                    event.setStatus(status);
+
+                    this.eventRepository.save(event);
+
+                    return MessageResponse.builder()
+                            .message(LocalizedStringVariables.EVENTSTATUSCHANGEDSUCCESSMESSAGE)
+                            .build();
+                }
+            }
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.GIVENEVENTSTATUSNOTCORRECTMESSAGE)
+                    .build();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.EVENTSTATUSCHANGEDFAILURESMESSAGE)
+                    .build();
         }
     }
 
     /**
      * An event corresponding to the eventId is being deleted
      * @param eventId ID of the event which will be deleted.
-     * @return Boolen as status for succes
+     * @return Boolen as status for success
      */
-    public boolean deleteEvent(Long eventId){
-        try {
-            eventRepository.deleteById(eventId);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+    public MessageResponse deleteEvent(Long eventId){
+        Event event = getEventById(eventId);
+        EnumEventStatus status = event.getStatus();
+        if (status.equals(EnumEventStatus.CANCELLED)) {
+            try {
+
+                List<UserInEventWithRole> userInEventWithRoles = userInEventWithRoleService.getUsersInEvent(eventId);
+                for (UserInEventWithRole userInEventWithRole: userInEventWithRoles) {
+                    userInEventWithRoleService.deleteUserInEventWithRole(userInEventWithRole);
+                }
+                eventRepository.deleteById(eventId);
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.EVENTDELETEDSUCCESSMESSAGE)
+                        .build();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.EVENTDELETEDFAILUREMESSAGE)
+                        .build();
+            }
+        } else {
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.EVENTSTATUSCHANGEDFAILURESMESSAGE)
+                    .build();
         }
     }
 
@@ -81,4 +172,32 @@ public class EventService {
     }
 
 
+    /**
+     * Sets the status of the event to cancelled and sends the attendees and invitees a mail.
+     * @param eventId ID of the event which will be cancelled.
+     * @param reason Reason why the event will be cancelled.
+     * @return String about success or failure.
+     */
+    public MessageResponse cancelEvent(long eventId, String reason) {
+        Event event = getEventById(eventId);
+        event.setStatus(EnumEventStatus.CANCELLED);
+
+
+        try {
+            eventRepository.save(event);
+            //TODO Mail an alle Teilnehmer und Eingeladene senden.
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.EVENTCANCELLEDSUCCESSMESSAGE)
+                    .build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.EVENTCANCELLEDFAILUREMESSAGE)
+                    .build();
+        }
+    }
+
+    protected void saveEvent(Event event) {
+        eventRepository.save(event);
+    }
 }

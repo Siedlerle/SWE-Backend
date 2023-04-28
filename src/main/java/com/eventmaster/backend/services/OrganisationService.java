@@ -2,57 +2,105 @@ package com.eventmaster.backend.services;
 
 import com.eventmaster.backend.entities.Organisation;
 import com.eventmaster.backend.repositories.OrganisationRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import local.variables.LocalizedStringVariables;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 /**
  * A class which receives and processes the requests of the SysAdminController.
  *
+ * @author Fabian Unger
  * @author Fabian Eilber
  */
+@Service
 public class OrganisationService {
     private final OrganisationRepository organisationRepository;
-
-    @Autowired
-    private OrgaUserRoleService orgaUserRoleService;
 
     public OrganisationService(OrganisationRepository organizationRepository) {
         this.organisationRepository = organizationRepository;
     }
 
-    public String createOrganisation(Organisation organisation, String sysAdminPassword){
-        //TODO passwort vom Sysadmin abfragen?
+    /**
+     * Saves the organisation in the database.
+     * @param organisation Organisation object which will be saved.
+     */
+    public void saveOrganisation(Organisation organisation) {
+        this.organisationRepository.save(organisation);
+    }
+
+    /**
+     * Get all organisations in the database in a list.
+     * @return List of organisations in the database.
+     */
+    public List<Organisation> getAllOrganisations(){
+        return organisationRepository.findAll();
+    }
+
+    /**
+     * Get the complete organisation by her id.
+     * @param organisationId ID of the organisation which will be returned.
+     * @return Organisation Object
+     */
+    public Organisation getOrganisationById(long organisationId){
+        return organisationRepository.findById(organisationId);
+    }
+
+    /**
+     * Saves a new organisation in the database.
+     * @param organisation Organisation object which will be saved.
+     * @return String if successful or not.
+     */
+    public String createOrganisation(Organisation organisation){
         try {
             organisationRepository.save(organisation);
-            return "Organization succesfully created";
+            return LocalizedStringVariables.ORGACREATEDSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "Organization creation failed";
+            return LocalizedStringVariables.ORGACREATEDFAILUREMESSAGE;
         }
     }
 
-    public String editOrganisation(Organisation organisation, String sysAdminPassword){
-        //TODO passwort vom Sysadmin abfragen?
+    /**
+     * Changes an already existing organisation.
+     * @param newOrganisation The new organisation which will replace the old organisation.
+     * @return String if successful or not.
+     */
+    public String changeOrganisation(Organisation newOrganisation){
         try {
-            //TODO Organisation finden und mit neuen daten überladen und speichern
-            return "Organization succesfully created";
+            long id = newOrganisation.getId();
+            Organisation oldOrganisation = this.organisationRepository.findById(id);
+
+            String newName = newOrganisation.getName();
+            String newLocation = newOrganisation.getLocation();
+
+            oldOrganisation.setName(newName);
+            oldOrganisation.setLocation(newLocation);
+
+            this.organisationRepository.save(oldOrganisation);
+
+            return LocalizedStringVariables.ORGACHANGEDSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "Organization creation failed";
+            return LocalizedStringVariables.ORGACHANGEDFAILUREMESSAGE;
         }
     }
 
-
-    public String deleteOrganisation(Organisation organisation, String sysAdminPassword){
-        //TODO passwort vom Sysadmin abfragen?
+    /**
+     * Deletes an organisation in the database.
+     * @param organisationId ID of the organisation which will be deleted.
+     * @return String if successful or not.
+     */
+    public String deleteOrganisation(long organisationId){
         try {
-            //TODO Organisation finden und mit neuen daten überladen und speichern
-            return "Organization succesfully created";
+            Organisation organisation = this.getOrganisationById(organisationId);
+            this.organisationRepository.deleteById(organisationId);
+
+            return LocalizedStringVariables.ORGADELETEDSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return "Organization creation failed";
+            return LocalizedStringVariables.ORGADELETEDFAILUREMESSAGE;
         }
     }
-
 }

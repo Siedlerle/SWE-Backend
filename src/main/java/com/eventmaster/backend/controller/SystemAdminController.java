@@ -3,7 +3,7 @@ package com.eventmaster.backend.controller;
 import com.eventmaster.backend.entities.Organisation;
 
 import com.eventmaster.backend.entities.User;
-import com.eventmaster.backend.serviceswithouttoken.*;
+import com.eventmaster.backend.services.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
