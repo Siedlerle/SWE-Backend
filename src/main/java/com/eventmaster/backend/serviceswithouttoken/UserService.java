@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -220,7 +221,7 @@ public class UserService {
 
 
 
-    public void refreshToken(
+    public ResponseEntity<?> refreshToken(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws IOException {
@@ -228,7 +229,7 @@ public class UserService {
         final String refreshToken;
         final String userEmail;
         if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
-            return;
+            return null;
         }
         refreshToken = authHeader.substring(7);
         userEmail = jwtService.extractUsername(refreshToken);
@@ -243,8 +244,10 @@ public class UserService {
                         .refreshToken(refreshToken)
                         .build();
                 new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+                return ResponseEntity.ok(authResponse);
             }
         }
+        return null;
     }
 
     private void revokeAllUserTokens(User user) {

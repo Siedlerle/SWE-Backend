@@ -118,8 +118,8 @@ public class UserController {
      * @throws IOException
      */
     @PostMapping("auth/refresh")
-    public void refresh(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        userService.refreshToken(request, response);
+    public ResponseEntity<?> refresh(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        return userService.refreshToken(request, response);
     }
 
 
