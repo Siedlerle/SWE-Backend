@@ -98,22 +98,26 @@ public class UserInEventWithRoleService {
      * @param emailAdress Email of the user who is being invited
      * @return success message
      */
-    public String acceptEventInvitation(long eventId, String emailAdress){
+    public MessageResponse acceptEventInvitation(long eventId, String emailAdress){
         try {
+            User user = userService.getUserByMail(emailAdress);
             EventRole eventRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
 
-            UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
-            //Todo Abfragen von User oder Event in if-Abfragen "abfangen" im Fehlerfall
+            UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUser_IdAndEvent_Id(user.getId(), eventId);
+
             userInEventWithRole.setEvent(eventService.getEventById(eventId));
             userInEventWithRole.setUser(userService.getUserByMail(emailAdress));
             userInEventWithRole.setEventRole(eventRole);
             userInEventWithRoleRepository.save(userInEventWithRole);
 
-            return LocalizedStringVariables.EVENTINVITATIONACCEPTEDSUCCESSMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.EVENTINVITATIONACCEPTEDSUCCESSMESSAGE)
+                    .build();
         }catch (Exception e) {
-            //Todo Exceptionhandling weiter ausbauen, sodass Nutzer weiß was genau passiert ist
             e.printStackTrace();
-            return LocalizedStringVariables.EVENTINVITATIONACCEPTEDFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.EVENTINVITATIONACCEPTEDFAILUREMESSAGE)
+                    .build();
         }
     }
 
@@ -123,7 +127,7 @@ public class UserInEventWithRoleService {
      * @param emailAdress Email of the user who is being invited
      * @return success message
      */
-    public String declineEventInvitation(long eventId, String emailAdress){
+    public MessageResponse declineEventInvitation(long eventId, String emailAdress){
         try {
             User user = userService.getUserByMail(emailAdress);
             Event event = eventService.getEventById(eventId);
@@ -133,10 +137,14 @@ public class UserInEventWithRoleService {
             if(userInEventWithRole!=null) {
                 userInEventWithRoleRepository.delete(userInEventWithRole);
             }
-            return LocalizedStringVariables.EVENTINVITATIONDECLINEDSUCCESSMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.EVENTINVITATIONDECLINEDSUCCESSMESSAGE)
+                    .build();
         }catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.EVENTINVITATIONDECLINEDFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.EVENTINVITATIONDECLINEDFAILUREMESSAGE)
+                    .build();
         }
     }
 

@@ -255,7 +255,7 @@ public class UserController {
      * @return success message
      */
     @PostMapping("/event/{eventId}/accept-invitation/{emailAdress}")
-    public ResponseEntity<String> acceptEventInvitation(@PathVariable long eventId, @PathVariable String emailAdress){
+    public ResponseEntity<MessageResponse> acceptEventInvitation(@PathVariable long eventId, @PathVariable String emailAdress){
         return ResponseEntity.ok(userInEventWithRoleService.acceptEventInvitation(eventId, emailAdress));
     }
 
@@ -266,7 +266,7 @@ public class UserController {
      * @return success message
      */
     @PostMapping("/event/{eventId}/decline-invitation/{emailAdress}")
-    public ResponseEntity<String> declineEventInvitation(@PathVariable long eventId, @PathVariable String emailAdress){
+    public ResponseEntity<MessageResponse> declineEventInvitation(@PathVariable long eventId, @PathVariable String emailAdress){
         return ResponseEntity.ok(userInEventWithRoleService.declineEventInvitation(eventId, emailAdress));
     }
 
