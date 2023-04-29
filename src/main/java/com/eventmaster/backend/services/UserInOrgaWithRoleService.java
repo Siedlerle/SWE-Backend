@@ -402,6 +402,10 @@ public class UserInOrgaWithRoleService {
         List<User> allUsersInOrga = userInOrgaWithRoleRepository
                 .findByOrganisation_Id(event.getOrganisation().getId())
                 .stream()
+                .filter(userInOrgaWithRole -> {
+                    EnumOrgaRole role = userInOrgaWithRole.getOrgaRole().getRole()
+                    ;return role == EnumOrgaRole.USER || role == EnumOrgaRole.ORGANIZER || role == EnumOrgaRole.ADMIN;
+                })
                 .map(UserInOrgaWithRole::getUser).toList();
         List<User> affiliated = userInEventWithRoleService
                 .findByEventId(eventId)
