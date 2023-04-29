@@ -196,14 +196,12 @@ public class OrganizerController {
      * Endpoint to remove a user from an event.
      * @param eventId ID of the event.
      * @param userMail Mail of the user who will be removed.
-     * @param reason Reason why user will be removed.
      * @return String about success or failure.
      */
-    @PostMapping("/event/{eventId}/attendee/remove")
-    public ResponseEntity<String> removeUserFromEvent(@PathVariable long eventId,
-                                                      @RequestBody String userMail,
-                                                      @RequestParam String reason) {
-        return ResponseEntity.ok(userInEventWithRoleService.removeUserFromEvent(eventId, userMail, reason));
+    @PostMapping("/event/{eventId}/attendee/{userMail}/remove")
+    public ResponseEntity<MessageResponse> removeUserFromEvent(@PathVariable long eventId,
+                                                               @PathVariable String userMail) {
+        return ResponseEntity.ok(userInEventWithRoleService.removeUserFromEvent(eventId, userMail));
     }
 
     /**
@@ -349,14 +347,12 @@ public class OrganizerController {
      * Endpoint to remove a user from an eventseries.
      * @param eventSeriesId ID of the eventseries.
      * @param userMail Mail of the user who will be removed.
-     * @param reason Reason why the user will be removed.
      * @return String about success or failure.
      */
     @PostMapping("/event-series/{eventSeriesId}/user/remove")
     public ResponseEntity<String> removeUserFromEventSeries(@PathVariable long eventSeriesId,
-                                                            @RequestBody String userMail,
-                                                            @RequestParam String reason) {
-        return ResponseEntity.ok(eventSeriesService.removeUserFromEventSeries(eventSeriesId, userMail, reason));
+                                                            @RequestBody String userMail) {
+        return ResponseEntity.ok(eventSeriesService.removeUserFromEventSeries(eventSeriesId, userMail));
     }
 
     /**

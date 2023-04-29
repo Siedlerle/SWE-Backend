@@ -776,10 +776,9 @@ public class UserInEventWithRoleService {
      * Removes a user from an event and sends the user an email why.
      * @param eventId ID of the event.
      * @param userMail Mail of the user who will be removed.
-     * @param reason Reason why he will be removed.
      * @return String about success or failure.
      */
-    public String removeUserFromEvent(long eventId, String userMail, String reason) {
+    public MessageResponse removeUserFromEvent(long eventId, String userMail) {
         Event event = eventService.getEventById(eventId);
         User user = userService.getUserByMail(userMail);
 
@@ -788,13 +787,19 @@ public class UserInEventWithRoleService {
             try {
                 userInEventWithRoleRepository.delete(userInEventWithRole);
                 //TODO Mail mit reason senden
-                return LocalizedStringVariables.REMOVEUSERFROMEVENTSUCCESSMESSAGE;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.REMOVEUSERFROMEVENTSUCCESSMESSAGE)
+                        .build();
             } catch (Exception e) {
                 e.printStackTrace();
-                return LocalizedStringVariables.REMOVEUSERFROMEVENTFAILUREMESSAGE;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.REMOVEUSERFROMEVENTFAILUREMESSAGE)
+                        .build();
             }
         } else {
-            return LocalizedStringVariables.USERNOTATTENDINGATEVENTMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.USERNOTATTENDINGATEVENTMESSAGE)
+                    .build();
         }
     }
 

@@ -203,10 +203,9 @@ public class EventSeriesService {
      * Removes a user from an eventseries.
      * @param eventSeriesId ID of the eventseries.
      * @param userMail Mail of the user who will be removed.
-     * @param reason Reason why the user will be removed.
      * @return String about success or failure.
      */
-    public String removeUserFromEventSeries(long eventSeriesId, String userMail, String reason) {
+    public String removeUserFromEventSeries(long eventSeriesId, String userMail) {
         EventSeries eventSeries = getEventSeriesById(eventSeriesId);
         LocalDate currentDate = LocalDate.now();
 
@@ -215,7 +214,7 @@ public class EventSeriesService {
             for (Event event : events) {
                 LocalDate startDate = event.getStartDate().toLocalDate();
                 if (startDate.isAfter(currentDate)) {
-                    userInEventWithRoleService.removeUserFromEvent(event.getId(), userMail, reason);
+                    userInEventWithRoleService.removeUserFromEvent(event.getId(), userMail);
                 }
             }
             saveEventSeries(eventSeries);
