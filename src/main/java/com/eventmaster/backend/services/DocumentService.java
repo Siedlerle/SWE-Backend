@@ -174,14 +174,15 @@ public class DocumentService {
      */
     public String saveEventImage(long eventId, MultipartFile image) throws IOException {
         String fileExtension = StringUtils.getFilenameExtension(image.getOriginalFilename());
-        Path uploadPath = Paths.get("src/main/resources/eventimages/");
+        Path uploadPath = Paths.get("src/main/upload/");
+        //"src/main/upload/"
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
 
         try (InputStream inputStream = image.getInputStream()) {
             Path filePath = uploadPath.resolve(String.valueOf(eventId)+"."+fileExtension);
-            String fileName = "http://localhost:8080/eventimages/" + String.valueOf(eventId)+"."+fileExtension;
+            String fileName = "http://localhost:8080/upload/" + String.valueOf(eventId)+"."+fileExtension;
             Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
             return fileName;
         } catch (IOException ioe) {
@@ -189,3 +190,4 @@ public class DocumentService {
         }
     }
 }
+

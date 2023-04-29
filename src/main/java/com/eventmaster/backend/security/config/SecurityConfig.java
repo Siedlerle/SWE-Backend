@@ -45,6 +45,7 @@ public class SecurityConfig{
                 .disable()
                 .authorizeHttpRequests()
                     .requestMatchers("/eventimages/**").permitAll()
+                    .requestMatchers("/upload/**").permitAll()
                     .requestMatchers("/user/auth/**").permitAll()
                     .requestMatchers("/user/orga/**").permitAll()
                     .requestMatchers("/user/event/**").permitAll()
