@@ -3,6 +3,7 @@ package com.eventmaster.backend.services;
 import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.repositories.UserInOrgaWithRoleRepository;
 import local.variables.LocalizedStringVariables;
+import org.aspectj.bridge.Message;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -322,13 +323,15 @@ public class UserInOrgaWithRoleService {
      * @param userMail Mail of the user who will be invited.
      * @return String about success or failure.
      */
-    public String inviteUserToOrganisation(long organisationId, String userMail) {
+    public MessageResponse inviteUserToOrganisation(long organisationId, String userMail) {
         Organisation organisation = organisationService.getOrganisationById(organisationId);
         User user = userService.getUserByMail(userMail);
         OrgaRole inviteRole = orgaRoleService.findByRole(EnumOrgaRole.INVITED);
 
         if (userInOrgaWithRoleRepository.existsByUser_IdAndOrganisation_Id(user.getId(), organisationId)) {
-            return LocalizedStringVariables.INVITEDUSERALREADYPARTOFORGANISATIONMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.INVITEDUSERALREADYPARTOFORGANISATIONMESSAGE)
+                    .build();
         } else {
             //TODO Einladungsmail an user senden.
 
@@ -338,10 +341,15 @@ public class UserInOrgaWithRoleService {
                 userInOrgaWithRole.setUser(user);
                 userInOrgaWithRole.setOrgaRole(inviteRole);
                 userInOrgaWithRoleRepository.save(userInOrgaWithRole);
-                return LocalizedStringVariables.INVITEUSERTOORGANISATIONSUCCESSMESSAGE;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.INVITEUSERTOORGANISATIONSUCCESSMESSAGE)
+                        .build();
             } catch (Exception e) {
                 e.printStackTrace();
-                return LocalizedStringVariables.INVITEUSERTOORGANISATIONFAILUREMESSAGE;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.INVITEUSERTOORGANISATIONFAILUREMESSAGE)
+                        .build();
+
             }
         }
     }
@@ -395,5 +403,13 @@ public class UserInOrgaWithRoleService {
                 .filter(user -> !affiliated.contains(user))
                 .toList();
         return unaffiliatedUsers;
+    }
+
+    public List<User> getAllUsersInOrga(long orgaId){
+            List<User> allUsersInOrga = userInOrgaWithRoleRepository
+                .findByOrganisation_Id(orgaId)
+                .stream()
+                .map(UserInOrgaWithRole::getUser).toList();
+            return allUsersInOrga;
     }
 }

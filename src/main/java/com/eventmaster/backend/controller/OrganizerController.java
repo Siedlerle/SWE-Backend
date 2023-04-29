@@ -440,9 +440,15 @@ public class OrganizerController {
      * @return String about success or failure.
      */
     @PostMapping("/organisation/{orgaId}/user/{userMail}/invite")
-    public ResponseEntity<String> inviteUserToOrganisation(@PathVariable long orgaId,
+    public ResponseEntity<MessageResponse> inviteUserToOrganisation(@PathVariable long orgaId,
                                                            @PathVariable String userMail) {
         return ResponseEntity.ok(userInOrgaWithRoleService.inviteUserToOrganisation(orgaId, userMail));
+    }
+
+
+    @PostMapping("/organisation/{orgaId}/user/get-all")
+    public ResponseEntity<List<User>> getAllUsersInOrganisation(@PathVariable long orgaId){
+        return ResponseEntity.ok(userInOrgaWithRoleService.getAllUsersInOrga(orgaId));
     }
 
     //endregion
