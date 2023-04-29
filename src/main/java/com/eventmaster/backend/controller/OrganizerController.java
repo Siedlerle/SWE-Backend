@@ -120,7 +120,15 @@ public class OrganizerController {
     public ResponseEntity<List<User>> getUnaffiliatedUsersForEvent(@RequestBody Event event){
         return ResponseEntity.ok(userInOrgaWithRoleService.getUnaffiliatedUsersForEvent(event));
     }
-
+    /**
+     * Endpoint to get all Groups of an organisation, not affiliated with the event.
+     * @param event The event to be checked.
+     * @return List of groups that aren't affiliated.
+     */
+    @PostMapping("/event/get/unaffiliated-groups")
+    public ResponseEntity<List<Group>> getUnaffiliatedGroupsForEvent(@RequestBody Event event){
+        return ResponseEntity.ok(groupInEventService.getUnaffiliatedGroupsForEvent(event));
+    }
 
 
     /**

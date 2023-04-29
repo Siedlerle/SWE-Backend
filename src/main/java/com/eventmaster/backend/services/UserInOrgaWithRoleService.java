@@ -377,21 +377,20 @@ public class UserInOrgaWithRoleService {
     /**
      * Gets all unaffiliated users of organisation for this event.
      * @param event Event to be checked.
-     * @return List of Users that aren't affiliated.
+     * @return List of users that aren't affiliated.
      */
     public List<User> getUnaffiliatedUsersForEvent(Event event) {
-        long eventID = event.getId();
-        List<User> unaffiliatedUsers = new ArrayList<>();
+        long eventId = event.getId();
         List<User> allUsersInOrga = userInOrgaWithRoleRepository
                 .findByOrganisation_Id(event.getOrganisation().getId())
                 .stream()
                 .map(UserInOrgaWithRole::getUser).toList();
         List<User> affiliated = userInEventWithRoleService
-                .findByEventId(eventID)
+                .findByEventId(eventId)
                 .stream()
                 .map(UserInEventWithRole::getUser)
                 .toList();
-        unaffiliatedUsers = allUsersInOrga
+        List<User> unaffiliatedUsers = allUsersInOrga
                 .stream()
                 .filter(user -> !affiliated.contains(user))
                 .toList();
