@@ -165,9 +165,10 @@ public class OrganizerController {
      * @param userMail Mail of the tutor.
      * @return String about success or failure.
      */
-    @PostMapping("/event/{eventId}/tutor/invite")
-    public ResponseEntity<String> inviteTutorToEvent(@PathVariable long eventId,
-                                                     @RequestBody String userMail) {
+    @PostMapping("/event/{eventId}/tutor/{userMail}/invite")
+    public ResponseEntity<MessageResponse> inviteTutorToEvent(@PathVariable long eventId,
+                                                     @PathVariable String userMail) {
+        System.out.println(userMail);
         return ResponseEntity.ok(userInEventWithRoleService.inviteTutorToEvent(eventId, userMail));
     }
 
