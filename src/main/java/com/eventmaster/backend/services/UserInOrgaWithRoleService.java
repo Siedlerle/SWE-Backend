@@ -150,7 +150,7 @@ public class UserInOrgaWithRoleService {
      * @param userMail Mail of the corresponding user
      * @return successmessage
      */
-    public String requestJoin(long organisationId, String userMail){
+    public MessageResponse requestJoin(long organisationId, String userMail){
         try {
             User user = userService.getUserByMail(userMail);
             Organisation organisation = organisationService.getOrganisationById(organisationId);
@@ -163,12 +163,18 @@ public class UserInOrgaWithRoleService {
                 userInOrgaWithRole.setOrgaRole(requestRole);
 
                 userInOrgaWithRoleRepository.save(userInOrgaWithRole);
-                return LocalizedStringVariables.REQUESTORGAJOINSUCCESSMESSAGE;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.REQUESTORGAJOINSUCCESSMESSAGE)
+                        .build();
             }
-            return LocalizedStringVariables.REQUESTORGAJOINALREADYEXISTSMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.REQUESTORGAJOINALREADYEXISTSMESSAGE)
+                    .build();
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.REQUESTORGAJOINFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.REQUESTORGAJOINFAILUREMESSAGE)
+                    .build();
         }
     }
 
@@ -244,26 +250,36 @@ public class UserInOrgaWithRoleService {
      * If the user is part of the organisation he will be removed from her.
      * @param organisationId ID of the organisation.
      * @param userMail Mail of the user who will leave the organisatione.
-     * @param reason Reason why he leaves the organisation.
      * @return String about success or failure.
      */
-    public String leaveOrganisation(long organisationId, String userMail, String reason){
+    //Todo reason per mail an den admin o.ä. der Organisation
+    public MessageResponse leaveOrganisation(long organisationId, String userMail){
         try {
             User user = userService.getUserByMail(userMail);
-            //Todo reason per mail an den admin o.ä. der Organisation
+            Organisation organisation = organisationService.getOrganisationById(organisationId);
 
-            UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId);
+            if (userInOrgaWithRoleRepository.existsByUser_IdAndOrganisation_Id(user.getId(), organisationId)) {
+                UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId);
+                OrgaRole orgaRole = userInOrgaWithRole.getOrgaRole();
 
-            if(userInOrgaWithRole == null) {
-                return LocalizedStringVariables.USERISNOTINORGANISATIONMESSAGE;
+                user.removeUserInOrgaWithRole(userInOrgaWithRole);
+                organisation.removeUserInOrgaWithRole(userInOrgaWithRole);
+                orgaRole.removeUserInOrgaWithRole(userInOrgaWithRole);
+
+                userInOrgaWithRoleRepository.deleteById(userInOrgaWithRole.getId());
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.LEAVEORGANISATIONSUCCESSMESSAGE)
+                        .build();
             } else {
-                //Todo Löschen ist nicht funktional
-                userInOrgaWithRoleRepository.delete(userInOrgaWithRole);
-                return LocalizedStringVariables.LEAVEORGANISATIONSUCCESSMESSAGE;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.USERISNOTINORGANISATIONMESSAGE)
+                        .build();
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.LEAVEORGANISATIONFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.LEAVEORGANISATIONFAILUREMESSAGE)
+                    .build();
         }
     }
 

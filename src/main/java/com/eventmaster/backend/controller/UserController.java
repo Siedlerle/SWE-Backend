@@ -171,7 +171,7 @@ public class UserController {
      * @return successmessage
      */
     @PostMapping("/orga/{organisationId}/request-join/{emailAdress}")
-    public ResponseEntity<String> requestJoin(@PathVariable long organisationId,@PathVariable String emailAdress){
+    public ResponseEntity<MessageResponse> requestJoin(@PathVariable long organisationId,@PathVariable String emailAdress){
         return ResponseEntity.ok(userInOrgaWithRoleService.requestJoin(organisationId, emailAdress));
     }
 
@@ -201,12 +201,11 @@ public class UserController {
      * Endpoint for a user to leave an organisation
      * @param organisationId Id of the corresponding Organisation
      * @param emailAdress Email to retrieve the id of the user requesting
-     * @param reason Reason why the user leaves the organisation
      * @return successmessage
      */
     @PostMapping("/orga/{organisationId}/leave/{emailAdress}")
-    public ResponseEntity<String> leaveOrganisation(@PathVariable long organisationId, @PathVariable String emailAdress, @RequestBody String reason){
-        return ResponseEntity.ok(userInOrgaWithRoleService.leaveOrganisation(organisationId, emailAdress, reason));
+    public ResponseEntity<MessageResponse> leaveOrganisation(@PathVariable long organisationId, @PathVariable String emailAdress){
+        return ResponseEntity.ok(userInOrgaWithRoleService.leaveOrganisation(organisationId, emailAdress));
     }
 
 
