@@ -343,12 +343,12 @@ public class UserInEventWithRoleService {
 
     /**
      * Finds all attendees for an event and returns them in a list.
-     * @param eventId ID of the event where the users attend.
+     * @param pevent event where the users attend.
      * @return List of users
      */
-    public List<User> getAttendeesForEvent(long eventId) {
+    public List<User> getAttendeesForEvent(Event pevent) {
         try {
-            Event event = eventService.getEventById(eventId);
+            Event event = eventService.getEventById(pevent.getId());
             Set<UserInEventWithRole> userInEventWithRoleList = event.getEventUserRoles();
             EventRole attendeeRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
             EventRole groupAttendeeRole = eventRoleService.findByRole(EnumEventRole.GROUPATTENDEE);

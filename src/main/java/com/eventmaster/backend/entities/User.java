@@ -2,6 +2,9 @@ package com.eventmaster.backend.entities;
 
 
 import com.eventmaster.backend.security.Token.Token;
+import com.eventmaster.backend.security.authorization.authority.CustomAuthority;
+import com.eventmaster.backend.security.authorization.authority.EventAuthority;
+import com.eventmaster.backend.security.authorization.authority.OrganisationAuthority;
 import com.eventmaster.backend.serviceswithouttoken.UserService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -49,7 +52,7 @@ public class User implements UserDetails {
     //---------------------------------------------------------------------------
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.EAGER)
     private Set<UserInEventWithRole> userInEventWithRoles = new HashSet<>();
 
     @JsonIgnore
@@ -161,13 +164,25 @@ public class User implements UserDetails {
     //---------------------------------------------------------------------------
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+    public Collection<CustomAuthority> getAuthorities() {
+        List<CustomAuthority> authorities = new ArrayList<>();
+        for(UserInOrgaWithRole uiOwR : userInOrgaWithRoleSet){
+            authorities.add(new OrganisationAuthority(uiOwR.getOrgaRole().getRole(),uiOwR.getOrganisation().getId()));
+        }
+        for(UserInEventWithRole uiEwR : userInEventWithRoles){
+            authorities.add(new EventAuthority(uiEwR.getEventRole().getRole(), uiEwR.getEvent().getId()));
+        }
+
+        /*List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         String role;
         for(UserInOrgaWithRole uiOwR : userInOrgaWithRoleSet){
-            role = "ROLE_"+uiOwR.getOrganisation().getId()+"_"+uiOwR.getOrgaRole().getRole().role;
+            role = "ROLE_ORGANISATION_"+uiOwR.getOrganisation().getId()+"_"+uiOwR.getOrgaRole().getRole().role;
             authorities.add(new SimpleGrantedAuthority(role));
         }
+        for(UserInEventWithRole uiEwR : userInEventWithRoles){
+            role = "ROLE_EVENT_"+uiEwR.getEvent().getId()+"_"+uiEwR.getEventRole().getRole().role;
+            authorities.add(new SimpleGrantedAuthority(role));
+        }*/
         return authorities;
     }
 

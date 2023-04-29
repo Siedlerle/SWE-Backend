@@ -1,10 +1,8 @@
 package com.eventmaster.backend.security.config;
 
-import com.eventmaster.backend.security.authorization.CustomAuthorizationManager;
-import com.eventmaster.backend.security.authorization.OrganizerAuthorizationManager;
+import com.eventmaster.backend.security.authorization.tutor.TutorEventManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -43,13 +41,15 @@ public class SecurityConfig{
         http
                 .csrf()
                 .disable()
+
                 .authorizeHttpRequests()
                     .requestMatchers("/user/auth/**").permitAll()
-                    .requestMatchers("/user/orga/**").permitAll()
+                    .requestMatchers("/user/orga/**").authenticated()
+                    .requestMatchers("/tutor/event/**").access(new TutorEventManager())
+                    .requestMatchers("/tutor/**").permitAll()
                     .requestMatchers("/organizer/**").permitAll()
                     .requestMatchers("/user/event/**").permitAll()
                     .requestMatchers("/admin/orga/**").permitAll()
-                    .requestMatchers("/tutor/**").permitAll()
                     //.requestMatchers("/organizer/**").access(new OrganizerAuthorizationManager())
                     //.anyRequest().access(new CustomAuthorizationManager())
                 .and()
@@ -63,7 +63,6 @@ public class SecurityConfig{
                         .addLogoutHandler(logoutHandler)
                         .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
                 );
-
         return http.build();
     }
 }

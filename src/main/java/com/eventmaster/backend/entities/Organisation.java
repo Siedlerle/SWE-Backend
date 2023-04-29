@@ -1,5 +1,6 @@
 package com.eventmaster.backend.entities;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
