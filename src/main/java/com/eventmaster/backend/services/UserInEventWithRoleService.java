@@ -658,7 +658,7 @@ public class UserInEventWithRoleService {
      * @param single Boolean if invitation is just for him or because his group was invited.
      * @return String about success or failure.
      */
-    public String inviteUserToEvent(long eventId, String userMail, boolean single) {
+    public MessageResponse inviteUserToEvent(long eventId, String userMail, boolean single) {
         Event event = eventService.getEventById(eventId);
         User user = userService.getUserByMail(userMail);
 
@@ -670,7 +670,9 @@ public class UserInEventWithRoleService {
         }
 
         if (userInEventWithRoleRepository.existsByUserAndEvent(user, event)) {
-            return LocalizedStringVariables.USERALREADYPARTOFEVENTMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.USERALREADYPARTOFEVENTMESSAGE)
+                    .build();
         } else {
             //TODO Einladungsmail senden
 
@@ -682,10 +684,14 @@ public class UserInEventWithRoleService {
 
             try {
                 userInEventWithRoleRepository.save(userInEventWithRole);
-                return LocalizedStringVariables.INVITEUSERTOEVENTSUCCESSMESSAGE;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.INVITEUSERTOEVENTSUCCESSMESSAGE)
+                        .build();
             } catch (Exception e) {
                 e.printStackTrace();
-                return LocalizedStringVariables.INVITEUSERTOEVENTFAILUREMESSAGE;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.INVITEUSERTOEVENTFAILUREMESSAGE)
+                        .build();
             }
         }
     }

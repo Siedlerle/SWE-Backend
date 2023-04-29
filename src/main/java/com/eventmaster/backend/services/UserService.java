@@ -109,7 +109,7 @@ public class UserService {
                     verifyUser.setEnabled(true);
                     userRepository.save(verifyUser);
                     return VerificationResponse.builder()
-                            .message("Verifikation war erfolgreich")
+                            .message("Verifikation war erfolgreich.\nSie können sich jetzt anmelden.")
                             .build();
                 }
             }

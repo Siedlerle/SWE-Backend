@@ -153,9 +153,9 @@ public class OrganizerController {
      * @param userMail Mail of the user who will be invited.
      * @return String about success or failure.
      */
-    @PostMapping("/event/{eventId}/user/invite")
-    public ResponseEntity<String> inviteUserToEvent(@PathVariable long eventId,
-                                                    @RequestBody String userMail) {
+    @PostMapping("/event/{eventId}/user/{userMail}/invite")
+    public ResponseEntity<MessageResponse> inviteUserToEvent(@PathVariable long eventId,
+                                                    @PathVariable String userMail) {
         return ResponseEntity.ok(userInEventWithRoleService.inviteUserToEvent(eventId, userMail, true));
     }
 
