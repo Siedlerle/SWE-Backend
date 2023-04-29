@@ -233,7 +233,7 @@ public class UserInOrgaWithRoleService {
      * @param userMail Mail of the user who will be removed.
      * @return String about success of failure.
      */
-    public String removeUserFromOrganisation(long organisationId, String userMail) {
+    public MessageResponse removeUserFromOrganisation(long organisationId, String userMail) {
         try {
             User user = userService.getUserByMail(userMail);
             Organisation organisation = organisationService.getOrganisationById(organisationId);
@@ -243,14 +243,19 @@ public class UserInOrgaWithRoleService {
                 if (userInOrgaWithRole.getOrganisation().getId() == organisation.getId())
                 {
                     userInOrgaWithRoleRepository.delete(userInOrgaWithRole);
-                    return LocalizedStringVariables.REMOVEDUSERFROMORGASUCCESSMESSAGE;
+                    return MessageResponse.builder()
+                            .message(LocalizedStringVariables.REMOVEDUSERFROMORGASUCCESSMESSAGE)
+                            .build();
                 }
             }
-
-            return LocalizedStringVariables.USERISNOTINORGANISATIONMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.USERISNOTINORGANISATIONMESSAGE)
+                    .build();
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.REMOVEDUSERFROMORGAFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.REMOVEDUSERFROMORGAFAILUREMESSAGE)
+                    .build();
         }
     }
 
