@@ -8,11 +8,11 @@ import org.springframework.security.web.access.intercept.RequestAuthorizationCon
 
 import java.util.function.Supplier;
 
-public class AdminAuthManager implements AuthorizationManager<RequestAuthorizationContext> {
+public class SysAdminAuthManager implements AuthorizationManager<RequestAuthorizationContext> {
     String adminPassword;
     private final BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder(13);
 
-    public AdminAuthManager(String adminPassword) {
+    public SysAdminAuthManager(String adminPassword) {
         this.adminPassword = adminPassword;
     }
 

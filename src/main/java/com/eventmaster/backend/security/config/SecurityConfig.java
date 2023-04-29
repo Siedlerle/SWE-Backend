@@ -1,7 +1,7 @@
 package com.eventmaster.backend.security.config;
 
-import com.eventmaster.backend.security.authorization.AdminAuthManager;
-import com.eventmaster.backend.security.authorization.AdminProperties;
+import com.eventmaster.backend.security.authorization.SysAdminAuthManager;
+import com.eventmaster.backend.security.authorization.SysAdminProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -21,16 +21,16 @@ public class SecurityConfig{
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final LogoutHandler logoutHandler;
-    private final AdminProperties adminProperties;
+    private final SysAdminProperties sysAdminProperties;
 
     public SecurityConfig(AuthenticationProvider authenticationProvider,
                           JwtAuthenticationFilter jwtAuthenticationFilter,
                           LogoutHandler logoutHandler,
-                          AdminProperties adminProperties) {
+                          SysAdminProperties sysAdminProperties) {
         this.authenticationProvider = authenticationProvider;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.logoutHandler = logoutHandler;
-        this.adminProperties = adminProperties;
+        this.sysAdminProperties = sysAdminProperties;
     }
 
 
@@ -54,7 +54,7 @@ public class SecurityConfig{
                     .requestMatchers("/admin/orga/**").permitAll()
                     .requestMatchers("/tutor/**").permitAll()
                     .requestMatchers("/logout").permitAll()
-                .requestMatchers("/sys-admin/**").access(new AdminAuthManager(adminProperties.getAdminPassword()))
+                .requestMatchers("/sys-admin/**").access(new SysAdminAuthManager(sysAdminProperties.getAdminPassword()))
                     //.requestMatchers("/organizer/**").access(new OrganizerAuthorizationManager())
                     //.anyRequest().access(new CustomAuthorizationManager())
                 .and()

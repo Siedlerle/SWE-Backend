@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationProperties(prefix = "admin")
-public class AdminProperties {
+public class SysAdminProperties {
     private String adminPassword;
 
     public void setAdminPassword(String adminPassword) {
