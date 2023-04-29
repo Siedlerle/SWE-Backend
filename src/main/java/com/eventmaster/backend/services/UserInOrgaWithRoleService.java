@@ -179,25 +179,66 @@ public class UserInOrgaWithRoleService {
      * @param emailAdress Email of the corresponding user
      * @return success message
      */
-    public String acceptOrganisationInvite(long organisationId, String emailAdress){
+    public MessageResponse acceptOrganisationInvite(long organisationId, String emailAdress){
         try {
             User user = userService.getUserByMail(emailAdress);
 
-            UserInOrgaWithRole userInOrgaWithRole = new UserInOrgaWithRole();
+            UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId);
+
             userInOrgaWithRole.setOrganisation(organisationService.getOrganisationById(organisationId));
             userInOrgaWithRole.setUser(user);
             userInOrgaWithRole.setOrgaRole(orgaRoleService.findByRole(EnumOrgaRole.USER));
 
             userInOrgaWithRoleRepository.save(userInOrgaWithRole);
 
-            return LocalizedStringVariables.ORGANISATIONIVITEACCPETEDSUCCESS;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.ORGANISATIONIVITEACCPETEDSUCCESS)
+                    .build();
 
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.ORGANISATIONIVITEACCPETEDFAILURE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.ORGANISATIONIVITEACCPETEDFAILURE)
+                    .build();
         }
     }
 
+
+    /**
+     * The user can accept an invitation and is added to the organisation
+     * @param organisationId Id of the corresponding orga
+     * @param emailAdress Email of the corresponding user
+     * @return success message
+     */
+    public MessageResponse declineOrganisationInvitation(long organisationId, String emailAdress){
+        try {
+            User user = userService.getUserByMail(emailAdress);
+            Organisation orga = organisationService.getOrganisationById(organisationId);
+            if(userInOrgaWithRoleRepository.existsByUser_IdAndOrganisation_Id(user.getId(), organisationId)){
+                UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId);
+                OrgaRole orgaRole = userInOrgaWithRole.getOrgaRole();
+
+                user.removeUserInOrgaWithRole(userInOrgaWithRole);
+                orga.removeUserInOrgaWithRole(userInOrgaWithRole);
+                orgaRole.removeUserInOrgaWithRole(userInOrgaWithRole);
+
+                userInOrgaWithRoleRepository.deleteById(userInOrgaWithRole.getId());
+
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.ORGANISATIONINVITEDECLINESUCCESS)
+                        .build();
+            }else {
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.USERISNOTINORGANISATIONMESSAGE)
+                        .build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.ORGANISATIONINVITEDECLINEFAILURE)
+                    .build();
+        }
+    }
 
     /**
      * If the user is part of the organisation he will be removed from her.
@@ -246,7 +287,7 @@ public class UserInOrgaWithRoleService {
                 organisation.removeUserInOrgaWithRole(userInOrgaWithRole);
                 orgaRole.removeUserInOrgaWithRole(userInOrgaWithRole);
 
-                System.out.println(userInOrgaWithRole.getUser().getEmailAdress() + "||" + userInOrgaWithRole.getOrganisation().getName());
+                //System.out.println(userInOrgaWithRole.getUser().getEmailAdress() + "||" + userInOrgaWithRole.getOrganisation().getName());
                 userInOrgaWithRoleRepository.deleteById(userInOrgaWithRole.getId());
                 return MessageResponse.builder()
                         .message(LocalizedStringVariables.REMOVEDUSERFROMORGASUCCESSMESSAGE)

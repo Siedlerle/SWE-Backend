@@ -182,7 +182,7 @@ public class UserController {
      * @return successmessage
      */
     @PostMapping("/orga/{organisationId}/accept-invitation/{emailAdress}")
-    public ResponseEntity<String> acceptOrganisationInvitation(@PathVariable long organisationId, @PathVariable String emailAdress){
+    public ResponseEntity<MessageResponse> acceptOrganisationInvitation(@PathVariable long organisationId, @PathVariable String emailAdress){
         return ResponseEntity.ok(userInOrgaWithRoleService.acceptOrganisationInvite(organisationId, emailAdress));
     }
 
@@ -193,8 +193,8 @@ public class UserController {
      * @return successmessage
      */
     @PostMapping("/orga/{organisationId}/decline-invitation/{emailAdress}")
-    public ResponseEntity<String> declineOrganisationInvitation(@PathVariable long organisationId, @PathVariable String emailAdress){
-        return ResponseEntity.ok(LocalizedStringVariables.ORGANISATIONINVITEDECLINESUCCESS);
+    public ResponseEntity<MessageResponse> declineOrganisationInvitation(@PathVariable long organisationId, @PathVariable String emailAdress){
+        return ResponseEntity.ok(userInOrgaWithRoleService.declineOrganisationInvitation(organisationId, emailAdress));
     }
 
     /**
@@ -332,6 +332,7 @@ public class UserController {
      */
     @PostMapping("/event/get-invitations/{emailAddress}")
     public ResponseEntity<List<Event>> getAllEventInvitationsForUser(@PathVariable String emailAddress) {
+        System.out.println(emailAddress);
         return ResponseEntity.ok(userInEventWithRoleService.getEventInvitationsForUser(emailAddress));
     }
 

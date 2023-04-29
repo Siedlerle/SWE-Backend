@@ -18,6 +18,8 @@ public final class LocalizedStringVariables {
         public static final String ORGANISATIONIVITEACCPETEDSUCCESS = "Anfrage wurde erfolgreich angenommen";
         public static final String ORGANISATIONIVITEACCPETEDFAILURE = "Anfrage konnte nicht angenommen werden";
         public static final String ORGANISATIONINVITEDECLINESUCCESS = "Anfrage wurder erfolgreich abgelehnt";
+        public static final String ORGANISATIONINVITEDECLINEFAILURE = "Anfrage konnte nicht abgelehnt werden";
+
 
 
         //EVENTSERIES
