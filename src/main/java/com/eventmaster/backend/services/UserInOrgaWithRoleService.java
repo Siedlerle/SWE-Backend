@@ -237,20 +237,25 @@ public class UserInOrgaWithRoleService {
         try {
             User user = userService.getUserByMail(userMail);
             Organisation organisation = organisationService.getOrganisationById(organisationId);
-            List <UserInOrgaWithRole> userInOrgaWithRoles = userInOrgaWithRoleRepository.findByUser(user);
 
-            for(UserInOrgaWithRole userInOrgaWithRole : userInOrgaWithRoles) {
-                if (userInOrgaWithRole.getOrganisation().getId() == organisation.getId())
-                {
-                    userInOrgaWithRoleRepository.delete(userInOrgaWithRole);
-                    return MessageResponse.builder()
-                            .message(LocalizedStringVariables.REMOVEDUSERFROMORGASUCCESSMESSAGE)
-                            .build();
-                }
+            if (userInOrgaWithRoleRepository.existsByUser_IdAndOrganisation_Id(user.getId(), organisationId)) {
+                UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId);
+                OrgaRole orgaRole = userInOrgaWithRole.getOrgaRole();
+
+                user.removeUserInOrgaWithRole(userInOrgaWithRole);
+                organisation.removeUserInOrgaWithRole(userInOrgaWithRole);
+                orgaRole.removeUserInOrgaWithRole(userInOrgaWithRole);
+
+                System.out.println(userInOrgaWithRole.getUser().getEmailAdress() + "||" + userInOrgaWithRole.getOrganisation().getName());
+                userInOrgaWithRoleRepository.deleteById(userInOrgaWithRole.getId());
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.REMOVEDUSERFROMORGASUCCESSMESSAGE)
+                        .build();
+            } else {
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.USERISNOTINORGANISATIONMESSAGE)
+                        .build();
             }
-            return MessageResponse.builder()
-                    .message(LocalizedStringVariables.USERISNOTINORGANISATIONMESSAGE)
-                    .build();
         } catch (Exception e) {
             e.printStackTrace();
             return MessageResponse.builder()

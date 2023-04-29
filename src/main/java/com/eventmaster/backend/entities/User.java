@@ -113,6 +113,10 @@ public class User implements UserDetails {
         this.userInOrgaWithRoleSet = userInOrgaWithRoleSet;
     }
 
+    public void removeUserInOrgaWithRole(UserInOrgaWithRole userInOrgaWithRole) {
+        this.userInOrgaWithRoleSet.remove(userInOrgaWithRole);
+    }
+
     public Set<Chat> getChats() {
         return chats;
     }
