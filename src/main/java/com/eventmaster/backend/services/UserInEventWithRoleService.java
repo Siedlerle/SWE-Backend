@@ -60,7 +60,7 @@ public class UserInEventWithRoleService {
      * @param emailAddress Email of the corresponding user
      * @return success message
      */
-    public String registerForEvent(long eventId, String emailAddress){
+    public MessageResponse registerForEvent(long eventId, String emailAddress){
         User user = userService.getUserByMail(emailAddress);
         Event event = eventService.getEventById(eventId);
         if(userInEventWithRoleRepository.existsByUserAndEvent(user, event)) {
@@ -68,10 +68,14 @@ public class UserInEventWithRoleService {
             EventRole attendeeRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
             EventRole groupAttendeeRole = eventRoleService.findByRole(EnumEventRole.GROUPATTENDEE);
             if (userInEventWithRole.getEventRole().equals(attendeeRole) || userInEventWithRole.getEventRole().equals(groupAttendeeRole)) {
-                return LocalizedStringVariables.USERALREADYATTENDTINGTOEVENT;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.USERALREADYATTENDTINGTOEVENT)
+                        .build();
             } else {
                 userInEventWithRole.setEventRole(attendeeRole);
-                return LocalizedStringVariables.USERREGISTERESFOREVENTSUCCESSMESSAGE;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.USERREGISTERESFOREVENTSUCCESSMESSAGE)
+                        .build();
             }
         } else {
             try {
@@ -84,10 +88,14 @@ public class UserInEventWithRoleService {
                 userInEventWithRole.setEventRole(eventRole);
                 userInEventWithRoleRepository.save(userInEventWithRole);
 
-                return LocalizedStringVariables.USERREGISTERESFOREVENTSUCCESSMESSAGE;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.USERREGISTERESFOREVENTSUCCESSMESSAGE)
+                        .build();
             }catch (Exception e) {
                 e.printStackTrace();
-                return LocalizedStringVariables.USERREGISTERESFOREVENTFAILUREMESSAGE;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.USERREGISTERESFOREVENTFAILUREMESSAGE)
+                        .build();
             }
         }
     }
@@ -225,10 +233,9 @@ public class UserInEventWithRoleService {
      * A user can unregister from an event
      * @param eventId Corresponding event
      * @param emailAdress Id of the user who is about to unregister
-     * @param reason Reason for unregistering as a feedback for the organizer
      * @return success message
      */
-    public String unregisterFromEvent(long eventId,String emailAdress, String reason){
+    public MessageResponse unregisterFromEvent(long eventId,String emailAdress){
         //Todo reason speichern
         try {
 
@@ -237,10 +244,14 @@ public class UserInEventWithRoleService {
             UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(user, event);
             userInEventWithRoleRepository.delete(userInEventWithRole);
 
-            return LocalizedStringVariables.USERUNREGISTERFROMEVENTSUCCESSMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.USERUNREGISTERFROMEVENTSUCCESSMESSAGE)
+                    .build();
         }catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.USERUNREGISTERFROMEVENTFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.USERUNREGISTERFROMEVENTFAILUREMESSAGE)
+                    .build();
         }
 
     }

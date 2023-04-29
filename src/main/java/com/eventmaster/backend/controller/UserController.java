@@ -288,7 +288,7 @@ public class UserController {
      * @return success message
      */
     @PostMapping("/event/{eventId}/register/{emailAdress}")
-    public ResponseEntity<String> registerForEvent( @PathVariable long eventId, @PathVariable String emailAdress){
+    public ResponseEntity<MessageResponse> registerForEvent( @PathVariable long eventId, @PathVariable String emailAdress){
         return ResponseEntity.ok(userInEventWithRoleService.registerForEvent(eventId, emailAdress));
     }
 
@@ -306,12 +306,12 @@ public class UserController {
      * Endpoint to unregister a user from an event
      * @param eventId Corresponding event for unregistration
      * @param emailAdress Token from user to get further information
-     * @param reason Reason why the user is unregistering
      * @return success message
      */
+    //TODO reason wieder einpflegen
     @PostMapping("/event/{eventId}/unregister/{emailAdress}")
-    public ResponseEntity<String> ungregisterFromEvent(@PathVariable long eventId, @PathVariable String emailAdress, @RequestBody String reason){
-        return ResponseEntity.ok(userInEventWithRoleService.unregisterFromEvent(eventId,emailAdress, reason));
+    public ResponseEntity<MessageResponse> ungregisterFromEvent(@PathVariable long eventId, @PathVariable String emailAdress){
+        return ResponseEntity.ok(userInEventWithRoleService.unregisterFromEvent(eventId,emailAdress));
     }
 
 
