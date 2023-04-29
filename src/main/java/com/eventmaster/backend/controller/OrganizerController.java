@@ -186,9 +186,9 @@ public class OrganizerController {
      * @param groupId ID of the group which will be invited.
      * @return String about success or failure.
      */
-    @PostMapping("/event/{eventId}/group/invite")
-    public ResponseEntity<String> inviteGroupToEvent(@PathVariable long eventId,
-                                                     @RequestBody long groupId) {
+    @PostMapping("/event/{eventId}/group/{groupId}/invite")
+    public ResponseEntity<MessageResponse> inviteGroupToEvent(@PathVariable long eventId,
+                                                     @PathVariable long groupId) {
         return ResponseEntity.ok(groupInEventService.inviteGroupToEvent(eventId, groupId));
     }
 
@@ -439,9 +439,9 @@ public class OrganizerController {
      * @param userMail Mail of the user who will be invited.
      * @return String about success or failure.
      */
-    @PostMapping("/organisation/{orgaId}/user/invite")
+    @PostMapping("/organisation/{orgaId}/user/{userMail}/invite")
     public ResponseEntity<String> inviteUserToOrganisation(@PathVariable long orgaId,
-                                                           @RequestBody String userMail) {
+                                                           @PathVariable String userMail) {
         return ResponseEntity.ok(userInOrgaWithRoleService.inviteUserToOrganisation(orgaId, userMail));
     }
 
