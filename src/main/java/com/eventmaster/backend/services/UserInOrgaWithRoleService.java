@@ -415,10 +415,19 @@ public class UserInOrgaWithRoleService {
         return unaffiliatedUsers;
     }
 
+    /**
+     * Gets all users of organisation(Not invited or requested once)
+     * @param orgaId Id of the corresponding organisation
+     * @return List of users
+     */
     public List<User> getAllUsersInOrga(long orgaId){
             List<User> allUsersInOrga = userInOrgaWithRoleRepository
                 .findByOrganisation_Id(orgaId)
                 .stream()
+                .filter(userInOrgaWithRole -> {
+                    EnumOrgaRole role = userInOrgaWithRole.getOrgaRole().getRole()
+                    ;return role == EnumOrgaRole.USER || role == EnumOrgaRole.ORGANIZER || role == EnumOrgaRole.ADMIN;
+                })
                 .map(UserInOrgaWithRole::getUser).toList();
             return allUsersInOrga;
     }

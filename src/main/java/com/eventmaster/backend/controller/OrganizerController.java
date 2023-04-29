@@ -445,7 +445,11 @@ public class OrganizerController {
         return ResponseEntity.ok(userInOrgaWithRoleService.inviteUserToOrganisation(orgaId, userMail));
     }
 
-
+    /**
+     * Endpoint to retrieve all users in organisation
+     * @param orgaId Id of the corresponding organisation
+     * @return List of users
+     */
     @PostMapping("/organisation/{orgaId}/user/get-all")
     public ResponseEntity<List<User>> getAllUsersInOrganisation(@PathVariable long orgaId){
         return ResponseEntity.ok(userInOrgaWithRoleService.getAllUsersInOrga(orgaId));
