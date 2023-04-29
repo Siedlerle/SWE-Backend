@@ -395,7 +395,6 @@ public class UserInOrgaWithRoleService {
                 .stream()
                 .filter(user -> !affiliated.contains(user))
                 .toList();
-        System.out.println("Hallo");
         return unaffiliatedUsers;
     }
 }
