@@ -6,6 +6,8 @@ import com.eventmaster.backend.repositories.GroupRepository;
 import local.variables.LocalizedStringVariables;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * A class which receives and processes the requests of multiple controllers concerning the management of groups
  *
@@ -91,5 +93,8 @@ public class GroupService {
             e.printStackTrace();
             return LocalizedStringVariables.GROUPDELETEDFAILUREMESSAGE;
         }
+    }
+    public List<Group> findByOrganisationId(long organisationId){
+        return this.groupRepository.findByOrganisation_Id(organisationId);
     }
 }

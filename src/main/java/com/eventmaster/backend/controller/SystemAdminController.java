@@ -32,10 +32,11 @@ public class SystemAdminController {
     /**
      * Endpoint to create an organisation.
      * @param organisation Organisation which will be saved.
+     * @param password Password of the System-Admin to authorize him.
      * @return success message
      */
-    @PostMapping("/organisation/create")
-    public ResponseEntity<String> createOrganisation(@RequestBody Organisation organisation){
+    @PostMapping("/organisation/create/{password}")
+    public ResponseEntity<String> createOrganisation(@RequestBody Organisation organisation,@PathVariable String password){
         //TODO passwort vom Sysadmin abfragen?
         return ResponseEntity.ok(organisationService.createOrganisation(organisation));
     }
@@ -43,10 +44,11 @@ public class SystemAdminController {
     /**
      * Endpoint to change an already existing organisation.
      * @param organisation Organisation which will be changed.
+     * @param password Password of the System-Admin to authorize him.
      * @return success message
      */
-    @PostMapping("/organisation/change")
-    public ResponseEntity<String> changeOrganisation(@RequestBody Organisation organisation){
+    @PostMapping("/organisation/change/{password}")
+    public ResponseEntity<String> changeOrganisation(@RequestBody Organisation organisation,@PathVariable String password){
         //TODO passwort vom Sysadmin abfragen?
         return ResponseEntity.ok(organisationService.changeOrganisation(organisation));
     }
@@ -54,10 +56,11 @@ public class SystemAdminController {
     /**
      * Endpoint to delete an organisation.
      * @param organisationId ID of the organisation which will be deleted.
+     * @param password Password of the System-Admin to authorize him.
      * @return success message
      */
-    @PostMapping("/organisation/delete/{organisationId}")
-    public ResponseEntity<String> deleteOrganisation(@PathVariable long organisationId) {
+    @PostMapping("/organisation/delete/{organisationId}/{password}")
+    public ResponseEntity<String> deleteOrganisation(@PathVariable long organisationId,@PathVariable String password) {
         //TODO passwort vom Sysadmin abfragen?
         return ResponseEntity.ok(organisationService.deleteOrganisation(organisationId));
     }
@@ -65,12 +68,11 @@ public class SystemAdminController {
     /**
      * Endpoint to delete a user.
      * @param emailAdress Email of the user which will be deleted.
-     * @param sysAdminPassword Password of the System-Admin to authorize him.
+     * @param password Password of the System-Admin to authorize him.
      * @return success message
      */
-    @PostMapping("/user/delete")
-    public ResponseEntity<String> deleteUser(@RequestParam String emailAdress,
-                                             @RequestParam String sysAdminPassword) {
+    @PostMapping("/user/delete/{password}")
+    public ResponseEntity<String> deleteUser(@RequestParam String emailAdress,@PathVariable String password) {
         //TODO passwort vom Sysadmin abfragen?
         return ResponseEntity.ok(userService.deleteUser(emailAdress));
     }
@@ -79,12 +81,11 @@ public class SystemAdminController {
     /**
      * Endpoint to add a user to the database directly.
      * @param user User who will be saved.
-     * @param sysAdminPassword Password of the System-Admin to authorize him.
+     * @param password Password of the System-Admin to authorize him.
      * @return success message
      */
-    @PostMapping("/user/add")
-    public ResponseEntity<String> addUser(@RequestBody User user,
-                        @RequestParam String sysAdminPassword) {
+    @PostMapping("/user/add/{password}")
+    public ResponseEntity<String> addUser(@RequestBody User user,@PathVariable String password) {
         return ResponseEntity.ok(userService.saveUser(user));
     }
 }

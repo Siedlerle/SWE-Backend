@@ -76,9 +76,7 @@ public class UserController {
      * @return AuthenticationResponse with tokens
      */
     @PostMapping("/auth/login")
-    public ResponseEntity<?> login (@RequestBody User user){
-        return ResponseEntity.ok(userService.login(user));
-    }
+    public ResponseEntity<?> login (@RequestBody User user){return ResponseEntity.ok(userService.login(user));}
 
 
     /**

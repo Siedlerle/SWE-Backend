@@ -2,6 +2,7 @@ package com.eventmaster.backend.services;
 
 import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.repositories.EventSeriesRepository;
+import com.eventmaster.backend.security.authentification.AuthenticationResponse;
 import local.variables.LocalizedStringVariables;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;

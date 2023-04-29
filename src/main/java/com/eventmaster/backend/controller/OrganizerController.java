@@ -120,7 +120,15 @@ public class OrganizerController {
     public ResponseEntity<List<User>> getUnaffiliatedUsersForEvent(@RequestBody Event event){
         return ResponseEntity.ok(userInOrgaWithRoleService.getUnaffiliatedUsersForEvent(event));
     }
-
+    /**
+     * Endpoint to get all Groups of an organisation, not affiliated with the event.
+     * @param event The event to be checked.
+     * @return List of groups that aren't affiliated.
+     */
+    @PostMapping("/event/get/unaffiliated-groups")
+    public ResponseEntity<List<Group>> getUnaffiliatedGroupsForEvent(@RequestBody Event event){
+        return ResponseEntity.ok(groupInEventService.getUnaffiliatedGroupsForEvent(event));
+    }
 
 
     /**
@@ -153,9 +161,9 @@ public class OrganizerController {
      * @param userMail Mail of the user who will be invited.
      * @return String about success or failure.
      */
-    @PostMapping("/event/{eventId}/user/invite")
-    public ResponseEntity<String> inviteUserToEvent(@PathVariable long eventId,
-                                                    @RequestBody String userMail) {
+    @PostMapping("/event/{eventId}/user/{userMail}/invite")
+    public ResponseEntity<MessageResponse> inviteUserToEvent(@PathVariable long eventId,
+                                                    @PathVariable String userMail) {
         return ResponseEntity.ok(userInEventWithRoleService.inviteUserToEvent(eventId, userMail, true));
     }
 
@@ -165,9 +173,10 @@ public class OrganizerController {
      * @param userMail Mail of the tutor.
      * @return String about success or failure.
      */
-    @PostMapping("/event/{eventId}/tutor/invite")
-    public ResponseEntity<String> inviteTutorToEvent(@PathVariable long eventId,
-                                                     @RequestBody String userMail) {
+    @PostMapping("/event/{eventId}/tutor/{userMail}/invite")
+    public ResponseEntity<MessageResponse> inviteTutorToEvent(@PathVariable long eventId,
+                                                     @PathVariable String userMail) {
+        System.out.println(userMail);
         return ResponseEntity.ok(userInEventWithRoleService.inviteTutorToEvent(eventId, userMail));
     }
 
@@ -177,9 +186,9 @@ public class OrganizerController {
      * @param groupId ID of the group which will be invited.
      * @return String about success or failure.
      */
-    @PostMapping("/event/{eventId}/group/invite")
-    public ResponseEntity<String> inviteGroupToEvent(@PathVariable long eventId,
-                                                     @RequestBody long groupId) {
+    @PostMapping("/event/{eventId}/group/{groupId}/invite")
+    public ResponseEntity<MessageResponse> inviteGroupToEvent(@PathVariable long eventId,
+                                                     @PathVariable long groupId) {
         return ResponseEntity.ok(groupInEventService.inviteGroupToEvent(eventId, groupId));
     }
 
@@ -430,10 +439,16 @@ public class OrganizerController {
      * @param userMail Mail of the user who will be invited.
      * @return String about success or failure.
      */
-    @PostMapping("/organisation/{orgaId}/user/invite")
-    public ResponseEntity<String> inviteUserToOrganisation(@PathVariable long orgaId,
-                                                           @RequestBody String userMail) {
+    @PostMapping("/organisation/{orgaId}/user/{userMail}/invite")
+    public ResponseEntity<MessageResponse> inviteUserToOrganisation(@PathVariable long orgaId,
+                                                           @PathVariable String userMail) {
         return ResponseEntity.ok(userInOrgaWithRoleService.inviteUserToOrganisation(orgaId, userMail));
+    }
+
+
+    @PostMapping("/organisation/{orgaId}/user/get-all")
+    public ResponseEntity<List<User>> getAllUsersInOrganisation(@PathVariable long orgaId){
+        return ResponseEntity.ok(userInOrgaWithRoleService.getAllUsersInOrga(orgaId));
     }
 
     //endregion

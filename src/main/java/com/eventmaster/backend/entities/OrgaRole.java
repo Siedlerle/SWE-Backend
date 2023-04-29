@@ -38,5 +38,9 @@ public class OrgaRole {
     public void setRole(EnumOrgaRole role) {
         this.role = role;
     }
+
+    public void removeUserInOrgaWithRole(UserInOrgaWithRole userInOrgaWithRole) {
+        this.userInOrgaWithRoles.remove(userInOrgaWithRole);
+    }
 }
 

@@ -2,6 +2,7 @@ package com.eventmaster.backend.controller;
 
 import com.eventmaster.backend.entities.Event;
 import com.eventmaster.backend.entities.Group;
+import com.eventmaster.backend.entities.MessageResponse;
 import com.eventmaster.backend.entities.Organisation;
 import com.eventmaster.backend.services.*;
 import org.springframework.http.ResponseEntity;
@@ -65,9 +66,9 @@ public class AdminController {
      * @param userMail Mail of the user.
      * @return String about success of failure.
      */
-    @PostMapping("/orga/{orgaId}/user/remove")
-    public ResponseEntity<String> removeUserFromOrganisation(@PathVariable long orgaId,
-                                                             @RequestBody String userMail) {
+    @PostMapping("/orga/{orgaId}/user/{userMail}/remove")
+    public ResponseEntity<MessageResponse> removeUserFromOrganisation(@PathVariable long orgaId,
+                                                                      @PathVariable String userMail) {
         return ResponseEntity.ok(userInOrgaWithRoleService.removeUserFromOrganisation(orgaId, userMail));
     }
 
