@@ -386,8 +386,6 @@ public class UserInOrgaWithRoleService {
                 .findByOrganisation_Id(event.getOrganisation().getId())
                 .stream()
                 .map(UserInOrgaWithRole::getUser).toList();
-        //List<UserInEventWithRole> uEWR = userInEventWithRoleService.findByEventId(15);
-        //System.out.println("SDASDASD");
         List<User> affiliated = userInEventWithRoleService
                 .findByEventId(eventID)
                 .stream()
@@ -396,7 +394,6 @@ public class UserInOrgaWithRoleService {
         unaffiliatedUsers = allUsersInOrga
                 .stream()
                 .filter(user -> !affiliated.contains(user))
-                //.map(all-> affiliated.contains(all) ? all : null)
                 .toList();
         System.out.println("Hallo");
         return unaffiliatedUsers;
