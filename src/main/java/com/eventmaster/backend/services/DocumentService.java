@@ -182,7 +182,7 @@ public class DocumentService {
 
         try (InputStream inputStream = image.getInputStream()) {
             Path filePath = uploadPath.resolve(String.valueOf(eventId)+"."+fileExtension);
-            String fileName = "http://localhost:8080/upload/" + String.valueOf(eventId)+"."+fileExtension;
+            String fileName = "/upload/" + String.valueOf(eventId)+"."+fileExtension;
             Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
             return fileName;
         } catch (IOException ioe) {
