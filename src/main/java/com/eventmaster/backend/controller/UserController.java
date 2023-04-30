@@ -171,7 +171,7 @@ public class UserController {
      * @return successmessage
      */
     @PostMapping("/orga/{organisationId}/request-join/{emailAdress}")
-    public ResponseEntity<String> requestJoin(@PathVariable long organisationId,@PathVariable String emailAdress){
+    public ResponseEntity<MessageResponse> requestJoin(@PathVariable long organisationId,@PathVariable String emailAdress){
         return ResponseEntity.ok(userInOrgaWithRoleService.requestJoin(organisationId, emailAdress));
     }
 
@@ -182,7 +182,7 @@ public class UserController {
      * @return successmessage
      */
     @PostMapping("/orga/{organisationId}/accept-invitation/{emailAdress}")
-    public ResponseEntity<String> acceptOrganisationInvitation(@PathVariable long organisationId, @PathVariable String emailAdress){
+    public ResponseEntity<MessageResponse> acceptOrganisationInvitation(@PathVariable long organisationId, @PathVariable String emailAdress){
         return ResponseEntity.ok(userInOrgaWithRoleService.acceptOrganisationInvite(organisationId, emailAdress));
     }
 
@@ -193,20 +193,19 @@ public class UserController {
      * @return successmessage
      */
     @PostMapping("/orga/{organisationId}/decline-invitation/{emailAdress}")
-    public ResponseEntity<String> declineOrganisationInvitation(@PathVariable long organisationId, @PathVariable String emailAdress){
-        return ResponseEntity.ok(LocalizedStringVariables.ORGANISATIONINVITEDECLINESUCCESS);
+    public ResponseEntity<MessageResponse> declineOrganisationInvitation(@PathVariable long organisationId, @PathVariable String emailAdress){
+        return ResponseEntity.ok(userInOrgaWithRoleService.declineOrganisationInvitation(organisationId, emailAdress));
     }
 
     /**
      * Endpoint for a user to leave an organisation
      * @param organisationId Id of the corresponding Organisation
      * @param emailAdress Email to retrieve the id of the user requesting
-     * @param reason Reason why the user leaves the organisation
      * @return successmessage
      */
     @PostMapping("/orga/{organisationId}/leave/{emailAdress}")
-    public ResponseEntity<String> leaveOrganisation(@PathVariable long organisationId, @PathVariable String emailAdress, @RequestBody String reason){
-        return ResponseEntity.ok(userInOrgaWithRoleService.leaveOrganisation(organisationId, emailAdress, reason));
+    public ResponseEntity<MessageResponse> leaveOrganisation(@PathVariable long organisationId, @PathVariable String emailAdress){
+        return ResponseEntity.ok(userInOrgaWithRoleService.leaveOrganisation(organisationId, emailAdress));
     }
 
 
@@ -255,7 +254,7 @@ public class UserController {
      * @return success message
      */
     @PostMapping("/event/{eventId}/accept-invitation/{emailAdress}")
-    public ResponseEntity<String> acceptEventInvitation(@PathVariable long eventId, @PathVariable String emailAdress){
+    public ResponseEntity<MessageResponse> acceptEventInvitation(@PathVariable long eventId, @PathVariable String emailAdress){
         return ResponseEntity.ok(userInEventWithRoleService.acceptEventInvitation(eventId, emailAdress));
     }
 
@@ -266,7 +265,7 @@ public class UserController {
      * @return success message
      */
     @PostMapping("/event/{eventId}/decline-invitation/{emailAdress}")
-    public ResponseEntity<String> declineEventInvitation(@PathVariable long eventId, @PathVariable String emailAdress){
+    public ResponseEntity<MessageResponse> declineEventInvitation(@PathVariable long eventId, @PathVariable String emailAdress){
         return ResponseEntity.ok(userInEventWithRoleService.declineEventInvitation(eventId, emailAdress));
     }
 
@@ -288,7 +287,7 @@ public class UserController {
      * @return success message
      */
     @PostMapping("/event/{eventId}/register/{emailAdress}")
-    public ResponseEntity<String> registerForEvent( @PathVariable long eventId, @PathVariable String emailAdress){
+    public ResponseEntity<MessageResponse> registerForEvent( @PathVariable long eventId, @PathVariable String emailAdress){
         return ResponseEntity.ok(userInEventWithRoleService.registerForEvent(eventId, emailAdress));
     }
 
@@ -306,12 +305,12 @@ public class UserController {
      * Endpoint to unregister a user from an event
      * @param eventId Corresponding event for unregistration
      * @param emailAdress Token from user to get further information
-     * @param reason Reason why the user is unregistering
      * @return success message
      */
+    //TODO reason wieder einpflegen
     @PostMapping("/event/{eventId}/unregister/{emailAdress}")
-    public ResponseEntity<String> ungregisterFromEvent(@PathVariable long eventId, @PathVariable String emailAdress, @RequestBody String reason){
-        return ResponseEntity.ok(userInEventWithRoleService.unregisterFromEvent(eventId,emailAdress, reason));
+    public ResponseEntity<MessageResponse> ungregisterFromEvent(@PathVariable long eventId, @PathVariable String emailAdress){
+        return ResponseEntity.ok(userInEventWithRoleService.unregisterFromEvent(eventId,emailAdress));
     }
 
 
@@ -332,6 +331,7 @@ public class UserController {
      */
     @PostMapping("/event/get-invitations/{emailAddress}")
     public ResponseEntity<List<Event>> getAllEventInvitationsForUser(@PathVariable String emailAddress) {
+        System.out.println(emailAddress);
         return ResponseEntity.ok(userInEventWithRoleService.getEventInvitationsForUser(emailAddress));
     }
 

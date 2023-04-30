@@ -186,9 +186,9 @@ public class OrganizerController {
      * @param groupId ID of the group which will be invited.
      * @return String about success or failure.
      */
-    @PostMapping("/event/{eventId}/group/invite")
-    public ResponseEntity<String> inviteGroupToEvent(@PathVariable long eventId,
-                                                     @RequestBody long groupId) {
+    @PostMapping("/event/{eventId}/group/{groupId}/invite")
+    public ResponseEntity<MessageResponse> inviteGroupToEvent(@PathVariable long eventId,
+                                                     @PathVariable long groupId) {
         return ResponseEntity.ok(groupInEventService.inviteGroupToEvent(eventId, groupId));
     }
 
@@ -196,14 +196,12 @@ public class OrganizerController {
      * Endpoint to remove a user from an event.
      * @param eventId ID of the event.
      * @param userMail Mail of the user who will be removed.
-     * @param reason Reason why user will be removed.
      * @return String about success or failure.
      */
-    @PostMapping("/event/{eventId}/attendee/remove")
-    public ResponseEntity<String> removeUserFromEvent(@PathVariable long eventId,
-                                                      @RequestBody String userMail,
-                                                      @RequestParam String reason) {
-        return ResponseEntity.ok(userInEventWithRoleService.removeUserFromEvent(eventId, userMail, reason));
+    @PostMapping("/event/{eventId}/attendee/{userMail}/remove")
+    public ResponseEntity<MessageResponse> removeUserFromEvent(@PathVariable long eventId,
+                                                               @PathVariable String userMail) {
+        return ResponseEntity.ok(userInEventWithRoleService.removeUserFromEvent(eventId, userMail));
     }
 
     /**
@@ -349,14 +347,12 @@ public class OrganizerController {
      * Endpoint to remove a user from an eventseries.
      * @param eventSeriesId ID of the eventseries.
      * @param userMail Mail of the user who will be removed.
-     * @param reason Reason why the user will be removed.
      * @return String about success or failure.
      */
     @PostMapping("/event-series/{eventSeriesId}/user/remove")
     public ResponseEntity<String> removeUserFromEventSeries(@PathVariable long eventSeriesId,
-                                                            @RequestBody String userMail,
-                                                            @RequestParam String reason) {
-        return ResponseEntity.ok(eventSeriesService.removeUserFromEventSeries(eventSeriesId, userMail, reason));
+                                                            @RequestBody String userMail) {
+        return ResponseEntity.ok(eventSeriesService.removeUserFromEventSeries(eventSeriesId, userMail));
     }
 
     /**
@@ -439,10 +435,20 @@ public class OrganizerController {
      * @param userMail Mail of the user who will be invited.
      * @return String about success or failure.
      */
-    @PostMapping("/organisation/{orgaId}/user/invite")
-    public ResponseEntity<String> inviteUserToOrganisation(@PathVariable long orgaId,
-                                                           @RequestBody String userMail) {
+    @PostMapping("/organisation/{orgaId}/user/{userMail}/invite")
+    public ResponseEntity<MessageResponse> inviteUserToOrganisation(@PathVariable long orgaId,
+                                                           @PathVariable String userMail) {
         return ResponseEntity.ok(userInOrgaWithRoleService.inviteUserToOrganisation(orgaId, userMail));
+    }
+
+    /**
+     * Endpoint to retrieve all users in organisation
+     * @param orgaId Id of the corresponding organisation
+     * @return List of users
+     */
+    @PostMapping("/organisation/{orgaId}/user/get-all")
+    public ResponseEntity<List<User>> getAllUsersInOrganisation(@PathVariable long orgaId){
+        return ResponseEntity.ok(userInOrgaWithRoleService.getAllUsersInOrga(orgaId));
     }
 
     //endregion

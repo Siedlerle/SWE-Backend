@@ -38,19 +38,22 @@ public class GroupInEventService {
      * @param groupId Group of users who will be invited to the event.
      * @return String about success or failure.
      */
-    public String inviteGroupToEvent(long eventId, long groupId) {
+    public MessageResponse inviteGroupToEvent(long eventId, long groupId) {
         Event event = eventService.getEventById(eventId);
-
         List<User> usersOfGroup = userInGroupService.getUsersOfGroup(groupId);
 
         try {
             for (User user : usersOfGroup) {
                 userInEventWithRoleService.inviteUserToEvent(event.getId(), user.getEmailAdress(), false);
             }
-            return LocalizedStringVariables.INVITEDGROUPTOEVENTSUCCESSMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.INVITEDGROUPTOEVENTSUCCESSMESSAGE)
+                    .build();
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.INVITEDGROUPTOEVENTFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.INVITEDGROUPTOEVENTFAILUREMESSAGE)
+                    .build();
         }
 
     }

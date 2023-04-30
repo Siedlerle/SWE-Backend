@@ -60,7 +60,7 @@ public class UserInEventWithRoleService {
      * @param emailAddress Email of the corresponding user
      * @return success message
      */
-    public String registerForEvent(long eventId, String emailAddress){
+    public MessageResponse registerForEvent(long eventId, String emailAddress){
         User user = userService.getUserByMail(emailAddress);
         Event event = eventService.getEventById(eventId);
         if(userInEventWithRoleRepository.existsByUserAndEvent(user, event)) {
@@ -68,10 +68,14 @@ public class UserInEventWithRoleService {
             EventRole attendeeRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
             EventRole groupAttendeeRole = eventRoleService.findByRole(EnumEventRole.GROUPATTENDEE);
             if (userInEventWithRole.getEventRole().equals(attendeeRole) || userInEventWithRole.getEventRole().equals(groupAttendeeRole)) {
-                return LocalizedStringVariables.USERALREADYATTENDTINGTOEVENT;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.USERALREADYATTENDTINGTOEVENT)
+                        .build();
             } else {
                 userInEventWithRole.setEventRole(attendeeRole);
-                return LocalizedStringVariables.USERREGISTERESFOREVENTSUCCESSMESSAGE;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.USERREGISTERESFOREVENTSUCCESSMESSAGE)
+                        .build();
             }
         } else {
             try {
@@ -84,10 +88,14 @@ public class UserInEventWithRoleService {
                 userInEventWithRole.setEventRole(eventRole);
                 userInEventWithRoleRepository.save(userInEventWithRole);
 
-                return LocalizedStringVariables.USERREGISTERESFOREVENTSUCCESSMESSAGE;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.USERREGISTERESFOREVENTSUCCESSMESSAGE)
+                        .build();
             }catch (Exception e) {
                 e.printStackTrace();
-                return LocalizedStringVariables.USERREGISTERESFOREVENTFAILUREMESSAGE;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.USERREGISTERESFOREVENTFAILUREMESSAGE)
+                        .build();
             }
         }
     }
@@ -98,22 +106,26 @@ public class UserInEventWithRoleService {
      * @param emailAdress Email of the user who is being invited
      * @return success message
      */
-    public String acceptEventInvitation(long eventId, String emailAdress){
+    public MessageResponse acceptEventInvitation(long eventId, String emailAdress){
         try {
+            User user = userService.getUserByMail(emailAdress);
             EventRole eventRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
 
-            UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
-            //Todo Abfragen von User oder Event in if-Abfragen "abfangen" im Fehlerfall
+            UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUser_IdAndEvent_Id(user.getId(), eventId);
+
             userInEventWithRole.setEvent(eventService.getEventById(eventId));
             userInEventWithRole.setUser(userService.getUserByMail(emailAdress));
             userInEventWithRole.setEventRole(eventRole);
             userInEventWithRoleRepository.save(userInEventWithRole);
 
-            return LocalizedStringVariables.EVENTINVITATIONACCEPTEDSUCCESSMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.EVENTINVITATIONACCEPTEDSUCCESSMESSAGE)
+                    .build();
         }catch (Exception e) {
-            //Todo Exceptionhandling weiter ausbauen, sodass Nutzer weiß was genau passiert ist
             e.printStackTrace();
-            return LocalizedStringVariables.EVENTINVITATIONACCEPTEDFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.EVENTINVITATIONACCEPTEDFAILUREMESSAGE)
+                    .build();
         }
     }
 
@@ -123,7 +135,7 @@ public class UserInEventWithRoleService {
      * @param emailAdress Email of the user who is being invited
      * @return success message
      */
-    public String declineEventInvitation(long eventId, String emailAdress){
+    public MessageResponse declineEventInvitation(long eventId, String emailAdress){
         try {
             User user = userService.getUserByMail(emailAdress);
             Event event = eventService.getEventById(eventId);
@@ -133,10 +145,14 @@ public class UserInEventWithRoleService {
             if(userInEventWithRole!=null) {
                 userInEventWithRoleRepository.delete(userInEventWithRole);
             }
-            return LocalizedStringVariables.EVENTINVITATIONDECLINEDSUCCESSMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.EVENTINVITATIONDECLINEDSUCCESSMESSAGE)
+                    .build();
         }catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.EVENTINVITATIONDECLINEDFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.EVENTINVITATIONDECLINEDFAILUREMESSAGE)
+                    .build();
         }
     }
 
@@ -217,10 +233,9 @@ public class UserInEventWithRoleService {
      * A user can unregister from an event
      * @param eventId Corresponding event
      * @param emailAdress Id of the user who is about to unregister
-     * @param reason Reason for unregistering as a feedback for the organizer
      * @return success message
      */
-    public String unregisterFromEvent(long eventId,String emailAdress, String reason){
+    public MessageResponse unregisterFromEvent(long eventId,String emailAdress){
         //Todo reason speichern
         try {
 
@@ -229,10 +244,14 @@ public class UserInEventWithRoleService {
             UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(user, event);
             userInEventWithRoleRepository.delete(userInEventWithRole);
 
-            return LocalizedStringVariables.USERUNREGISTERFROMEVENTSUCCESSMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.USERUNREGISTERFROMEVENTSUCCESSMESSAGE)
+                    .build();
         }catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.USERUNREGISTERFROMEVENTFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.USERUNREGISTERFROMEVENTFAILUREMESSAGE)
+                    .build();
         }
 
     }
@@ -776,10 +795,9 @@ public class UserInEventWithRoleService {
      * Removes a user from an event and sends the user an email why.
      * @param eventId ID of the event.
      * @param userMail Mail of the user who will be removed.
-     * @param reason Reason why he will be removed.
      * @return String about success or failure.
      */
-    public String removeUserFromEvent(long eventId, String userMail, String reason) {
+    public MessageResponse removeUserFromEvent(long eventId, String userMail) {
         Event event = eventService.getEventById(eventId);
         User user = userService.getUserByMail(userMail);
 
@@ -788,13 +806,19 @@ public class UserInEventWithRoleService {
             try {
                 userInEventWithRoleRepository.delete(userInEventWithRole);
                 //TODO Mail mit reason senden
-                return LocalizedStringVariables.REMOVEUSERFROMEVENTSUCCESSMESSAGE;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.REMOVEUSERFROMEVENTSUCCESSMESSAGE)
+                        .build();
             } catch (Exception e) {
                 e.printStackTrace();
-                return LocalizedStringVariables.REMOVEUSERFROMEVENTFAILUREMESSAGE;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.REMOVEUSERFROMEVENTFAILUREMESSAGE)
+                        .build();
             }
         } else {
-            return LocalizedStringVariables.USERNOTATTENDINGATEVENTMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.USERNOTATTENDINGATEVENTMESSAGE)
+                    .build();
         }
     }
 

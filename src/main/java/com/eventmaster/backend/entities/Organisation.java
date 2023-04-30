@@ -74,4 +74,8 @@ public class Organisation {
     public Set<Preset> getPresets() {
         return presets;
     }
+
+    public void removeUserInOrgaWithRole(UserInOrgaWithRole userInOrgaWithRole) {
+        this.orgaUserRoles.remove(userInOrgaWithRole);
+    }
 }

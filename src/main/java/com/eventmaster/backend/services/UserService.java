@@ -1,4 +1,5 @@
 package com.eventmaster.backend.services;
+import com.eventmaster.backend.entities.MessageResponse;
 import com.eventmaster.backend.entities.User;
 import com.eventmaster.backend.repositories.UserRepository;
 import local.variables.LocalizedStringVariables;
@@ -67,7 +68,16 @@ public class UserService {
      * @param request Userobject
      * @return success message
      */
-    public String register(User request){
+    public MessageResponse register(User request){
+
+        User checkUser = request;
+
+        if(userRepository.findByEmailAdress(checkUser.getEmailAdress()) != null){
+            return MessageResponse.builder()
+                    .message("Email ist bereits vergeben.")
+                    .build();
+        }
+
         var user = User.builder()
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
@@ -89,7 +99,9 @@ public class UserService {
         //emailService.sendEmail(mailMessage);
         System.out.println(mailMessage.getText());
 
-        return "Successfully registered";
+        return MessageResponse.builder()
+                .message("Sie wurden erfolgreich registriert.\nBitte prüfen Sie ihre Mails.")
+                .build();
     }
 
     /**

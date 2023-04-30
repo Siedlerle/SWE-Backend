@@ -3,6 +3,7 @@ package com.eventmaster.backend.services;
 import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.repositories.UserInOrgaWithRoleRepository;
 import local.variables.LocalizedStringVariables;
+import org.aspectj.bridge.Message;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -149,7 +150,7 @@ public class UserInOrgaWithRoleService {
      * @param userMail Mail of the corresponding user
      * @return successmessage
      */
-    public String requestJoin(long organisationId, String userMail){
+    public MessageResponse requestJoin(long organisationId, String userMail){
         try {
             User user = userService.getUserByMail(userMail);
             Organisation organisation = organisationService.getOrganisationById(organisationId);
@@ -162,12 +163,18 @@ public class UserInOrgaWithRoleService {
                 userInOrgaWithRole.setOrgaRole(requestRole);
 
                 userInOrgaWithRoleRepository.save(userInOrgaWithRole);
-                return LocalizedStringVariables.REQUESTORGAJOINSUCCESSMESSAGE;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.REQUESTORGAJOINSUCCESSMESSAGE)
+                        .build();
             }
-            return LocalizedStringVariables.REQUESTORGAJOINALREADYEXISTSMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.REQUESTORGAJOINALREADYEXISTSMESSAGE)
+                    .build();
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.REQUESTORGAJOINFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.REQUESTORGAJOINFAILUREMESSAGE)
+                    .build();
         }
     }
 
@@ -178,50 +185,101 @@ public class UserInOrgaWithRoleService {
      * @param emailAdress Email of the corresponding user
      * @return success message
      */
-    public String acceptOrganisationInvite(long organisationId, String emailAdress){
+    public MessageResponse acceptOrganisationInvite(long organisationId, String emailAdress){
         try {
             User user = userService.getUserByMail(emailAdress);
 
-            UserInOrgaWithRole userInOrgaWithRole = new UserInOrgaWithRole();
+            UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId);
+
             userInOrgaWithRole.setOrganisation(organisationService.getOrganisationById(organisationId));
             userInOrgaWithRole.setUser(user);
             userInOrgaWithRole.setOrgaRole(orgaRoleService.findByRole(EnumOrgaRole.USER));
 
             userInOrgaWithRoleRepository.save(userInOrgaWithRole);
 
-            return LocalizedStringVariables.ORGANISATIONIVITEACCPETEDSUCCESS;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.ORGANISATIONIVITEACCPETEDSUCCESS)
+                    .build();
 
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.ORGANISATIONIVITEACCPETEDFAILURE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.ORGANISATIONIVITEACCPETEDFAILURE)
+                    .build();
         }
     }
 
 
     /**
-     * If the user is part of the organisation he will be removed from her.
-     * @param organisationId ID of the organisation.
-     * @param userMail Mail of the user who will leave the organisatione.
-     * @param reason Reason why he leaves the organisation.
-     * @return String about success or failure.
+     * The user can accept an invitation and is added to the organisation
+     * @param organisationId Id of the corresponding orga
+     * @param emailAdress Email of the corresponding user
+     * @return success message
      */
-    public String leaveOrganisation(long organisationId, String userMail, String reason){
+    public MessageResponse declineOrganisationInvitation(long organisationId, String emailAdress){
         try {
-            User user = userService.getUserByMail(userMail);
-            //Todo reason per mail an den admin o.ä. der Organisation
+            User user = userService.getUserByMail(emailAdress);
+            Organisation orga = organisationService.getOrganisationById(organisationId);
+            if(userInOrgaWithRoleRepository.existsByUser_IdAndOrganisation_Id(user.getId(), organisationId)){
+                UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId);
+                OrgaRole orgaRole = userInOrgaWithRole.getOrgaRole();
 
-            UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId);
+                user.removeUserInOrgaWithRole(userInOrgaWithRole);
+                orga.removeUserInOrgaWithRole(userInOrgaWithRole);
+                orgaRole.removeUserInOrgaWithRole(userInOrgaWithRole);
 
-            if(userInOrgaWithRole == null) {
-                return LocalizedStringVariables.USERISNOTINORGANISATIONMESSAGE;
-            } else {
-                //Todo Löschen ist nicht funktional
-                userInOrgaWithRoleRepository.delete(userInOrgaWithRole);
-                return LocalizedStringVariables.LEAVEORGANISATIONSUCCESSMESSAGE;
+                userInOrgaWithRoleRepository.deleteById(userInOrgaWithRole.getId());
+
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.ORGANISATIONINVITEDECLINESUCCESS)
+                        .build();
+            }else {
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.USERISNOTINORGANISATIONMESSAGE)
+                        .build();
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.LEAVEORGANISATIONFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.ORGANISATIONINVITEDECLINEFAILURE)
+                    .build();
+        }
+    }
+
+    /**
+     * If the user is part of the organisation he will be removed from her.
+     * @param organisationId ID of the organisation.
+     * @param userMail Mail of the user who will leave the organisatione.
+     * @return String about success or failure.
+     */
+    //Todo reason per mail an den admin o.ä. der Organisation
+    public MessageResponse leaveOrganisation(long organisationId, String userMail){
+        try {
+            User user = userService.getUserByMail(userMail);
+            Organisation organisation = organisationService.getOrganisationById(organisationId);
+
+            if (userInOrgaWithRoleRepository.existsByUser_IdAndOrganisation_Id(user.getId(), organisationId)) {
+                UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId);
+                OrgaRole orgaRole = userInOrgaWithRole.getOrgaRole();
+
+                user.removeUserInOrgaWithRole(userInOrgaWithRole);
+                organisation.removeUserInOrgaWithRole(userInOrgaWithRole);
+                orgaRole.removeUserInOrgaWithRole(userInOrgaWithRole);
+
+                userInOrgaWithRoleRepository.deleteById(userInOrgaWithRole.getId());
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.LEAVEORGANISATIONSUCCESSMESSAGE)
+                        .build();
+            } else {
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.USERISNOTINORGANISATIONMESSAGE)
+                        .build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.LEAVEORGANISATIONFAILUREMESSAGE)
+                    .build();
         }
     }
 
@@ -232,24 +290,34 @@ public class UserInOrgaWithRoleService {
      * @param userMail Mail of the user who will be removed.
      * @return String about success of failure.
      */
-    public String removeUserFromOrganisation(long organisationId, String userMail) {
+    public MessageResponse removeUserFromOrganisation(long organisationId, String userMail) {
         try {
             User user = userService.getUserByMail(userMail);
             Organisation organisation = organisationService.getOrganisationById(organisationId);
-            List <UserInOrgaWithRole> userInOrgaWithRoles = userInOrgaWithRoleRepository.findByUser(user);
 
-            for(UserInOrgaWithRole userInOrgaWithRole : userInOrgaWithRoles) {
-                if (userInOrgaWithRole.getOrganisation().getId() == organisation.getId())
-                {
-                    userInOrgaWithRoleRepository.delete(userInOrgaWithRole);
-                    return LocalizedStringVariables.REMOVEDUSERFROMORGASUCCESSMESSAGE;
-                }
+            if (userInOrgaWithRoleRepository.existsByUser_IdAndOrganisation_Id(user.getId(), organisationId)) {
+                UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId);
+                OrgaRole orgaRole = userInOrgaWithRole.getOrgaRole();
+
+                user.removeUserInOrgaWithRole(userInOrgaWithRole);
+                organisation.removeUserInOrgaWithRole(userInOrgaWithRole);
+                orgaRole.removeUserInOrgaWithRole(userInOrgaWithRole);
+
+                //System.out.println(userInOrgaWithRole.getUser().getEmailAdress() + "||" + userInOrgaWithRole.getOrganisation().getName());
+                userInOrgaWithRoleRepository.deleteById(userInOrgaWithRole.getId());
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.REMOVEDUSERFROMORGASUCCESSMESSAGE)
+                        .build();
+            } else {
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.USERISNOTINORGANISATIONMESSAGE)
+                        .build();
             }
-
-            return LocalizedStringVariables.USERISNOTINORGANISATIONMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.REMOVEDUSERFROMORGAFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.REMOVEDUSERFROMORGAFAILUREMESSAGE)
+                    .build();
         }
     }
 
@@ -322,13 +390,15 @@ public class UserInOrgaWithRoleService {
      * @param userMail Mail of the user who will be invited.
      * @return String about success or failure.
      */
-    public String inviteUserToOrganisation(long organisationId, String userMail) {
+    public MessageResponse inviteUserToOrganisation(long organisationId, String userMail) {
         Organisation organisation = organisationService.getOrganisationById(organisationId);
         User user = userService.getUserByMail(userMail);
         OrgaRole inviteRole = orgaRoleService.findByRole(EnumOrgaRole.INVITED);
 
         if (userInOrgaWithRoleRepository.existsByUser_IdAndOrganisation_Id(user.getId(), organisationId)) {
-            return LocalizedStringVariables.INVITEDUSERALREADYPARTOFORGANISATIONMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.INVITEDUSERALREADYPARTOFORGANISATIONMESSAGE)
+                    .build();
         } else {
             //TODO Einladungsmail an user senden.
 
@@ -338,10 +408,15 @@ public class UserInOrgaWithRoleService {
                 userInOrgaWithRole.setUser(user);
                 userInOrgaWithRole.setOrgaRole(inviteRole);
                 userInOrgaWithRoleRepository.save(userInOrgaWithRole);
-                return LocalizedStringVariables.INVITEUSERTOORGANISATIONSUCCESSMESSAGE;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.INVITEUSERTOORGANISATIONSUCCESSMESSAGE)
+                        .build();
             } catch (Exception e) {
                 e.printStackTrace();
-                return LocalizedStringVariables.INVITEUSERTOORGANISATIONFAILUREMESSAGE;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.INVITEUSERTOORGANISATIONFAILUREMESSAGE)
+                        .build();
+
             }
         }
     }
@@ -384,6 +459,10 @@ public class UserInOrgaWithRoleService {
         List<User> allUsersInOrga = userInOrgaWithRoleRepository
                 .findByOrganisation_Id(event.getOrganisation().getId())
                 .stream()
+                .filter(userInOrgaWithRole -> {
+                    EnumOrgaRole role = userInOrgaWithRole.getOrgaRole().getRole()
+                    ;return role == EnumOrgaRole.USER || role == EnumOrgaRole.ORGANIZER || role == EnumOrgaRole.ADMIN;
+                })
                 .map(UserInOrgaWithRole::getUser).toList();
         List<User> affiliated = userInEventWithRoleService
                 .findByEventId(eventId)
@@ -395,6 +474,23 @@ public class UserInOrgaWithRoleService {
                 .filter(user -> !affiliated.contains(user))
                 .toList();
         return unaffiliatedUsers;
+    }
+
+    /**
+     * Gets all users of organisation(Not invited or requested once)
+     * @param orgaId Id of the corresponding organisation
+     * @return List of users
+     */
+    public List<User> getAllUsersInOrga(long orgaId){
+            List<User> allUsersInOrga = userInOrgaWithRoleRepository
+                .findByOrganisation_Id(orgaId)
+                .stream()
+                .filter(userInOrgaWithRole -> {
+                    EnumOrgaRole role = userInOrgaWithRole.getOrgaRole().getRole()
+                    ;return role == EnumOrgaRole.USER || role == EnumOrgaRole.ORGANIZER || role == EnumOrgaRole.ADMIN;
+                })
+                .map(UserInOrgaWithRole::getUser).toList();
+            return allUsersInOrga;
     }
     //Sys-Admin
     /**
