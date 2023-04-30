@@ -1,4 +1,6 @@
 package com.eventmaster.backend.services;
+
+import com.eventmaster.backend.EmailService.EmailService;
 import com.eventmaster.backend.entities.MessageResponse;
 import com.eventmaster.backend.entities.User;
 import com.eventmaster.backend.repositories.UserRepository;
@@ -42,6 +44,8 @@ public class UserService {
 
     private final AuthenticationManager authenticationManager;
 
+    private final EmailService emailService;
+
     private final SimpleMailMessage mailMessage = new SimpleMailMessage();
 
 
@@ -50,12 +54,14 @@ public class UserService {
             PasswordEncoder passwordEncoder,
             JwtService jwtService,
             TokenService tokenService,
-            AuthenticationManager authenticationManager) {
+            AuthenticationManager authenticationManager,
+            EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.tokenService = tokenService;
         this.authenticationManager = authenticationManager;
+        this.emailService = emailService;
     }
 
     public String saveUser(User user) {
@@ -65,14 +71,15 @@ public class UserService {
 
     /**
      * Creates a new user and sends an Email
+     *
      * @param request Userobject
      * @return success message
      */
-    public MessageResponse register(User request){
+    public MessageResponse register(User request) {
 
         User checkUser = request;
 
-        if(userRepository.findByEmailAdress(checkUser.getEmailAdress()) != null){
+        if (userRepository.findByEmailAdress(checkUser.getEmailAdress()) != null) {
             return MessageResponse.builder()
                     .message("Email ist bereits vergeben.")
                     .build();
@@ -93,11 +100,11 @@ public class UserService {
         mailMessage.setTo(user.getEmailAdress());
         mailMessage.setSubject("Complete Registration!");
         mailMessage.setText("Hello " + user.getFirstname() + "," +
-                        "\nto confirm your account, please click here : \n"
-                +"http://localhost:4200/login?authToken=" + jwtToken + "\n"
-                +"WARNING: The token is only valid up to 15 Minutes");
-        //emailService.sendEmail(mailMessage);
-        System.out.println(mailMessage.getText());
+                "\nto confirm your account, please click here : \n"
+                + "http://localhost:4200/login?authToken=" + jwtToken + "\n"
+                + "WARNING: The token is only valid up to 15 Minutes");
+        emailService.sendEmail(mailMessage);
+        //System.out.println(mailMessage.getText());
 
         return MessageResponse.builder()
                 .message("Sie wurden erfolgreich registriert.\nBitte prüfen Sie ihre Mails.")
@@ -106,6 +113,7 @@ public class UserService {
 
     /**
      * Verifying a user after registration
+     *
      * @param authToken jwt Token
      * @return VerificationResponse
      */
@@ -115,8 +123,8 @@ public class UserService {
 
         List<Token> tokens = verifyUser.getTokens();
 
-        for (Token token: tokens) {
-            if(token.getToken().equals(authToken)) {
+        for (Token token : tokens) {
+            if (token.getToken().equals(authToken)) {
                 if (!token.isRevoked() || !token.isExpired()) {
                     verifyUser.setEnabled(true);
                     userRepository.save(verifyUser);
@@ -133,10 +141,11 @@ public class UserService {
 
     /**
      * Creates a new Token for the corresponding user
+     *
      * @param request Userobject
      * @return AuthenticationResponse
      */
-    public AuthenticationResponse login(User request){
+    public AuthenticationResponse login(User request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmailAdress(),
@@ -147,8 +156,8 @@ public class UserService {
 
         List<Token> allTokens = tokenService.findAllTokensByUser(requestinUserg.getId());
 
-        for (Token token:allTokens) {
-            if(token.isExpired() && token.isRevoked()){
+        for (Token token : allTokens) {
+            if (token.isExpired() && token.isRevoked()) {
                 tokenService.deleteToken(token);
             }
         }
@@ -167,7 +176,8 @@ public class UserService {
 
     /**
      * Saves the tokens for the corresponding user
-     * @param user Userobject
+     *
+     * @param user     Userobject
      * @param jwtToken Token
      */
     private void saveUserToken(User user, String jwtToken) {
@@ -185,11 +195,12 @@ public class UserService {
 
     /**
      * Sends a mail to user to verify password reset request
+     *
      * @param emailAdress EMail of the corresponding user
      * @return success message
      */
-    public String requestPasswordReset(String emailAdress){
-        try{
+    public String requestPasswordReset(String emailAdress) {
+        try {
             User resetUserPwd = userRepository.findByEmailAdress(emailAdress);
 
             revokeAllUserTokens(resetUserPwd);
@@ -204,12 +215,12 @@ public class UserService {
             mailMessage.setSubject("Change your Password");
             mailMessage.setText("Hello " + resetUserPwd.getFirstname() + "," +
                     "\nto confirm the password change click the link below : \n"
-                    +"Token to authenticate reset: " + jwtToken + "\n"
-                    +"WARNING: The token is only valid up to 15 Minutes");
-            //emailService.sendEmail(mailMessage);
-            System.out.println(mailMessage.getText());
+                    + "Token to authenticate reset: " + jwtToken + "\n"
+                    + "WARNING: The token is only valid up to 15 Minutes");
+            emailService.sendEmail(mailMessage);
+            //System.out.println(mailMessage.getText());
             return "reset-request sent";
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return "request failed";
         }
@@ -217,11 +228,12 @@ public class UserService {
 
     /**
      * Resets the users password
+     *
      * @param user Userobject of the corresponding user
      * @return AuthenticationResponse
      */
-    public AuthenticationResponse resetPassword(User user){
-        try{
+    public AuthenticationResponse resetPassword(User user) {
+        try {
             User changedUser = userRepository.findByEmailAdress(user.getEmailAdress());
 
             changedUser.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -237,7 +249,7 @@ public class UserService {
                     .refreshToken(refreshToken)
                     .build();
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -245,6 +257,7 @@ public class UserService {
 
     /**
      * Retrieves a user by his Id
+     *
      * @param userId Id of the corresponding user
      * @return Userobject
      */
@@ -254,6 +267,7 @@ public class UserService {
 
     /**
      * Retrieves a user by his EMail
+     *
      * @param userMail EMail of the corresponding user
      * @return Userobject
      */
@@ -268,6 +282,7 @@ public class UserService {
 
     /**
      * Deletes a user
+     *
      * @param emailAdress EMail of the corresponding user
      * @return success message
      */
@@ -277,8 +292,8 @@ public class UserService {
             tokenService.deleteTokens(user.getId());
             userRepository.delete(user);
 
-            return LocalizedStringVariables.USERDELETEDMESSAGE + user.getFirstname() +" "+user.getLastname();
-        }catch (Exception e) {
+            return LocalizedStringVariables.USERDELETEDMESSAGE + user.getFirstname() + " " + user.getLastname();
+        } catch (Exception e) {
             e.printStackTrace();
             return LocalizedStringVariables.USERNOTDELETEDMESSAGE;
         }
@@ -287,7 +302,8 @@ public class UserService {
 
     /**
      * Refreshes the jwt token for a user
-     * @param request HttpServletRequest
+     *
+     * @param request  HttpServletRequest
      * @param response HttpServletResponse
      * @return refreshed token
      * @throws IOException
@@ -299,7 +315,7 @@ public class UserService {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String refreshToken;
         final String userEmail;
-        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return null;
         }
         refreshToken = authHeader.substring(7);
@@ -323,6 +339,7 @@ public class UserService {
 
     /**
      * Revokes all active tokens for user
+     *
      * @param user Userobject of corresponding user
      */
     private void revokeAllUserTokens(User user) {
