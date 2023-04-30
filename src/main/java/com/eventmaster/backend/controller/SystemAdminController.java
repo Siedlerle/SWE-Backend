@@ -36,9 +36,10 @@ public class SystemAdminController {
      * @return success message
      */
     @PostMapping("/organisation/create/{password}")
-    public ResponseEntity<String> createOrganisation(@RequestBody Organisation organisation,@PathVariable String password){
-        //TODO passwort vom Sysadmin abfragen?
-        return ResponseEntity.ok(organisationService.createOrganisation(organisation));
+    public ResponseEntity<String> createOrganisation(@RequestParam Organisation organisation,
+                                                     @RequestParam User admin,
+                                                     @PathVariable String password){
+        return ResponseEntity.ok(organisationService.createOrganisation(organisation,admin));
     }
 
     /**
@@ -49,7 +50,6 @@ public class SystemAdminController {
      */
     @PostMapping("/organisation/change/{password}")
     public ResponseEntity<String> changeOrganisation(@RequestBody Organisation organisation,@PathVariable String password){
-        //TODO passwort vom Sysadmin abfragen?
         return ResponseEntity.ok(organisationService.changeOrganisation(organisation));
     }
 
@@ -61,7 +61,6 @@ public class SystemAdminController {
      */
     @PostMapping("/organisation/delete/{organisationId}/{password}")
     public ResponseEntity<String> deleteOrganisation(@PathVariable long organisationId,@PathVariable String password) {
-        //TODO passwort vom Sysadmin abfragen?
         return ResponseEntity.ok(organisationService.deleteOrganisation(organisationId));
     }
 
@@ -73,7 +72,6 @@ public class SystemAdminController {
      */
     @PostMapping("/user/delete/{password}")
     public ResponseEntity<String> deleteUser(@RequestParam String emailAdress,@PathVariable String password) {
-        //TODO passwort vom Sysadmin abfragen?
         return ResponseEntity.ok(userService.deleteUser(emailAdress));
     }
 

@@ -261,7 +261,6 @@ public class UserService {
      */
     public String deleteUser(String emailAdress) {
         try {
-            System.out.println(emailAdress);
             User user = userRepository.findByEmailAdress(emailAdress);
             tokenService.deleteTokens(user.getId());
             userRepository.delete(user);

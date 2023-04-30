@@ -396,4 +396,24 @@ public class UserInOrgaWithRoleService {
                 .toList();
         return unaffiliatedUsers;
     }
+    //Sys-Admin
+    /**
+     * Sets a user Admin in an organisation.
+     * @param organisation Organisation.
+     * @param admin Person to be added as an admin
+     * @return Failure or success.
+     */
+    public String setAdminForOrga(Organisation organisation, User admin){
+        UserInOrgaWithRole adminInOrga = new UserInOrgaWithRole();
+        adminInOrga.setOrgaRole(orgaRoleService.findByRole(EnumOrgaRole.ADMIN));
+        adminInOrga.setOrganisation(organisation);
+        adminInOrga.setUser(admin);
+        try {
+            userInOrgaWithRoleRepository.save(adminInOrga);
+            return LocalizedStringVariables.ORGACREATEDSUCCESSMESSAGE;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return LocalizedStringVariables.ORGACREATEDFAILUREMESSAGE;
+        }
+    }
 }
