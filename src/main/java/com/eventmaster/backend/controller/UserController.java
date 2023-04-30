@@ -2,13 +2,14 @@ package com.eventmaster.backend.controller;
 
 //Todo import explizit definieren
 import com.eventmaster.backend.entities.*;
-import com.eventmaster.backend.serviceswithouttoken.UserService;
+import com.eventmaster.backend.services.UserService;
 import com.eventmaster.backend.security.authentification.VerificationResponse;
-import com.eventmaster.backend.serviceswithouttoken.OrganisationService;
-import com.eventmaster.backend.serviceswithouttoken.UserInEventWithRoleService;
-import com.eventmaster.backend.serviceswithouttoken.UserInOrgaWithRoleService;
+import com.eventmaster.backend.services.OrganisationService;
+import com.eventmaster.backend.services.UserInEventWithRoleService;
+import com.eventmaster.backend.services.UserInOrgaWithRoleService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import local.variables.LocalizedStringVariables;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -75,9 +76,7 @@ public class UserController {
      * @return AuthenticationResponse with tokens
      */
     @PostMapping("/auth/login")
-    public ResponseEntity<?> login (@RequestBody User user){
-        return ResponseEntity.ok(userService.login(user));
-    }
+    public ResponseEntity<?> login (@RequestBody User user){return ResponseEntity.ok(userService.login(user));}
 
 
     /**
@@ -85,8 +84,8 @@ public class UserController {
      * @param emailAdress Mail of the corresponding user
      * @return successmessage
      */
-    @PostMapping("/auth/pwd-reset-request")
-    public ResponseEntity<?> requestPasswordReset(@RequestParam String emailAdress){
+    @PostMapping("/auth/pwd-reset-request/{emailAdress}")
+    public ResponseEntity<?> requestPasswordReset(@PathVariable String emailAdress){
         return ResponseEntity.ok(userService.requestPasswordReset(emailAdress));
     }
 
@@ -102,12 +101,12 @@ public class UserController {
 
     /**
      * Endpoint to delete a user
-     * @param userId Id of the corresponding user
+     * @param emailAdress Email of the corresponding user
      * @return success message
      */
-    @PostMapping("/auth/delete")
-    public ResponseEntity<?> delete(@RequestParam long userId){
-        return ResponseEntity.ok(userService.deleteUser(userId));
+    @PostMapping("/auth/delete/{emailAdress}")
+    public ResponseEntity<?> delete(@PathVariable String emailAdress){
+        return ResponseEntity.ok(userService.deleteUser(emailAdress));
     }
 
     /**
@@ -117,13 +116,14 @@ public class UserController {
      * @throws IOException
      */
     @PostMapping("auth/refresh")
-    public void refresh(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        userService.refreshToken(request, response);
+    public ResponseEntity<?> refresh(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        return userService.refreshToken(request, response);
     }
 
 
-    //Operations regarding user, orga connection
 
+
+    //Operations regarding user, orga connection
     /**
      * Endpoint for a user to get all existing organisations
      * @return List of Organisations
@@ -138,166 +138,201 @@ public class UserController {
      * @param organisationId Id of the corresponding Organisation
      * @return Organisation object
      */
-    @PostMapping("/orga/get-orga")
-    public ResponseEntity<Organisation> getOrganisation(long organisationId){
+    @PostMapping("/orga/get-orga/{organisationId}")
+    public ResponseEntity<Organisation> getOrganisation(@PathVariable long organisationId){
         return ResponseEntity.ok(organisationService.getOrganisationById(organisationId));
     }
 
     /**
      * Endpoint for a user to get all organisations a User is part of
-     * @param authToken Token to retrieve the id of the user requesting
+     * @param emailAdress Email to retrieve the id of the user requesting
      * @return List of organisations the user is part of
      */
-    @PostMapping("/orga/get-for-user")
-    public ResponseEntity<List<Organisation>> getOrganisationsForUser(String authToken){
-        long userId = 0;
-        return ResponseEntity.ok(userInOrgaWithRoleService.getOrgaForUser(userId));
+    @PostMapping("/orga/get-for-user/{emailAdress}")
+    public ResponseEntity<List<Organisation>> getOrganisationsForUser(@PathVariable String emailAdress){
+        return ResponseEntity.ok(userInOrgaWithRoleService.getOrgasForUser(emailAdress));
+    }
+
+    /**
+     * Endpoint for a user to get his Role in an organisation
+     * @param organisationId Id of the corresponding organisation
+     * @param emailAdress Email of the corresponding user
+     * @return organisation role
+     */
+    @PostMapping("/orga/{organisationId}/get-role-for-user/{emailAdress}")
+    public ResponseEntity<OrgaRole> getRoleInOrganisation(@PathVariable long organisationId, @PathVariable String emailAdress){
+        return ResponseEntity.ok(userInOrgaWithRoleService.getRoleInOrganisation(organisationId, emailAdress));
     }
 
     /**
      * Endpoint for a user to request to join a organisation
      * @param organisationId Id of the corresponding Organisation
-     * @param authToken Token to retrieve the id of the user requesting
+     * @param emailAdress Email to retrieve the id of the user requesting
      * @return successmessage
      */
-    @PostMapping("/orga/request-join")
-    public ResponseEntity<String> requestJoin(long organisationId, String authToken){
-        long userId = 0;
-        return ResponseEntity.ok(userInOrgaWithRoleService.requestJoin(organisationId, authToken));
+    @PostMapping("/orga/{organisationId}/request-join/{emailAdress}")
+    public ResponseEntity<MessageResponse> requestJoin(@PathVariable long organisationId,@PathVariable String emailAdress){
+        return ResponseEntity.ok(userInOrgaWithRoleService.requestJoin(organisationId, emailAdress));
     }
 
     /**
      * Endpoint for a user to accept an invitation to an orga
      * @param organisationId Id of the corresponding Organisation
-     * @param authToken Token to retrieve the id of the user requesting
+     * @param emailAdress Email to retrieve the id of the user requesting
      * @return successmessage
      */
-    @PostMapping("/orga/accept-invitation")
-    public ResponseEntity<String> acceptOrganisationInvitation(long organisationId, String authToken){
-        long userId = 0;
-        return ResponseEntity.ok("nicht implementiert");
+    @PostMapping("/orga/{organisationId}/accept-invitation/{emailAdress}")
+    public ResponseEntity<MessageResponse> acceptOrganisationInvitation(@PathVariable long organisationId, @PathVariable String emailAdress){
+        return ResponseEntity.ok(userInOrgaWithRoleService.acceptOrganisationInvite(organisationId, emailAdress));
     }
 
     /**
      * Endpoint for a user to decline an invitation to an orga
      * @param organisationId Id of the corresponding Organisation
-     * @param authToken Token to retrieve the id of the user requesting
+     * @param emailAdress Email to retrieve the id of the user requesting
      * @return successmessage
      */
-    @PostMapping("/orga/decline-invitation")
-    public ResponseEntity<String> declineOrganisationInvitation(long organisationId, String authToken){
-        long userId = 0;
-        return ResponseEntity.ok("nicht implementiert");
+    @PostMapping("/orga/{organisationId}/decline-invitation/{emailAdress}")
+    public ResponseEntity<MessageResponse> declineOrganisationInvitation(@PathVariable long organisationId, @PathVariable String emailAdress){
+        return ResponseEntity.ok(userInOrgaWithRoleService.declineOrganisationInvitation(organisationId, emailAdress));
     }
 
     /**
      * Endpoint for a user to leave an organisation
      * @param organisationId Id of the corresponding Organisation
-     * @param authToken Token to retrieve the id of the user requesting
-     * @param reason Reason why the user leaves the organisation
+     * @param emailAdress Email to retrieve the id of the user requesting
      * @return successmessage
      */
-    @PostMapping("/orga/leave")
-    public ResponseEntity<String> leaveOrganisation(long organisationId, String authToken, String reason){
-        long userId = 0;
-        return ResponseEntity.ok(userInOrgaWithRoleService.leaveOrganisation(organisationId, authToken, reason));
+    @PostMapping("/orga/{organisationId}/leave/{emailAdress}")
+    public ResponseEntity<MessageResponse> leaveOrganisation(@PathVariable long organisationId, @PathVariable String emailAdress){
+        return ResponseEntity.ok(userInOrgaWithRoleService.leaveOrganisation(organisationId, emailAdress));
     }
 
-    //Todo Controller aufteilen, falls diese zu groß werden
-/*
+
+
+
     //Operations regarding user, event, orga connection
-    @PostMapping("/orga/event/get-all-events-of-orga")
-    public ResponseEntity<List<Event>> getAllVisibleEventsOfOrganisationForUser(long organisationId, String authToken){
-        return
+    /**
+     * Endpoint for a user to get all events inside an organisation where he is not attending.
+     * @param organisationId Id of the corresponding orga
+     * @param emailAddress Mail of user who requests.
+     * @return List of events
+     */
+    @PostMapping("/orga/{organisationId}/event/get-available-events/{emailAddress}")
+    public ResponseEntity<List<Event>> getAllVisibleEventsOfOrganisationForUser(@PathVariable long organisationId,
+                                                                                @PathVariable String emailAddress){
+        return ResponseEntity.ok(userInOrgaWithRoleService.getAllVisibleEventsOfOrganisationForUser(organisationId, emailAddress));
     }
 
-    @PostMapping("/orga/event/get-registerd")
-    public ResponseEntity<String> getRegisteredEventsForUserInOrganisation(long organisationId, String authToken){
-        return
+    /**
+     * Endpoint for a user to get all events inside an organisation he is registered for
+     * @param organisationId Id of the corresponding organisation
+     * @param emailAdress Email of the corresponding user
+     * @return List of events
+     */
+    @PostMapping("/orga/{organisationId}/event/get-registered/{emailAdress}")
+    public ResponseEntity<List<Event>> getRegisteredEventsForUserInOrganisation(@PathVariable long organisationId, @PathVariable String emailAdress){
+        return ResponseEntity.ok(userInOrgaWithRoleService.getRegisteredEventsForUserInOrganisation(organisationId, emailAdress));
     }
-*/
+
+    /**
+     * Endpoint for a user to get his invitations to organisations.
+     * @param emailAddress Mail of the user.
+     * @return List of organisations.
+     */
+    @PostMapping("/orga/get-invitations/{emailAddress}")
+    public ResponseEntity<List<Organisation>> getOrganisationInvitationsForUser(@PathVariable String emailAddress) {
+        return ResponseEntity.ok(userInOrgaWithRoleService.getOrganisationInvitationsForUser(emailAddress));
+    }
 
 
-    //TODO für alle Endpoints muss noch die userId aus den Tokensretrieved werden
     //Operations regarding user, event connection
-
     /**
      * Endpoint for a user to accept an invitation to an event
      * @param eventId Id of the event user is about to accept
-     * @param authToken Token from user to get further information
+     * @param emailAdress Email from user to get further information
      * @return success message
      */
-    @PostMapping("/event/accept-invitation")
-    public ResponseEntity<String> acceptEventInvitation(long eventId, String authToken){
-        //Todo Validierung der Inputs
-        long userId = 0;
-        return ResponseEntity.ok(userInEventWithRoleService.acceptEventInvitation(eventId, userId));
+    @PostMapping("/event/{eventId}/accept-invitation/{emailAdress}")
+    public ResponseEntity<MessageResponse> acceptEventInvitation(@PathVariable long eventId, @PathVariable String emailAdress){
+        return ResponseEntity.ok(userInEventWithRoleService.acceptEventInvitation(eventId, emailAdress));
     }
 
     /**
      * Endpoint for a user to decline an invitation to an event
      * @param eventId Id of the event user is about to decline
-     * @param authToken Token from user to get further information
+     * @param emailAdress Email from user to get further information
      * @return success message
      */
-    @PostMapping("/event/decline-invitation")
-    public ResponseEntity<String> declineEventInvitation(long eventId, String authToken){
-        long userId = 0;
-        return ResponseEntity.ok(userInEventWithRoleService.declineEventInvitation(eventId, userId));
+    @PostMapping("/event/{eventId}/decline-invitation/{emailAdress}")
+    public ResponseEntity<MessageResponse> declineEventInvitation(@PathVariable long eventId, @PathVariable String emailAdress){
+        return ResponseEntity.ok(userInEventWithRoleService.declineEventInvitation(eventId, emailAdress));
     }
 
     /**
      * Endpont for an user to get his role for a specific event
      * @param eventId Id of the event a user wants to get his role for
-     * @param authToken Token from user to get further information
+     * @param emaiAdress Email from user to get further information
      * @return role of the user for the corresponding event
      */
-    @PostMapping("/event/get-role")
-    public ResponseEntity<EventRole> getRoleForEvent(long eventId, String authToken){
-        long userId = 0;
-        return ResponseEntity.ok(userInEventWithRoleService.getRoleForEvent(eventId, userId));
+    @PostMapping("/event/{eventId}/get-role/{emaiAdress}")
+    public ResponseEntity<EventRole> getRoleForEvent(@PathVariable long eventId, @PathVariable String emaiAdress){
+        return ResponseEntity.ok(userInEventWithRoleService.getRoleForEvent(eventId, emaiAdress));
     }
 
     /**
      * Endpoint for a user to register for an event
      * @param eventId Id of the event a user is about to register for
-     * @param authToken Token from user to get further information
+     * @param emailAdress Email from user to get further information
      * @return success message
      */
-    @PostMapping("/event/register")
-    public ResponseEntity<String> registerForEvent(long eventId, String authToken){
-        long userId = 0;
-        return ResponseEntity.ok(userInEventWithRoleService.registerForEvent(eventId, userId));
+    @PostMapping("/event/{eventId}/register/{emailAdress}")
+    public ResponseEntity<MessageResponse> registerForEvent( @PathVariable long eventId, @PathVariable String emailAdress){
+        return ResponseEntity.ok(userInEventWithRoleService.registerForEvent(eventId, emailAdress));
     }
 
     /**
      * Endpoint to get all events a user is registered for
-     * @param authToken Token from user to get further information
+     * @param emailAdress Email from user to get further information
      * @return List of events a user is registered for
      */
-    @PostMapping("/event/get-registered")
-    public ResponseEntity<List<Event>> getRegisteredEventsForUser(String authToken){
-        long userId = 0;
-        return ResponseEntity.ok(userInEventWithRoleService.getRegisteredEventsForUser(userId));
+    @PostMapping("/event/get-registered/{emailAdress}")
+    public ResponseEntity<List<Event>> getRegisteredEventsForUser(@PathVariable String emailAdress){
+        return ResponseEntity.ok(userInEventWithRoleService.getRegisteredEventsForUser(emailAdress));
     }
 
     /**
      * Endpoint to unregister a user from an event
-     * @param event Corresponding event for unregistration
-     * @param authToken Token from user to get further information
-     * @param reason Reason why the user is unregistering
+     * @param eventId Corresponding event for unregistration
+     * @param emailAdress Token from user to get further information
      * @return success message
      */
-    @PostMapping("/event/unregister")
-    public ResponseEntity<String> ungregisterFromEvent(Event event, String authToken, String reason){
-        long userId = 0;
-        return ResponseEntity.ok(userInEventWithRoleService.unregisterFromEvent(event,userId, reason));
+    //TODO reason wieder einpflegen
+    @PostMapping("/event/{eventId}/unregister/{emailAdress}")
+    public ResponseEntity<MessageResponse> ungregisterFromEvent(@PathVariable long eventId, @PathVariable String emailAdress){
+        return ResponseEntity.ok(userInEventWithRoleService.unregisterFromEvent(eventId,emailAdress));
     }
 
-    /*
-    @PostMapping("/event/get-all")
-    public ResponseEntity<List<Event>> getAllEventsForUser(String authToken){
-        return ResponseEntity.ok(userInEventWithRoleService.getAllEventsForUser(authToken));
-    }*/
+
+    /**
+     * Endpoint to get all available Events for a user, which he hasn't joined yet.
+     * @param emailAdress Email of the corresponding user.
+     * @return List of events.
+     */
+    @PostMapping("/event/get-all/{emailAdress}")
+    public ResponseEntity<List<Event>> getAllAvailableEventsForUser(@PathVariable String emailAdress){
+        return ResponseEntity.ok(userInEventWithRoleService.getAllAvailableEventsForUser(emailAdress));
+    }
+
+    /**
+     * Endpoint to get all events where a user is invited to.
+     * @param emailAddress Mail of the user.
+     * @return List of events.
+     */
+    @PostMapping("/event/get-invitations/{emailAddress}")
+    public ResponseEntity<List<Event>> getAllEventInvitationsForUser(@PathVariable String emailAddress) {
+        System.out.println(emailAddress);
+        return ResponseEntity.ok(userInEventWithRoleService.getEventInvitationsForUser(emailAddress));
+    }
 
 }

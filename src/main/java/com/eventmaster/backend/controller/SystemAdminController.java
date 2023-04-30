@@ -2,7 +2,8 @@ package com.eventmaster.backend.controller;
 
 import com.eventmaster.backend.entities.Organisation;
 
-import com.eventmaster.backend.serviceswithouttoken.*;
+import com.eventmaster.backend.entities.User;
+import com.eventmaster.backend.services.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,47 +32,58 @@ public class SystemAdminController {
     /**
      * Endpoint to create an organisation.
      * @param organisation Organisation which will be saved.
+     * @param password Password of the System-Admin to authorize him.
      * @return success message
      */
-    @PostMapping("/organisation/create")
-    public ResponseEntity<String> createOrganisation(@RequestBody Organisation organisation){
-        //TODO passwort vom Sysadmin abfragen?
-        return ResponseEntity.ok(organisationService.createOrganisation(organisation));
+    @PostMapping("/organisation/create/{password}")
+    public ResponseEntity<String> createOrganisation(@RequestParam Organisation organisation,
+                                                     @RequestParam User admin,
+                                                     @PathVariable String password){
+        return ResponseEntity.ok(organisationService.createOrganisation(organisation,admin));
     }
 
     /**
      * Endpoint to change an already existing organisation.
      * @param organisation Organisation which will be changed.
+     * @param password Password of the System-Admin to authorize him.
      * @return success message
      */
-    @PostMapping("/organisation/change")
-    public ResponseEntity<String> changeOrganisation(@RequestBody Organisation organisation){
-        //TODO passwort vom Sysadmin abfragen?
+    @PostMapping("/organisation/change/{password}")
+    public ResponseEntity<String> changeOrganisation(@RequestBody Organisation organisation,@PathVariable String password){
         return ResponseEntity.ok(organisationService.changeOrganisation(organisation));
     }
 
     /**
      * Endpoint to delete an organisation.
      * @param organisationId ID of the organisation which will be deleted.
+     * @param password Password of the System-Admin to authorize him.
      * @return success message
      */
-    @PostMapping("/organisation/delete/{organisationId}")
-    public ResponseEntity<String> deleteOrganisation(@PathVariable long organisationId) {
-        //TODO passwort vom Sysadmin abfragen?
+    @PostMapping("/organisation/delete/{organisationId}/{password}")
+    public ResponseEntity<String> deleteOrganisation(@PathVariable long organisationId,@PathVariable String password) {
         return ResponseEntity.ok(organisationService.deleteOrganisation(organisationId));
     }
 
     /**
      * Endpoint to delete a user.
-     * @param userId ID of the user which will be deleted.
-     * @param sysAdminPassword Password of the System-Admin to authorize him.
+     * @param emailAdress Email of the user which will be deleted.
+     * @param password Password of the System-Admin to authorize him.
      * @return success message
      */
-    @PostMapping("/user/delete")
-    public ResponseEntity<String> deleteUser(@RequestParam long userId,
-                                             @RequestParam String sysAdminPassword) {
-        //TODO passwort vom Sysadmin abfragen?
-        return ResponseEntity.ok(userService.deleteUser(userId));
+    @PostMapping("/user/delete/{password}")
+    public ResponseEntity<String> deleteUser(@RequestParam String emailAdress,@PathVariable String password) {
+        return ResponseEntity.ok(userService.deleteUser(emailAdress));
     }
 
+
+    /**
+     * Endpoint to add a user to the database directly.
+     * @param user User who will be saved.
+     * @param password Password of the System-Admin to authorize him.
+     * @return success message
+     */
+    @PostMapping("/user/add/{password}")
+    public ResponseEntity<String> addUser(@RequestBody User user,@PathVariable String password) {
+        return ResponseEntity.ok(userService.saveUser(user));
+    }
 }

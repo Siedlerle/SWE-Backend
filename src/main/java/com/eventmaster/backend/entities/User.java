@@ -2,7 +2,6 @@ package com.eventmaster.backend.entities;
 
 
 import com.eventmaster.backend.security.Token.Token;
-import com.eventmaster.backend.serviceswithouttoken.UserService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -42,6 +41,7 @@ public class User implements UserDetails {
     //@Enumerated(EnumType.STRING)
     //private Role role;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;
 
@@ -111,6 +111,10 @@ public class User implements UserDetails {
 
     public void setUserInOrgaWithRoleSet(Set<UserInOrgaWithRole> userInOrgaWithRoleSet) {
         this.userInOrgaWithRoleSet = userInOrgaWithRoleSet;
+    }
+
+    public void removeUserInOrgaWithRole(UserInOrgaWithRole userInOrgaWithRole) {
+        this.userInOrgaWithRoleSet.remove(userInOrgaWithRole);
     }
 
     public Set<Chat> getChats() {

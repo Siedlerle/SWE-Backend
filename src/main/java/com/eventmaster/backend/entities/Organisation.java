@@ -1,5 +1,6 @@
 package com.eventmaster.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -18,15 +19,19 @@ public class Organisation {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "organisation",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Event> events = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "organisation",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<UserInOrgaWithRole> orgaUserRoles = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "organisation",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Group> groups = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "organisation",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Preset> presets = new HashSet<>();
 
@@ -62,7 +67,15 @@ public class Organisation {
         return groups;
     }
 
+    public void addGroup(Group group) {
+        groups.add(group);
+    }
+
     public Set<Preset> getPresets() {
         return presets;
+    }
+
+    public void removeUserInOrgaWithRole(UserInOrgaWithRole userInOrgaWithRole) {
+        this.orgaUserRoles.remove(userInOrgaWithRole);
     }
 }

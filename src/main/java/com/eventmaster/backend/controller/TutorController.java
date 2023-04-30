@@ -2,10 +2,10 @@ package com.eventmaster.backend.controller;
 
 import com.eventmaster.backend.entities.Question;
 import com.eventmaster.backend.entities.User;
-import com.eventmaster.backend.serviceswithouttoken.ChatService;
-import com.eventmaster.backend.serviceswithouttoken.DocumentService;
-import com.eventmaster.backend.serviceswithouttoken.QuestionService;
-import com.eventmaster.backend.serviceswithouttoken.UserInEventWithRoleService;
+import com.eventmaster.backend.services.ChatService;
+import com.eventmaster.backend.services.DocumentService;
+import com.eventmaster.backend.services.QuestionService;
+import com.eventmaster.backend.services.UserInEventWithRoleService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

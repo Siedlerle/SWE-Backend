@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TokenService {
@@ -19,11 +18,15 @@ public class TokenService {
         tokenRepository.save(token);
     }
 
-    public void deleteToken(long userId){
+    public void deleteTokens(long userId){
         List<Token> deleteTokens = tokenRepository.findTokensByUserId(userId);
         for (Token token: deleteTokens) {
             tokenRepository.delete(token);
         }
+    }
+
+    public void deleteToken(Token token){
+        tokenRepository.delete(token);
     }
 
     public List<Token> findAllValidTokensByUser(User user){
@@ -35,6 +38,11 @@ public class TokenService {
             }
         }
         return validTokens;
+    }
+
+
+    public List<Token> findAllTokensByUser(long userId){
+        return tokenRepository.findTokensByUserId(userId);
     }
 
     public Token findByToken(String token){

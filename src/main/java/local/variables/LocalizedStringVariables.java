@@ -15,13 +15,28 @@ public final class LocalizedStringVariables {
         //USER
         public static final String USERNOTDELETEDMESSAGE = "Benutzer konnte nicht gelöscht werden";
         public static final String USERDELETEDMESSAGE = "Benutzer wurde erfolgreich gelöscht:";
+        public static final String ORGANISATIONIVITEACCPETEDSUCCESS = "Anfrage wurde erfolgreich angenommen";
+        public static final String ORGANISATIONIVITEACCPETEDFAILURE = "Anfrage konnte nicht angenommen werden";
+        public static final String ORGANISATIONINVITEDECLINESUCCESS = "Anfrage wurder erfolgreich abgelehnt";
+        public static final String ORGANISATIONINVITEDECLINEFAILURE = "Anfrage konnte nicht abgelehnt werden";
+
 
 
         //EVENTSERIES
         public static final String EVENTSERIESDELETEDSUCCESSMESSAGE = "Eventseries deleted successfully";
         public static final String EVENTSERIESDELETEDNOTALLMESSAGE = "Could not delete all events of series because of status";
         public static final String EVENTSERIESDELETEDFAILUREMESSAGE = "Eventseries deleted successfully";
+        public static final String CHANGEDROLEOFPERSONINEVENTSERIESSUCCESSMESSAGE = "Changed role of person in eventseries successfully";
+        public static final String CHANGEDROLEOFPERSONINEVENTSERIESFAILUREMESSAGE = "Changed role of person in eventseries no successfully";
         public static final String EVENTSERIESNONEXTEVENTFOUNDMESSAGE = "No next event found to invite user";
+        public static final String REMOVEUSERFROMEVENTSERIESSUCCESSMESSAGE = "Removed user from eventseries successfully";
+        public static final String REMOVEUSERFROMEVENTSERIESFAILUREMESSAGE = "Removed user from eventseries not successfully";
+        public static final String INVITEDGROUPTOEVENTSERIESSUCCESSMESSAGE = "Invited group to eventseries successfully";
+        public static final String INVITEDGROUPTOEVENTSERIESFAILUREMESSAGE = "Invited group to eventseries not successfully";
+        public static final String REMOVEGROUPFROMEVENTSERIESSUCCESSMESSAGE = "Removed group from eventseries successfully";
+        public static final String REMOVEGROUPFROMEVENTSERIESFAILUREMESSAGE = "Removed group from eventseries not successfully";
+        public static final String EVENTSERIESCANCELLEDSUCCESSMESSAGE = "Eventseries cancelled successfully";
+        public static final String EVENTSERIESCANCELLEDFAILUREMESSAGE = "Eventseries cancelled not successfully";
         public static final String EVENTSERIESCREATEDSUCCESSMESSAGE = "EventSeries created successfully";
         public static final String EVENTSERIESCREATEDFAILUREMESSAGE = "EventSeries was not created";
         public static final String EVENTSERIESCHANGEDSUCCESSMESAGE = "EventSeries changed successfully";
@@ -84,6 +99,7 @@ public final class LocalizedStringVariables {
 
 
         //USERINEVENTWITHROLE
+        public static final String USERALREADYATTENDTINGTOEVENT = "User is already attending to event";
         public static final String USERREGISTERESFOREVENTSUCCESSMESSAGE = "Registration for event was successful";
         public static final String USERREGISTERESFOREVENTFAILUREMESSAGE = "Registration for event failed";
         public static final String EVENTINVITATIONACCEPTEDSUCCESSMESSAGE = "Event invitation accepted successfully";
@@ -104,6 +120,8 @@ public final class LocalizedStringVariables {
         public static final String USERALREADYPARTOFEVENTMESSAGE = "User already invited or attending to event";
         public static final String INVITEUSERTOEVENTSUCCESSMESSAGE = "Invited user to event successfully";
         public static final String INVITEUSERTOEVENTFAILUREMESSAGE = "Invited user to event not successfully";
+        public static final String INVITETUTORTOEVENTSUCCESSMESSAGE = "Invited tutor to event successfully";
+        public static final String INVITETUTORTOEVENTFAILUREMESSAGE = "Invited tutor to event not successfully";
         public static final String INVITEUSERTOFIRSTEVENTOFSERIESSUCCESSMESSAGE = "Invited user to first event of series successfully";
         public static final String INVITEUSERTOFIRSTEVENTOFSERIESFAILUREMESSAGE = "Invited user to first event of series not successfully";
         public static final String REMOVEUSERFROMEVENTSUCCESSMESSAGE = "Removed user from event successfully";
@@ -126,6 +144,7 @@ public final class LocalizedStringVariables {
 
         //USERINORGAWITHROLE
         public static final String REQUESTORGAJOINSUCCESSMESSAGE = "Request to join organisation was successful";
+        public static final String REQUESTORGAJOINALREADYEXISTSMESSAGE = "Request to join was rejected, because user is already in organisation";
         public static final String REQUESTORGAJOINFAILUREMESSAGE = "Request to join organisation failed";
         public static final String LEAVEORGANISATIONSUCCESSMESSAGE = "User left organisation successfully";
         public static final String LEAVEORGANISATIONFAILUREMESSAGE = "User left organisation not successfully";

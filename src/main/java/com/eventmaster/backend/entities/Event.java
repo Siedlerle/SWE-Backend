@@ -1,5 +1,6 @@
 package com.eventmaster.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.io.File;
@@ -29,18 +30,23 @@ public class Event {
     @JoinColumn(name = "eventSeriesId",referencedColumnName = "id")
     private EventSeries eventSeries;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Chat> chats = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Document> documents = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Question> questions = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<UserInEventWithRole> eventUserRoles = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<GroupInEvent> eventGroups = new HashSet<>();
 
@@ -50,14 +56,15 @@ public class Event {
     @Enumerated(EnumType.ORDINAL)
     EnumEventStatus status;
     boolean isPublic;
+    @Column(length = 1000)
     String description;
-    File image;
+    String image;
     //@TODO brauchen wir hier eine Adress Tabelle oder wollen wir location als String speichern? (Falls ja, kann man auch jeder Organiazion Adresse(n) zuweisen)
     String location;
     Date startDate;
     Date endDate;
-    Time startTime;
-    Time endTime;
+    String startTime;
+    String endTime;
     //---------------------------------------------------------------------------
 
 
@@ -149,12 +156,12 @@ public class Event {
         this.status = status;
     }
 
-    public boolean isPublic() {
-        return isPublic;
+    public boolean getIsPublic() {
+        return this.isPublic;
     }
 
-    public void setPublic(boolean aPublic) {
-        isPublic = aPublic;
+    public void setIsPublic(boolean isPublic) {
+        this.isPublic = isPublic;
     }
 
     public String getDescription() {
@@ -165,11 +172,11 @@ public class Event {
         this.description = description;
     }
 
-    public File getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(File image) {
+    public void setImage(String image) {
         this.image = image;
     }
 
@@ -197,19 +204,19 @@ public class Event {
         this.endDate = endDate;
     }
 
-    public Time getStartTime() {
+    public String getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Time startTime) {
+    public void setStartTime(String startTime) {
         this.startTime = startTime;
     }
 
-    public Time getEndTime() {
+    public String getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Time endTime) {
+    public void setEndTime(String endTime) {
         this.endTime = endTime;
     }
 }

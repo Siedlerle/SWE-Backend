@@ -1,12 +1,15 @@
 package com.eventmaster.backend.controller;
 
-import com.eventmaster.backend.entities.Event;
-import com.eventmaster.backend.entities.EventSeries;
-import com.eventmaster.backend.entities.Preset;
-import com.eventmaster.backend.serviceswithouttoken.*;
+import com.eventmaster.backend.entities.*;
+import com.eventmaster.backend.services.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -45,16 +48,35 @@ public class OrganizerController {
 
     //region Event
 
+   /**
+     * Endpoint to get all managing events in a organisation.
+     * @param userMail Mail of the organizer.
+     * @param orgaId ID of the organisation.
+     * @return List of events.
+     */
+    @PostMapping("/orga/{orgaId}/event/managing/get/{userMail}")
+    public ResponseEntity<List<Event>> getManagingEventsInOrga(@PathVariable String userMail,
+                                                               @PathVariable long orgaId) {
+        return ResponseEntity.ok(userInEventWithRoleService.getManagingEvents(userMail, orgaId));
+    }
+
     /**
      * Endpoint to create an event.
-     * @param event Event which will be saved in the database.
+     * @param eventJson Data of the event
+     * @param image Image of the event
      * @param userMail Mail of user who created event and becomes organizer.
+     * @param orgaId Organisation which will contain the event.
      * @return String about success or failure.
      */
-    @PostMapping("/event/create")
-    public ResponseEntity<String> createEvent(@RequestBody Event event,
-                                              @RequestParam String userMail) {
-        return ResponseEntity.ok(userInEventWithRoleService.createEventWithOrganizer(event, userMail));
+    @PostMapping("/event/create/{userMail}/{orgaId}")
+    public ResponseEntity<MessageResponse> createEvent(@RequestParam("event") String eventJson,
+                                                       @RequestParam(value = "image", required = false) MultipartFile image,
+                                                       @PathVariable String userMail,
+                                                       @PathVariable long orgaId) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        Event event = mapper.readValue(eventJson, Event.class);
+
+        return ResponseEntity.ok(userInEventWithRoleService.createEventWithOrganizer(event, userMail, orgaId, image));
     }
 
     /**
@@ -63,7 +85,7 @@ public class OrganizerController {
      * @return String about success or failure.
      */
     @PostMapping("/event/change")
-    public ResponseEntity<String> changeEvent(@RequestBody Event event) {
+    public ResponseEntity<MessageResponse> changeEvent(@RequestBody Event event) {
         return ResponseEntity.ok(eventService.changeEvent(event));
     }
 
@@ -74,7 +96,7 @@ public class OrganizerController {
      * @return String about success or failure.
      */
     @PostMapping("/event/{eventId}/status/change")
-    public ResponseEntity<String> changeStatusOfEvent(@PathVariable long eventId,
+    public ResponseEntity<MessageResponse> changeStatusOfEvent(@PathVariable long eventId,
                                                       @RequestBody String status) {
         return ResponseEntity.ok(eventService.changeStatusOfEvent(eventId, status));
     }
@@ -85,9 +107,29 @@ public class OrganizerController {
      * @return String about success or failure.
      */
     @PostMapping("/event/delete/{eventId}")
-    public ResponseEntity<String> deleteEvent(@PathVariable long eventId) {
+    public ResponseEntity<MessageResponse> deleteEvent(@PathVariable long eventId) {
         return ResponseEntity.ok(eventService.deleteEvent(eventId));
     }
+
+    /**
+     * Endpoint to get all Users of an organisation, not affiliated with the event.
+     * @param event The event to be checked.
+     * @return List of users that aren't affiliated.
+     */
+    @PostMapping("/event/get/unaffiliated-users")
+    public ResponseEntity<List<User>> getUnaffiliatedUsersForEvent(@RequestBody Event event){
+        return ResponseEntity.ok(userInOrgaWithRoleService.getUnaffiliatedUsersForEvent(event));
+    }
+    /**
+     * Endpoint to get all Groups of an organisation, not affiliated with the event.
+     * @param event The event to be checked.
+     * @return List of groups that aren't affiliated.
+     */
+    @PostMapping("/event/get/unaffiliated-groups")
+    public ResponseEntity<List<Group>> getUnaffiliatedGroupsForEvent(@RequestBody Event event){
+        return ResponseEntity.ok(groupInEventService.getUnaffiliatedGroupsForEvent(event));
+    }
+
 
     /**
      * Endpoint to change an attendee to a tutor in an event.
@@ -119,10 +161,23 @@ public class OrganizerController {
      * @param userMail Mail of the user who will be invited.
      * @return String about success or failure.
      */
-    @PostMapping("/event/{eventId}/user/invite")
-    public ResponseEntity<String> inviteUserToEvent(@PathVariable long eventId,
-                                                    @RequestBody String userMail) {
+    @PostMapping("/event/{eventId}/user/{userMail}/invite")
+    public ResponseEntity<MessageResponse> inviteUserToEvent(@PathVariable long eventId,
+                                                    @PathVariable String userMail) {
         return ResponseEntity.ok(userInEventWithRoleService.inviteUserToEvent(eventId, userMail, true));
+    }
+
+    /**
+     * Endpoint to invite a tutor to an event.
+     * @param eventId ID of the event.
+     * @param userMail Mail of the tutor.
+     * @return String about success or failure.
+     */
+    @PostMapping("/event/{eventId}/tutor/{userMail}/invite")
+    public ResponseEntity<MessageResponse> inviteTutorToEvent(@PathVariable long eventId,
+                                                     @PathVariable String userMail) {
+        System.out.println(userMail);
+        return ResponseEntity.ok(userInEventWithRoleService.inviteTutorToEvent(eventId, userMail));
     }
 
     /**
@@ -131,9 +186,9 @@ public class OrganizerController {
      * @param groupId ID of the group which will be invited.
      * @return String about success or failure.
      */
-    @PostMapping("/event/{eventId}/group/invite")
-    public ResponseEntity<String> inviteGroupToEvent(@PathVariable long eventId,
-                                                     @RequestBody long groupId) {
+    @PostMapping("/event/{eventId}/group/{groupId}/invite")
+    public ResponseEntity<MessageResponse> inviteGroupToEvent(@PathVariable long eventId,
+                                                     @PathVariable long groupId) {
         return ResponseEntity.ok(groupInEventService.inviteGroupToEvent(eventId, groupId));
     }
 
@@ -141,14 +196,12 @@ public class OrganizerController {
      * Endpoint to remove a user from an event.
      * @param eventId ID of the event.
      * @param userMail Mail of the user who will be removed.
-     * @param reason Reason why user will be removed.
      * @return String about success or failure.
      */
-    @PostMapping("/event/{eventId}/attendee/remove")
-    public ResponseEntity<String> removeUserFromEvent(@PathVariable long eventId,
-                                                      @RequestBody String userMail,
-                                                      @RequestParam String reason) {
-        return ResponseEntity.ok(userInEventWithRoleService.removeUserFromEvent(eventId, userMail, reason));
+    @PostMapping("/event/{eventId}/attendee/{userMail}/remove")
+    public ResponseEntity<MessageResponse> removeUserFromEvent(@PathVariable long eventId,
+                                                               @PathVariable String userMail) {
+        return ResponseEntity.ok(userInEventWithRoleService.removeUserFromEvent(eventId, userMail));
     }
 
     /**
@@ -166,14 +219,14 @@ public class OrganizerController {
     }
 
     /**
-     * Endpoint to set the status of an event to cancelled.
+     * Endpoint to set the status of an event to "cancelled".
      * @param eventId ID of the event.
      * @param reason Reason why the event is cancelled.
      * @return String about success or failure.
      */
-    @PostMapping("event/{eventId}/cancel")
-    public ResponseEntity<String> cancelEvent(@PathVariable long eventId,
-                                              @RequestParam String reason) {
+    @PostMapping("/event/{eventId}/cancel")
+    public ResponseEntity<MessageResponse> cancelEvent(@PathVariable long eventId,
+                                              @RequestBody String reason) {
         return ResponseEntity.ok(eventService.cancelEvent(eventId, reason));
     }
 
@@ -185,26 +238,39 @@ public class OrganizerController {
 
     /**
      * Endpoint to create a series of events.
-     * @param eventSeries EventSeries with information about time interval between events.
-     * @param lastEvent Last event of the event series with event data.
+     * @param eventJson Data of the first Event of the series
+     * @param eventSeriesJson Data of the eventseries
+     * @param image Image of the events.
+     * @param userMail Mail of user who created the events and becomes organizers.
+     * @param orgaId ID of the organisation.
      * @return String about success or failure.
      */
-    @PostMapping("/event-series/create")
-    public ResponseEntity<String> createEventSeries(@RequestParam EventSeries eventSeries,
-                                                    @RequestParam Event lastEvent) {
-        return ResponseEntity.ok(eventSeriesService.createEventSeries(lastEvent, eventSeries));
+    @PostMapping(value = "/event-series/create/{userMail}/{orgaId}", produces = "application/json")
+    public ResponseEntity<String> createEventSeries(@RequestParam("event") String eventJson,
+                                                    @RequestParam("eventseries") String eventSeriesJson,
+                                                    @RequestParam(value = "image", required = false) MultipartFile image,
+                                                    @PathVariable String userMail,
+                                                    @PathVariable long orgaId) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        Event startEvent = mapper.readValue(eventJson, Event.class);
+
+        EventSeries eventSeries = mapper.readValue(eventSeriesJson, EventSeries.class);
+
+        ObjectNode response = mapper.createObjectNode();
+        response.put("message", userInEventWithRoleService.createEventSeriesWithOrganizer(startEvent, eventSeries, userMail, orgaId, image));
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response.toString());
     }
 
     /**
      * Endpoint to change a series of events.
      * @param eventSeries New EventSeries with information about time interval between events.
-     * @param lastEvent New last event of the series.
+     * @param startEvent New start event of the series.
      * @return String about success or failure.
      */
     @PostMapping("/event-series/change")
     public ResponseEntity<String> changeEventSeries(@RequestParam EventSeries eventSeries,
-                                                    @RequestParam Event lastEvent) {
-        return ResponseEntity.ok(eventSeriesService.changeEventSeries(lastEvent, eventSeries));
+                                                    @RequestParam Event startEvent) {
+        return ResponseEntity.ok(eventSeriesService.changeEventSeries(startEvent, eventSeries));
     }
 
     /**
@@ -230,6 +296,30 @@ public class OrganizerController {
     }
 
     /**
+     * Endpoint to change an attendee of an eventseries to a tutor of the eventseries.
+     * @param eventSeriesId ID of the eventseries.
+     * @param userMail Mail of user who gets Attendee.
+     * @return String about success or failure.
+     */
+    @PostMapping("/event-series/{eventSeriesId}/attendee/set-tutor")
+    public ResponseEntity<String> changeAttendeeToTutorInEventSeries(@PathVariable long eventSeriesId,
+                                                                     @RequestBody String userMail) {
+        return ResponseEntity.ok(eventSeriesService.changeRoleOfPersonInEventSeries(eventSeriesId, userMail, false));
+    }
+
+    /**
+     * Endpoint to change a tutor of an eventseries to an attendee of the eventseries.
+     * @param eventSeriesId ID of the eventseries.
+     * @param userMail Mail of user who gets Attendee.
+     * @return String about success or failure.
+     */
+    @PostMapping("/event-series/{eventSeriesId}/attendee/set-attendee")
+    public ResponseEntity<String> changeTutorToAttendeeInEventSeries(@PathVariable long eventSeriesId,
+                                                                     @RequestBody String userMail) {
+        return ResponseEntity.ok(eventSeriesService.changeRoleOfPersonInEventSeries(eventSeriesId, userMail, true));
+    }
+
+    /**
      * Endpoint to invite a user to a series of events.
      * @param eventSeriesId ID of the eventseries.
      * @param userMail Mail of the user who will be invited.
@@ -238,7 +328,55 @@ public class OrganizerController {
     @PostMapping("/event-series/{eventSeriesId}/user/invite")
     public ResponseEntity<String> inviteUserToEventSeries(@PathVariable long eventSeriesId,
                                                           @RequestBody String userMail) {
-        return ResponseEntity.ok(eventSeriesService.inviteUserToEventSeries(eventSeriesId, userMail));
+        return ResponseEntity.ok(eventSeriesService.inviteUserToEventSeries(eventSeriesId, userMail, false));
+    }
+
+    /**
+     * Endpoint to invite a group to a series of events.
+     * @param eventSeriesId ID of the eventseries.
+     * @param groupId ID of the group which will be invited.
+     * @return String about success or failure.
+     */
+    @PostMapping("/event-series/{eventSeriesId}/group/invite")
+    public ResponseEntity<String> inviteGroupToEventSeries(@PathVariable long eventSeriesId,
+                                                           @RequestBody long groupId) {
+        return ResponseEntity.ok(eventSeriesService.inviteGroupToEventSeries(eventSeriesId, groupId));
+    }
+
+    /**
+     * Endpoint to remove a user from an eventseries.
+     * @param eventSeriesId ID of the eventseries.
+     * @param userMail Mail of the user who will be removed.
+     * @return String about success or failure.
+     */
+    @PostMapping("/event-series/{eventSeriesId}/user/remove")
+    public ResponseEntity<String> removeUserFromEventSeries(@PathVariable long eventSeriesId,
+                                                            @RequestBody String userMail) {
+        return ResponseEntity.ok(eventSeriesService.removeUserFromEventSeries(eventSeriesId, userMail));
+    }
+
+    /**
+     * Endpoint to remove a group from an eventseries.
+     * @param eventSeriesId ID of the eventseries.
+     * @param groupId ID of the group which will be removed from eventseries.
+     * @param reason Reason why the group will be removed.
+     * @return String about success or failure.
+     */
+    @PostMapping("/event-series/{eventSeriesId}/group/remove")
+    public ResponseEntity<String> removeGroupFromEventSeries(@PathVariable long eventSeriesId,
+                                                             @RequestBody long groupId,
+                                                             @RequestParam String reason) {
+        return ResponseEntity.ok(eventSeriesService.removeGroupFromEventSeries(eventSeriesId, groupId, reason));
+    }
+
+    /**
+     * Endpoint to cancel an eventseries.
+     * @param eventSeriesId ID of the eventseries which will be cancelled.
+     * @return String about success or failure.
+     */
+    @PostMapping("/event-series/{eventSeriesId}/cancel")
+    public ResponseEntity<String> cancelEventSeries(@PathVariable long eventSeriesId) {
+        return ResponseEntity.ok(eventSeriesService.cancelEventSeries(eventSeriesId));
     }
 
     //endregion
@@ -295,14 +433,22 @@ public class OrganizerController {
      * Endpoint to invite a user to an organisation.
      * @param orgaId ID of the organisation.
      * @param userMail Mail of the user who will be invited.
-     * @param authToken Token to identify sender.
      * @return String about success or failure.
      */
-    @PostMapping("/organisation/{orgaId}/user/invite")
-    public ResponseEntity<String> inviteUserToOrganisation(@PathVariable long orgaId,
-                                                           @RequestBody String userMail,
-                                                           @RequestParam String authToken) {
+    @PostMapping("/organisation/{orgaId}/user/{userMail}/invite")
+    public ResponseEntity<MessageResponse> inviteUserToOrganisation(@PathVariable long orgaId,
+                                                           @PathVariable String userMail) {
         return ResponseEntity.ok(userInOrgaWithRoleService.inviteUserToOrganisation(orgaId, userMail));
+    }
+
+    /**
+     * Endpoint to retrieve all users in organisation
+     * @param orgaId Id of the corresponding organisation
+     * @return List of users
+     */
+    @PostMapping("/organisation/{orgaId}/user/get-all")
+    public ResponseEntity<List<User>> getAllUsersInOrganisation(@PathVariable long orgaId){
+        return ResponseEntity.ok(userInOrgaWithRoleService.getAllUsersInOrga(orgaId));
     }
 
     //endregion

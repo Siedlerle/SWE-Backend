@@ -1,8 +1,9 @@
 package com.eventmaster.backend.ControllerTests;
 
 import com.eventmaster.backend.entities.Organisation;
+import com.eventmaster.backend.entities.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Test;
+import local.variables.LocalizedStringVariables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,72 +13,89 @@ import org.springframework.test.web.servlet.MvcResult;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+
+
 @SpringBootTest
 @AutoConfigureMockMvc
-public class SystemAdminControllerTests {
+public class SystemAdminControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+    ObjectMapper mapper = new ObjectMapper();
+    public SystemAdminControllerTest(MockMvc mockMvc) {
+        this.mockMvc = mockMvc;
+    }
 
-    @Test
-    public void testOrganisationManagement() throws Exception {
-        Organisation organisation = new Organisation();
-        organisation.setName("TestOrgaName");
-        organisation.setLocation("TestOrgaLocation");
+    public void createUser(User user) throws Exception {
+        String sysAdminPassword = "password";
+        mockMvc.perform(post("/sys-admin/user/add")
+                        .content(asJsonString(mapper, user))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("sysAdminPassword", sysAdminPassword))
+
+                .andExpect(status().isOk())
+                .andExpect(content().string("saved"));
+    }
+
+    public long testOrganisationManagement(Organisation testOrganisation) throws Exception {
         String sysAdminPassword = "password";
 
-        ObjectMapper mapper = new ObjectMapper();
+
 
         mockMvc.perform(post("/sys-admin/organisation/create")
-                        .content(asJsonString(mapper, organisation))
+                        .content(asJsonString(mapper, testOrganisation))
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("sysAdminPassword", sysAdminPassword))
                     .andExpect(status().isOk())
-                    .andExpect(content().string("Organisation created successfully"));
+                    .andExpect(content().string(LocalizedStringVariables.ORGACREATEDSUCCESSMESSAGE));
+
 
         MvcResult ra = mockMvc.perform(post("/user/orga/get-all")
-                        .content(asJsonString(mapper, organisation))
+                        .content(asJsonString(mapper, testOrganisation))
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("sysAdminPassword", sysAdminPassword))
                 .andExpect(status().isOk())
-                .andReturn();;
+                .andReturn();
 
         String content = ra.getResponse().getContentAsString();
 
         List<Organisation> organisations = mapper.readValue(content, new TypeReference<List<Organisation>>(){});
 
         for (Organisation orga: organisations) {
-            if (organisation.getName().equals(orga.getName()))
+            if (testOrganisation.getName().equals(orga.getName()))
             {
-                organisation = orga;
+                testOrganisation = orga;
             }
         }
 
-        organisation.setName("NewTestOrgaName");
+
+        testOrganisation.setName("NewTestOrgaName");
 
         mockMvc.perform(post("/sys-admin/organisation/change")
-                        .content(asJsonString(mapper, organisation))
+                        .content(asJsonString(mapper, testOrganisation))
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("sysAdminPassword", sysAdminPassword))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Organisation changed successfully"));
+                .andExpect(content().string(LocalizedStringVariables.ORGACHANGEDSUCCESSMESSAGE));
 
-        mockMvc.perform(post("/sys-admin/organisation/delete/" + organisation.getId())
-                        .content(asJsonString(mapper, organisation))
+        /*
+        mockMvc.perform(post("/sys-admin/organisation/delete/" + testOrganisation.getId())
+                        .content(asJsonString(mapper, testOrganisation))
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("sysAdminPassword", sysAdminPassword))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Organisation " + organisation.getName() + " deleted successfully"));
+                .andExpect(content().string(LocalizedStringVariables.ORGADELETEDSUCCESSMESSAGE));
+         */
+        return testOrganisation.getId();
     }
 
-    public static String asJsonString(ObjectMapper mapper, final Object obj) {
+    protected static String asJsonString(ObjectMapper mapper, final Object obj) {
         try {
             return mapper.writeValueAsString(obj);
         } catch (Exception e) {

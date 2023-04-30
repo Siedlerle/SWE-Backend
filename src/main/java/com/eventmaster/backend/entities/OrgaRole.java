@@ -1,5 +1,6 @@
 package com.eventmaster.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -18,7 +19,7 @@ public class OrgaRole {
     @Enumerated(EnumType.ORDINAL)
     private EnumOrgaRole role;
 
-
+    @JsonIgnore
     @OneToMany(mappedBy = "orgaRole",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<UserInOrgaWithRole> userInOrgaWithRoles  = new HashSet<>();
 
@@ -36,6 +37,10 @@ public class OrgaRole {
 
     public void setRole(EnumOrgaRole role) {
         this.role = role;
+    }
+
+    public void removeUserInOrgaWithRole(UserInOrgaWithRole userInOrgaWithRole) {
+        this.userInOrgaWithRoles.remove(userInOrgaWithRole);
     }
 }
 

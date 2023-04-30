@@ -1,4 +1,4 @@
-package com.eventmaster.backend.serviceswithouttoken;
+package com.eventmaster.backend.services;
 
 
 import com.eventmaster.backend.entities.EnumEventRole;
