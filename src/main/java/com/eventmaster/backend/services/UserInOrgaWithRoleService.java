@@ -154,7 +154,7 @@ public class UserInOrgaWithRoleService {
         try {
             User user = userService.getUserByMail(userMail);
             Organisation organisation = organisationService.getOrganisationById(organisationId);
-            OrgaRole requestRole = orgaRoleService.findByRole(EnumOrgaRole.REQUESTED);
+            OrgaRole requestRole = orgaRoleService.findByRole(EnumOrgaRole.USER);//@TODO Lösung finden, ob Organisator anfrage annehmen muss oder direkt beigetreten wird, public boolean für Orgas
 
             if(userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId) == null){
                 UserInOrgaWithRole userInOrgaWithRole = new UserInOrgaWithRole();
