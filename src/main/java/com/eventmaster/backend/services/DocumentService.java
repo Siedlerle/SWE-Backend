@@ -2,6 +2,7 @@ package com.eventmaster.backend.services;
 
 import com.eventmaster.backend.entities.Document;
 import com.eventmaster.backend.entities.Event;
+import com.eventmaster.backend.entities.MessageResponse;
 import com.eventmaster.backend.repositories.DocumentRepository;
 import local.variables.LocalizedStringVariables;
 import org.springframework.core.io.FileSystemResource;
@@ -73,8 +74,8 @@ public class DocumentService {
      * @throws IOException
      */
     public ResponseEntity<Resource> downloadFile(String uri, String filename) throws IOException {
-        String filePath = "/media/eventfiles/" + uri;
-
+        //String filePath = "/media/eventfiles/" + uri;
+        String filePath = "src/main/upload/event_documents/"+uri;
         org.springframework.core.io.Resource resource = new FileSystemResource(filePath);
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
@@ -92,7 +93,7 @@ public class DocumentService {
      * @return String about success or failure.
      * @throws IOException
      */
-    public String createDocument(long eventId, MultipartFile multipartFile) throws IOException {
+    public MessageResponse createDocument(long eventId, MultipartFile multipartFile) throws IOException {
         Event event = eventService.getEventById(eventId);
 
         String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
@@ -103,13 +104,19 @@ public class DocumentService {
         doc.setSize(size);
         doc.setEvent(event);
         try{
-            doc = documentRepository.save(doc);
+            //doc =
             String filecode = saveFile(eventId,doc.getId(), fileName, multipartFile);
+            //doc.setDownloadUri("src/main/upload/event_documents/event/"+eventId+"/"+filecode);
             doc.setDownloadUri("event/" + eventId + "/" + filecode);
-            return LocalizedStringVariables.DOCUMENTCREATEDSUCCESSMESSAGE;
+            documentRepository.save(doc);
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.DOCUMENTCREATEDSUCCESSMESSAGE)
+                    .build();
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.DOCUMENTCREATEDFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.DOCUMENTCREATEDFAILUREMESSAGE)
+                    .build();
         }
     }
 
@@ -118,24 +125,29 @@ public class DocumentService {
      * @param docId ID of the document which will be deleted.
      * @return String about success or failure.
      */
-    public String deleteDocument(long docId) {
-        Document document = getDocumentById(docId);
-
-        String uri = document.getDownloadUri();
-
-        Event event = document.getEvent();
-
+    public MessageResponse deleteDocument(long docId) {
         try {
+            Document document = getDocumentById(docId);
+
+            String uri = document.getDownloadUri();
+
+            Event event = document.getEvent();
             event.removeDocument(document);
+
             document.setEvent(null);
             documentRepository.delete(document);
 
-            File file = new File("/media/eventfiles/" + uri);
+
+            File file = new File("src/main/upload/event_documents/" + uri);
             file.delete();
-            return LocalizedStringVariables.DOCUMENTDELETEDSUCCESSMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.DOCUMENTDELETEDSUCCESSMESSAGE)
+                    .build();
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.DOCUMENTDELETEDFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.DOCUMENTDELETEDFAILUREMESSAGE)
+                    .build();
         }
     }
 
@@ -149,8 +161,8 @@ public class DocumentService {
      * @throws IOException
      */
     public String saveFile(long eventId, long documentId, String fileName, MultipartFile multipartFile) throws IOException {
-        Path uploadPath = Paths.get("/media/eventfiles/event/" + eventId);
-
+        //Path uploadPath = Paths.get("/media/eventfiles/event/" + eventId);
+        Path uploadPath = Paths.get("src/main/upload/event_documents/event/" + eventId);
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }

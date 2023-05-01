@@ -1,11 +1,13 @@
 package com.eventmaster.backend.controller;
 
+import com.eventmaster.backend.entities.MessageResponse;
 import com.eventmaster.backend.entities.Question;
 import com.eventmaster.backend.entities.User;
 import com.eventmaster.backend.services.ChatService;
 import com.eventmaster.backend.services.DocumentService;
 import com.eventmaster.backend.services.QuestionService;
 import com.eventmaster.backend.services.UserInEventWithRoleService;
+import org.aspectj.bridge.Message;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -105,26 +107,22 @@ public class TutorController {
      * Endpoint to upload a file to an event.
      * @param eventId ID of the event which will contain the document.
      * @param multipartFile File which will be saved.
-     * @param authToken Token to identify user.
      * @return String about success or failure.
      * @throws IOException
      */
     @PostMapping("/event/{eventId}/file/upload")
-    public ResponseEntity<String> uploadFile(@PathVariable long eventId,
-                                             @RequestParam("file")MultipartFile multipartFile,
-                                             @RequestParam String authToken) throws IOException {
+    public ResponseEntity<MessageResponse> uploadFile(@PathVariable long eventId,
+                                                      @RequestParam("file")MultipartFile multipartFile) throws IOException {
         return ResponseEntity.ok(documentService.createDocument(eventId, multipartFile));
     }
 
     /**
      * Endpoint to delete a token from database and server.
      * @param docId ID of the document.
-     * @param authToken Token to identify user.
      * @return String about success or failure.
      */
     @PostMapping("/event/file/{docId}/delete")
-    public ResponseEntity<String> deleteFile(@PathVariable long docId,
-                                             @RequestParam String authToken) {
+    public ResponseEntity<MessageResponse> deleteFile(@PathVariable long docId) {
         return ResponseEntity.ok(documentService.deleteDocument(docId));
     }
 
@@ -132,13 +130,11 @@ public class TutorController {
      * Endpoint to delete a token from database and server.
      * @param eventId ID of the event.
      * @param question Questionnaire to be created.
-     * @param authToken Token to identify user.
      * @return String about success or failure.
      */
     @PostMapping("/event/{eventId}/question/add")
     public ResponseEntity<String> addQuestion(@PathVariable long eventId,
-                                              @RequestBody Question question,
-                                              @RequestParam String authToken){
+                                              @RequestBody Question question){
         return ResponseEntity.ok(questionService.createQuestion(eventId, question));
     }
 }

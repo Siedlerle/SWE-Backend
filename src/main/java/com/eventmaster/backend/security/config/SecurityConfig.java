@@ -53,6 +53,7 @@ public class SecurityConfig{
                     .requestMatchers("/organizer/**").permitAll()
                     .requestMatchers("/admin/orga/**").permitAll()
                     .requestMatchers("/tutor/**").permitAll()
+                    .requestMatchers("/attendee/**").permitAll()
                     .requestMatchers("/logout").permitAll()
                 .requestMatchers("/sys-admin/**").access(new SysAdminAuthManager(sysAdminProperties.getAdminPassword()))
                     //.requestMatchers("/organizer/**").access(new OrganizerAuthorizationManager())
