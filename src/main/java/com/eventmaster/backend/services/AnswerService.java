@@ -61,4 +61,8 @@ public class AnswerService {
         });
         return returns;
     }
+
+    public void saveAnswer(Answer answer){
+        answerRepository.save(answer);
+    }
 }

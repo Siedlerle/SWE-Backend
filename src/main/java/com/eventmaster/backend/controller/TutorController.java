@@ -129,12 +129,12 @@ public class TutorController {
     /**
      * Endpoint to delete a token from database and server.
      * @param eventId ID of the event.
-     * @param question Questionnaire to be created.
+     * @param questions Questionnaire to be created.
      * @return String about success or failure.
      */
     @PostMapping("/event/{eventId}/question/add")
-    public ResponseEntity<String> addQuestion(@PathVariable long eventId,
-                                              @RequestBody Question question){
-        return ResponseEntity.ok(questionService.createQuestion(eventId, question));
+    public ResponseEntity<MessageResponse> addQuestion(@PathVariable long eventId,
+                                              @RequestBody List<Question> questions){
+        return ResponseEntity.ok(questionService.createQuestion(eventId, questions));
     }
 }

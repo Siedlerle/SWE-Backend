@@ -33,11 +33,8 @@ public class Question {
 
     //---------------------------------------------------------------------------
     private String text;
-    private QuestionType type;
-    private enum QuestionType {
-        multipleChoice,
-        text
-    }
+    @Enumerated(EnumType.ORDINAL)
+    EnumQuestionType type;
     //---------------------------------------------------------------------------
 
     public long getId() {
@@ -80,7 +77,7 @@ public class Question {
         this.text = text;
     }
 
-    public QuestionType getType() {
+    public EnumQuestionType getType() {
         return type;
     }
 
@@ -88,7 +85,7 @@ public class Question {
         return type.toString();
     }
 
-    public void setType(QuestionType type) {
+    public void setType(EnumQuestionType type) {
         this.type = type;
     }
 }
