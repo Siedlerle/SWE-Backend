@@ -327,7 +327,7 @@ public class UserInOrgaWithRoleService {
      * @param userMail Mail of the user who will be admin.
      * @return String about success or failure.
      */
-    public String setPersonAdmin(long organisationId, String userMail) {
+    public MessageResponse setPersonAdmin(long organisationId, String userMail) {
         User user = userService.getUserByMail(userMail);
         OrgaRole newOrgaRole = orgaRoleService.findByRole(EnumOrgaRole.ADMIN);
         UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId);
@@ -335,10 +335,14 @@ public class UserInOrgaWithRoleService {
         try {
             userInOrgaWithRole.setOrgaRole(newOrgaRole);
             userInOrgaWithRoleRepository.save(userInOrgaWithRole);
-            return LocalizedStringVariables.SETPERSONADMININORGASUCCESSMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.SETPERSONADMININORGASUCCESSMESSAGE)
+                    .build();
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.SETPERSONADMININORGAFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.SETPERSONADMININORGAFAILUREMESSAGE)
+                    .build();
         }
     }
 
@@ -348,7 +352,7 @@ public class UserInOrgaWithRoleService {
      * @param userMail Mail of the user who will be organizer.
      * @return String about success or failure.
      */
-    public String setPersonOrganizer(long organisationId, String userMail) {
+    public MessageResponse setPersonOrganizer(long organisationId, String userMail) {
         User user = userService.getUserByMail(userMail);
         OrgaRole newOrgaRole = orgaRoleService.findByRole(EnumOrgaRole.ORGANIZER);
         UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId);
@@ -356,10 +360,14 @@ public class UserInOrgaWithRoleService {
         try {
             userInOrgaWithRole.setOrgaRole(newOrgaRole);
             userInOrgaWithRoleRepository.save(userInOrgaWithRole);
-            return LocalizedStringVariables.SETPERSONORGANIZERINORGASUCCESSMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.SETPERSONORGANIZERINORGASUCCESSMESSAGE)
+                    .build();
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.SETPERSONORGANIZERINORGAFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.SETPERSONORGANIZERINORGAFAILUREMESSAGE)
+                    .build();
         }
     }
 
@@ -369,7 +377,7 @@ public class UserInOrgaWithRoleService {
      * @param userMail Mail of the user who will be a normal user.
      * @return String about success or failure.
      */
-    public String setPersonUser(long organisationId, String userMail) {
+    public MessageResponse setPersonUser(long organisationId, String userMail) {
         User user = userService.getUserByMail(userMail);
         OrgaRole newOrgaRole = orgaRoleService.findByRole(EnumOrgaRole.USER);
         UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId);
@@ -377,10 +385,14 @@ public class UserInOrgaWithRoleService {
         try {
             userInOrgaWithRole.setOrgaRole(newOrgaRole);
             userInOrgaWithRoleRepository.save(userInOrgaWithRole);
-            return LocalizedStringVariables.SETPERSONUSERINORGASUCCESSMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.SETPERSONUSERINORGASUCCESSMESSAGE)
+                    .build();
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.SETPERSONUSERINORGAFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.SETPERSONUSERINORGAFAILUREMESSAGE)
+                    .build();
         }
     }
 

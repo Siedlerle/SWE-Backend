@@ -79,7 +79,7 @@ public class AdminController {
      * @return String about success or failure.
      */
     @PostMapping("/orga/{orgaId}/user/role/admin")
-    public ResponseEntity<String> setPersonAdmin(@PathVariable long orgaId,
+    public ResponseEntity<MessageResponse> setPersonAdmin(@PathVariable long orgaId,
                                                  @RequestBody String userMail) {
         return ResponseEntity.ok(userInOrgaWithRoleService.setPersonAdmin(orgaId, userMail));
     }
@@ -91,7 +91,7 @@ public class AdminController {
      * @return String about success or failure.
      */
     @PostMapping("/orga/{orgaId}/user/role/organizer")
-    public ResponseEntity<String> setPersonOrganizer(@PathVariable long orgaId,
+    public ResponseEntity<MessageResponse> setPersonOrganizer(@PathVariable long orgaId,
                                                      @RequestBody String userMail) {
         return ResponseEntity.ok(userInOrgaWithRoleService.setPersonOrganizer(orgaId, userMail));
     }
@@ -103,7 +103,7 @@ public class AdminController {
      * @return String about success or failure.
      */
     @PostMapping("/orga/{orgaId}/user/role/user")
-    public ResponseEntity<String> setPersonUser(@PathVariable long orgaId,
+    public ResponseEntity<MessageResponse> setPersonUser(@PathVariable long orgaId,
                                                 @RequestBody String userMail) {
         return ResponseEntity.ok(userInOrgaWithRoleService.setPersonUser(orgaId, userMail));
     }
