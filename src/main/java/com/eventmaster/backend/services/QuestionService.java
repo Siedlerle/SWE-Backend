@@ -64,7 +64,8 @@ public class QuestionService {
                 question.setEvent(event);
                 questionRepository.save(question);
 
-                if(question.getType().equals(EnumQuestionType.MULTIPLECHOICE)){
+                if(question.getQuestionType().equals(EnumQuestionType.MULTIPLECHOICE)){
+                    System.out.println(question.getQuestionText());
                     for (String answer : question.getAnswerString()) {
                         Answer a = new Answer();
                         a.setAmount(0);

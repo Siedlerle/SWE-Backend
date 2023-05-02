@@ -72,24 +72,24 @@ public class Question {
         this.questionUsers = questionUsers;
     }
 
-    public String getText() {
+    public String getQuestionText() {
         return questionText;
     }
 
-    public void setText(String questionText) {
+    public void setQuestionText(String questionText) {
         this.questionText = questionText;
     }
 
-    public EnumQuestionType getType() {
+    public EnumQuestionType getQuestionType() {
         return questionType;
+    }
+
+    public void setQuestionType(EnumQuestionType questionType) {
+        this.questionType = questionType;
     }
 
     public String getTypeVal(){
         return questionType.toString();
-    }
-
-    public void setType(EnumQuestionType questionType) {
-        this.questionType = questionType;
     }
 
     public String[] getAnswerString() {
