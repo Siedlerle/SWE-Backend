@@ -134,7 +134,7 @@ public class TutorController {
      */
     @PostMapping("/event/{eventId}/question/add")
     public ResponseEntity<MessageResponse> addQuestion(@PathVariable long eventId,
-                                              @RequestBody List<Question> questions){
+                                                       @RequestBody List<Question> questions){
         return ResponseEntity.ok(questionService.createQuestion(eventId, questions));
     }
 }

@@ -105,7 +105,7 @@ public class UserController {
      * @return success message
      */
     @PostMapping("/auth/delete/{emailAdress}")
-    public ResponseEntity<?> delete(@PathVariable String emailAdress){
+    public ResponseEntity<MessageResponse> delete(@PathVariable String emailAdress){
         return ResponseEntity.ok(userService.deleteUser(emailAdress));
     }
 
@@ -121,6 +121,17 @@ public class UserController {
     }
 
 
+    //Operations regarding user information
+
+    /**
+     * Endpoint to get userinformation
+     * @param emailAdress EMail of the corresponding user
+     * @return Userobject
+     */
+    @PostMapping("/info/{emailAdress}")
+    public ResponseEntity<User> getUserInformation (@PathVariable String emailAdress){
+        return ResponseEntity.ok(userService.getUserByMail(emailAdress));
+    }
 
 
     //Operations regarding user, orga connection

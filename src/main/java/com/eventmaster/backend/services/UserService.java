@@ -271,16 +271,20 @@ public class UserService {
      * @param emailAdress EMail of the corresponding user
      * @return success message
      */
-    public String deleteUser(String emailAdress) {
+    public MessageResponse deleteUser(String emailAdress) {
         try {
             User user = userRepository.findByEmailAdress(emailAdress);
             tokenService.deleteTokens(user.getId());
             userRepository.delete(user);
 
-            return LocalizedStringVariables.USERDELETEDMESSAGE + user.getFirstname() +" "+user.getLastname();
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.USERDELETEDMESSAGE + user.getFirstname() +" "+user.getLastname())
+                    .build();
         }catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.USERNOTDELETEDMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.USERNOTDELETEDMESSAGE)
+                    .build();
         }
     }
 

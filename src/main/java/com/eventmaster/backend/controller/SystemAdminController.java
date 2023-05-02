@@ -1,5 +1,6 @@
 package com.eventmaster.backend.controller;
 
+import com.eventmaster.backend.entities.MessageResponse;
 import com.eventmaster.backend.entities.Organisation;
 
 import com.eventmaster.backend.entities.User;
@@ -71,7 +72,7 @@ public class SystemAdminController {
      * @return success message
      */
     @PostMapping("/user/delete/{password}")
-    public ResponseEntity<String> deleteUser(@RequestParam String emailAdress,@PathVariable String password) {
+    public ResponseEntity<MessageResponse> deleteUser(@RequestParam String emailAdress, @PathVariable String password) {
         return ResponseEntity.ok(userService.deleteUser(emailAdress));
     }
 

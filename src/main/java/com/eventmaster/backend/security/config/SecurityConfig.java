@@ -48,6 +48,7 @@ public class SecurityConfig{
                     .requestMatchers("/eventimages/**").permitAll()
                     .requestMatchers("/upload/**").permitAll()
                     .requestMatchers("/user/auth/**").permitAll()
+                    .requestMatchers("/user/info/**").permitAll()
                     .requestMatchers("/user/orga/**").permitAll()
                     .requestMatchers("/user/event/**").permitAll()
                     .requestMatchers("/organizer/**").permitAll()

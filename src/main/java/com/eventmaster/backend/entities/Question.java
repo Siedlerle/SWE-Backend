@@ -32,9 +32,12 @@ public class Question {
     private Set<QuestionAnsweredByUser> questionUsers = new HashSet<>();
 
     //---------------------------------------------------------------------------
-    private String text;
+    private String questionText;
+    @Transient
+    private String[] answerString;
+
     @Enumerated(EnumType.ORDINAL)
-    EnumQuestionType type;
+    EnumQuestionType questionType;
     //---------------------------------------------------------------------------
 
     public long getId() {
@@ -70,22 +73,30 @@ public class Question {
     }
 
     public String getText() {
-        return text;
+        return questionText;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setText(String questionText) {
+        this.questionText = questionText;
     }
 
     public EnumQuestionType getType() {
-        return type;
+        return questionType;
     }
 
     public String getTypeVal(){
-        return type.toString();
+        return questionType.toString();
     }
 
-    public void setType(EnumQuestionType type) {
-        this.type = type;
+    public void setType(EnumQuestionType questionType) {
+        this.questionType = questionType;
+    }
+
+    public String[] getAnswerString() {
+        return answerString;
+    }
+
+    public void setAnswerString(String[] answerString) {
+        this.answerString = answerString;
     }
 }

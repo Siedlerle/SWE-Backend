@@ -64,12 +64,11 @@ public class QuestionService {
                 question.setEvent(event);
                 questionRepository.save(question);
 
-                if (question.getType().equals(EnumQuestionType.MULTIPLECHOICE)) {
-
-                    for (Answer answer : question.getAnswers()) {
+                if(question.getType().equals(EnumQuestionType.MULTIPLECHOICE)){
+                    for (String answer : question.getAnswerString()) {
                         Answer a = new Answer();
                         a.setAmount(0);
-                        a.setText(answer.getText());
+                        a.setText(answer);
                         a.setQuestion(question);
                         answerService.saveAnswer(a);
                     }
