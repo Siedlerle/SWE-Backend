@@ -77,14 +77,14 @@ public class AttendeeController {
     /**
      * Endpoint for an attendee of an event to get the survey
      * @param eventId Id of the corresponding event
-     * @param userId Id of the attendee
+     * @param emailAdress EMail of the attendee
      * @return List of question objects as they store the questions
      */
-    @PostMapping("/get-survey/{eventId}/{userId}")
+    @PostMapping("/get-survey/{eventId}/{emailAdress}")
     public ResponseEntity<List<Question>> getSurveyForEvent(
             @PathVariable long eventId,
-            @PathVariable long userId) {
-        return ResponseEntity.ok(questionService.getUnfinishedQuestionsByUser(eventId, userId));
+            @PathVariable String emailAdress) {
+        return ResponseEntity.ok(questionService.getUnfinishedQuestionsByUser(eventId, emailAdress));
     }
 
     /**

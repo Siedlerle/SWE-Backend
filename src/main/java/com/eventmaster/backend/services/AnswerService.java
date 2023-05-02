@@ -65,4 +65,8 @@ public class AnswerService {
     public void saveAnswer(Answer answer){
         answerRepository.save(answer);
     }
+
+    public List<Answer> findByQuestionId(long questionId){
+        return answerRepository.findByQuestion_id(questionId);
+    }
 }
