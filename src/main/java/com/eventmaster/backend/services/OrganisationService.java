@@ -1,5 +1,6 @@
 package com.eventmaster.backend.services;
 
+import com.eventmaster.backend.entities.MessageResponse;
 import com.eventmaster.backend.entities.Organisation;
 import com.eventmaster.backend.entities.User;
 import com.eventmaster.backend.repositories.OrganisationRepository;
@@ -91,7 +92,7 @@ public class OrganisationService {
      * @param newOrganisation The new organisation which will replace the old organisation.
      * @return String if successful or not.
      */
-    public String changeOrganisation(Organisation newOrganisation, MultipartFile image) {
+    public MessageResponse changeOrganisation(Organisation newOrganisation, MultipartFile image) {
         try {
             long id = newOrganisation.getId();
             Organisation oldOrganisation = this.organisationRepository.findById(id);
@@ -116,10 +117,14 @@ public class OrganisationService {
                 this.organisationRepository.save(oldOrganisation);
             }
 
-            return LocalizedStringVariables.ORGACHANGEDSUCCESSMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.ORGACHANGEDSUCCESSMESSAGE)
+                    .build();
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.ORGACHANGEDFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.ORGACHANGEDFAILUREMESSAGE)
+                    .build();
         }
     }
 
