@@ -36,6 +36,12 @@ public class QuestionService {
         this.userService = userService;
     }
 
+    /**
+     * Returns all unfinished questions from user
+     * @param eventId Id of the corresponding event
+     * @param emailAdress EMail of the corresponding user
+     * @return List of questions
+     */
     public List<Question> getUnfinishedQuestionsByUser(long eventId, String emailAdress){
         try {
 
@@ -60,6 +66,22 @@ public class QuestionService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /**
+     * Returns all Answers to the questions in an event
+     * @param eventId Id of the corresponding event
+     * @return List of answers
+     */
+    public List<Answer> getAnswersToQuestions(long eventId){
+
+        //TODO Antworten von Fragen in Event holen
+        List<Question> questions = questionRepository.findByEventId(eventId);
+        List<Answer> answers = new ArrayList<>();
+
+
+
+        return answers;
     }
 
     /**

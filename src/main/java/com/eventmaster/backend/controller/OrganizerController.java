@@ -139,8 +139,8 @@ public class OrganizerController {
      * @return String about success or failure.
      */
     @PostMapping("/event/{eventId}/attendee/set-tutor")
-    public ResponseEntity<String> changeAttendeeToTutorOfEvent(@PathVariable long eventId,
-                                                               @RequestBody String userMail) {
+    public ResponseEntity<MessageResponse> changeAttendeeToTutorOfEvent(@PathVariable long eventId,
+                                                                        @RequestBody String userMail) {
         return ResponseEntity.ok(userInEventWithRoleService.changeRoleOfPersonInEvent(eventId, userMail, false));
     }
 
@@ -150,9 +150,9 @@ public class OrganizerController {
      * @param userMail Mail address of the user whom role will be changed.
      * @return String about success or failure.
      */
-    @PostMapping("/event/{eventId}/attendee/set-attendee")
-    public ResponseEntity<String> changeTutorToAttendeeInEvent(@PathVariable long eventId,
-                                                               @RequestBody String userMail) {
+    @PostMapping("/event/{eventId}/attendee/{userMail}/set-attendee")
+    public ResponseEntity<MessageResponse> changeTutorToAttendeeInEvent(@PathVariable long eventId,
+                                                                        @PathVariable String userMail) {
         return ResponseEntity.ok(userInEventWithRoleService.changeRoleOfPersonInEvent(eventId, userMail, true));
     }
 
