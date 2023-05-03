@@ -186,19 +186,68 @@ public class DocumentService {
      */
     public String saveEventImage(long eventId, MultipartFile image) throws IOException {
         String fileExtension = StringUtils.getFilenameExtension(image.getOriginalFilename());
-        Path uploadPath = Paths.get("src/main/upload/");
+        Path uploadPath = Paths.get("src/main/upload/event_images/");
         //"src/main/upload/"
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
+        if (Files.exists(Path.of(uploadPath + String.valueOf(eventId) + "." + fileExtension))) {
+            File file = new File("src/main/upload/event_images/" + String.valueOf(eventId) + "." + fileExtension);
+            file.delete();
+        }
 
         try (InputStream inputStream = image.getInputStream()) {
             Path filePath = uploadPath.resolve(String.valueOf(eventId)+"."+fileExtension);
-            String fileName = "/upload/" + String.valueOf(eventId)+"."+fileExtension;
+            String fileName = "/event_images/" + String.valueOf(eventId)+"."+fileExtension;
             Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
             return fileName;
         } catch (IOException ioe) {
             throw new IOException("Could not save file: " + eventId, ioe);
+        }
+    }
+
+    public void deleteEventImage(long eventId) {
+        Path uploadPath = Paths.get("src/main/upload/event_images/");
+        if (Files.exists(Path.of(uploadPath + String.valueOf(eventId)))) {
+            File file = new File(uploadPath + String.valueOf(eventId));
+            file.delete();
+        }
+    }
+
+    /**
+     * Saves the image for an present in the resources and returns the filepath.
+     * @param presetId ID of the preset which the image is belonging to.
+     * @param image Image of the preset.
+     * @returnFilePath of the image.
+     * @throws IOException
+     */
+    public String savePresetImage(long presetId, MultipartFile image) throws IOException {
+        String fileExtension = StringUtils.getFilenameExtension(image.getOriginalFilename());
+        Path uploadPath = Paths.get("src/main/upload/preset_images/");
+        //"src/main/upload/"
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+        if (Files.exists(Path.of(uploadPath + String.valueOf(presetId) + "." + fileExtension))) {
+            File file = new File("src/main/upload/preset_images/" + String.valueOf(presetId) + "." + fileExtension);
+            file.delete();
+        }
+
+        try (InputStream inputStream = image.getInputStream()) {
+            Path filePath = uploadPath.resolve(String.valueOf(presetId)+"."+fileExtension);
+            String fileName = "/preset_images/" + String.valueOf(presetId)+"."+fileExtension;
+            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+            return fileName;
+        } catch (IOException ioe) {
+            throw new IOException("Could not save file: " + presetId, ioe);
+        }
+    }
+
+    public void deletePresetImage(long presetId) {
+        Path uploadPath = Paths.get("src/main/upload/preset_images/");
+        if (Files.exists(Path.of(uploadPath + String.valueOf(presetId)))) {
+            File file = new File(uploadPath + String.valueOf(presetId));
+            file.delete();
         }
     }
 }

@@ -27,13 +27,13 @@ public class Preset {
     String name;
     String type;
     String description;
-    File image;
+    String image;
     //@TODO brauchen wir hier eine Adress Tabelle oder wollen wir location als String speichern? (Falls ja, kann man auch jeder Organiazion Adresse(n) zuweisen)
     String location;
     Date startDate;
     Date endDate;
-    Time startTime;
-    Time endTime;
+    String startTime;
+    String endTime;
     //---------------------------------------------------------------------------
 
     public long getId() {
@@ -76,11 +76,11 @@ public class Preset {
         this.description = description;
     }
 
-    public File getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(File image) {
+    public void setImage(String image) {
         this.image = image;
     }
 
@@ -108,19 +108,19 @@ public class Preset {
         this.endDate = endDate;
     }
 
-    public Time getStartTime() {
+    public String getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Time startTime) {
+    public void setStartTime(String startTime) {
         this.startTime = startTime;
     }
 
-    public Time getEndTime() {
+    public String getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Time endTime) {
+    public void setEndTime(String endTime) {
         this.endTime = endTime;
     }
 }

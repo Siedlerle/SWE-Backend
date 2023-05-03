@@ -2,6 +2,7 @@ package com.eventmaster.backend.controller;
 
 import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.services.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.http.MediaType;
@@ -385,34 +386,46 @@ public class OrganizerController {
 
     /**
      * Endpoint to get all presets from an organisation.
-     * @param organisationId ID of the organisation which contains the presets.
+     * @param orgaId ID of the organisation which contains the presets.
      * @return List of presets.
      */
-    @PostMapping("/preset/get-from-orga")
-    public ResponseEntity<List<Preset>> getPresetsForOrganisation(@RequestBody long organisationId) {
-        return ResponseEntity.ok(presetService.getPresetsForOrganisation(organisationId));
+    @PostMapping("/preset/get-from-orga/{orgaId}")
+    public ResponseEntity<List<Preset>> getPresetsForOrganisation(@PathVariable long orgaId) {
+        return ResponseEntity.ok(presetService.getPresetsForOrganisation(orgaId));
     }
 
     /**
      * Endpoint to create a preset and add it to his organisation.
      * @param orgaId ID of the organisation which will contain the preset.
-     * @param preset Preset which will be added to the database and the organisation.
+     * @param presetJson Preset which will be added to the database and the organisation.
+     * @param image Image of the preset.
      * @return String about success or failure.
      */
     @PostMapping("/preset/create/{orgaId}")
-    public ResponseEntity<String> createPreset(@PathVariable long orgaId,
-                                               @RequestBody Preset preset) {
-        return ResponseEntity.ok(presetService.createPreset(orgaId, preset));
+    public ResponseEntity<MessageResponse> createPreset(@PathVariable long orgaId,
+                                               @RequestParam("preset") String presetJson,
+                                               @RequestParam(value = "image", required = false) MultipartFile image) throws IOException {
+
+        ObjectMapper mapper = new ObjectMapper();
+        Preset preset = mapper.readValue(presetJson, Preset.class);
+
+        return ResponseEntity.ok(presetService.createPreset(orgaId, preset, image));
     }
 
     /**
      * Endpoint to change a preset.
-     * @param preset New preset with the new information.
+     * @param presetJson New preset with the new information.
+     * @param image New Image for the preset.
      * @return String about success or failure.
      */
     @PostMapping("/preset/change")
-    public ResponseEntity<String> changePreset(@RequestBody Preset preset) {
-        return ResponseEntity.ok(presetService.changePreset(preset));
+    public ResponseEntity<MessageResponse> changePreset(@RequestParam("preset") String presetJson,
+                                               @RequestParam(value = "image", required = false) MultipartFile image) throws JsonProcessingException {
+
+        ObjectMapper mapper = new ObjectMapper();
+        Preset preset = mapper.readValue(presetJson, Preset.class);
+
+        return ResponseEntity.ok(presetService.changePreset(preset, image));
     }
 
     /**
@@ -421,7 +434,7 @@ public class OrganizerController {
      * @return String about success or failure.
      */
     @PostMapping("/preset/delete/{presetId}")
-    public ResponseEntity<String> deletePreset(@PathVariable long presetId) {
+    public ResponseEntity<MessageResponse> deletePreset(@PathVariable long presetId) {
         return ResponseEntity.ok(presetService.deletePreset(presetId));
     }
 
