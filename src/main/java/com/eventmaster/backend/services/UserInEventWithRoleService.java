@@ -215,7 +215,7 @@ public class UserInEventWithRoleService {
 
             for (UserInEventWithRole event: userInEvents) {
                 if(event != null){
-                    if(event.getEventRole().getRole().equals(EnumEventRole.ATTENDEE) || event.getEventRole().getRole().equals(EnumEventRole.GROUPATTENDEE)){
+                    if(event.getEventRole().getRole().equals(EnumEventRole.ATTENDEE) || event.getEventRole().getRole().equals(EnumEventRole.GROUPATTENDEE) || event.getEventRole().getRole().equals(EnumEventRole.TUTOR)){
                         userEvents.add(event.getEvent());
                     }
                 }
