@@ -5,8 +5,11 @@ import com.eventmaster.backend.entities.Group;
 import com.eventmaster.backend.entities.MessageResponse;
 import com.eventmaster.backend.entities.Organisation;
 import com.eventmaster.backend.services.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -56,8 +59,12 @@ public class AdminController {
      * @return String about success or failure.
      */
     @PostMapping("/orga/change")
-    public ResponseEntity<String> changeOrganisationDetails(@RequestBody Organisation organisation) {
-        return ResponseEntity.ok(organisationService.changeOrganisation(organisation));
+    public ResponseEntity<String> changeOrganisationDetails(@RequestParam("organisation") String organisationJson,
+                                                            @RequestParam(value = "image", required = false) MultipartFile image) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Organisation organisation = mapper.readValue(organisationJson, Organisation.class);
+
+        return ResponseEntity.ok(organisationService.changeOrganisation(organisation, image));
     }
 
     /**

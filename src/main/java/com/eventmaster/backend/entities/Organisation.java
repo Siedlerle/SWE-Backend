@@ -39,6 +39,8 @@ public class Organisation {
 
     private String location;
 
+    String image;
+
     //---------------------------------------------------------------------------
 
     public long getId() {
@@ -77,5 +79,13 @@ public class Organisation {
 
     public void removeUserInOrgaWithRole(UserInOrgaWithRole userInOrgaWithRole) {
         this.orgaUserRoles.remove(userInOrgaWithRole);
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

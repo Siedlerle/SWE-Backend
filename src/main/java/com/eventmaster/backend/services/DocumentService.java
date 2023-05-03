@@ -250,5 +250,25 @@ public class DocumentService {
             file.delete();
         }
     }
+
+
+    public String saveOrgaImage(long orgaId, MultipartFile image) throws IOException {
+
+        String fileExtension = StringUtils.getFilenameExtension(image.getOriginalFilename());
+        Path uploadPath = Paths.get("src/main/upload/");
+        //"src/main/upload/"
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        try (InputStream inputStream = image.getInputStream()) {
+            Path filePath = uploadPath.resolve(String.valueOf(orgaId)+"."+fileExtension);
+            String fileName = "/upload/" + String.valueOf(orgaId)+"."+fileExtension;
+            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+            return fileName;
+        } catch (IOException ioe) {
+            throw new IOException("Could not save file: " + orgaId, ioe);
+        }
+    }
 }
 
