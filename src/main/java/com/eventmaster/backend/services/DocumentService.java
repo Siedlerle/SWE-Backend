@@ -206,14 +206,6 @@ public class DocumentService {
         }
     }
 
-    public void deleteEventImage(long eventId) {
-        Path uploadPath = Paths.get("src/main/upload/event_images/");
-        if (Files.exists(Path.of(uploadPath + String.valueOf(eventId)))) {
-            File file = new File(uploadPath + String.valueOf(eventId));
-            file.delete();
-        }
-    }
-
     /**
      * Saves the image for an present in the resources and returns the filepath.
      * @param presetId ID of the preset which the image is belonging to.
@@ -228,10 +220,6 @@ public class DocumentService {
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
-        if (Files.exists(Path.of(uploadPath + String.valueOf(presetId) + "." + fileExtension))) {
-            File file = new File("src/main/upload/preset_images/" + String.valueOf(presetId) + "." + fileExtension);
-            file.delete();
-        }
 
         try (InputStream inputStream = image.getInputStream()) {
             Path filePath = uploadPath.resolve(String.valueOf(presetId)+"."+fileExtension);
@@ -242,20 +230,11 @@ public class DocumentService {
             throw new IOException("Could not save file: " + presetId, ioe);
         }
     }
-
-    public void deletePresetImage(long presetId) {
-        Path uploadPath = Paths.get("src/main/upload/preset_images/");
-        if (Files.exists(Path.of(uploadPath + String.valueOf(presetId)))) {
-            File file = new File(uploadPath + String.valueOf(presetId));
-            file.delete();
-        }
-    }
-
-
+    
     public String saveOrgaImage(long orgaId, MultipartFile image) throws IOException {
 
         String fileExtension = StringUtils.getFilenameExtension(image.getOriginalFilename());
-        Path uploadPath = Paths.get("src/main/upload/");
+        Path uploadPath = Paths.get("src/main/upload/orga_images/");
         //"src/main/upload/"
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
@@ -263,7 +242,7 @@ public class DocumentService {
 
         try (InputStream inputStream = image.getInputStream()) {
             Path filePath = uploadPath.resolve(String.valueOf(orgaId)+"."+fileExtension);
-            String fileName = "/upload/" + String.valueOf(orgaId)+"."+fileExtension;
+            String fileName = "/orga_images/" + String.valueOf(orgaId)+"."+fileExtension;
             Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
             return fileName;
         } catch (IOException ioe) {

@@ -107,8 +107,10 @@ public class OrganisationService {
             this.organisationRepository.save(oldOrganisation);
 
             if (image != null) {
-                File oldfile = new File("src/main/" + oldImageLink);
-                oldfile.delete();
+                File oldfile = new File("src/main/upload" + oldImageLink);
+                if (oldfile.exists()) {
+                    oldfile.delete();
+                }
                 String imageUrl = documentService.saveOrgaImage(oldOrganisation.getId(), image);
                 oldOrganisation.setImage(imageUrl);
                 this.organisationRepository.save(oldOrganisation);

@@ -94,6 +94,11 @@ public class PresetService {
             updatedPreset.setStartTime(preset.getStartTime());
             updatedPreset.setEndTime(preset.getEndTime());
             if (image != null) {
+                String oldImageLink = preset.getImage();
+                File oldfile = new File("src/main/upload" + oldImageLink);
+                if (oldfile.exists()) {
+                    oldfile.delete();
+                }
                 String imageUrl = documentService.savePresetImage(preset.getId(), image);
                 updatedPreset.setImage(imageUrl);
             }
