@@ -47,7 +47,7 @@ public class QuestionService {
                     .filter(q -> hasNotAnswered(q, user.getId()))
                     .forEach(q -> toAnswer.add(q));
             toAnswer.stream()
-                    .filter(q -> q.getQuestionType().equals("multiple-choice"))
+                    .filter(q -> q.getQuestionType().equals(EnumQuestionType.MULTIPLECHOICE))
                     .forEach(q -> q.setAnswerString(answerService
                                     .findByQuestionId(q.getId())
                                     .stream()
