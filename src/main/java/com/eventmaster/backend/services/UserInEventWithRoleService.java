@@ -924,7 +924,6 @@ public class UserInEventWithRoleService {
         }
 
         if (!userInEventWithRoleRepository.existsByUser_IdAndEvent_Id(newOrganizer.getId(), eventId)) {
-            System.out.println("XXXX");
             UserInEventWithRole newUserInEventWithRole = new UserInEventWithRole();
             newUserInEventWithRole.setUser(newOrganizer);
             newUserInEventWithRole.setEvent(event);
@@ -938,7 +937,6 @@ public class UserInEventWithRoleService {
                         .build();
             }
         } else {
-            System.out.println("YYYY");
             UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(newOrganizer, event);
             userInEventWithRole.setEventRole(eventRole);
             try {
