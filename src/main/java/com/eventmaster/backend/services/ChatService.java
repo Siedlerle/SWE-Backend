@@ -2,6 +2,7 @@ package com.eventmaster.backend.services;
 
 import com.eventmaster.backend.entities.Chat;
 import com.eventmaster.backend.entities.Event;
+import com.eventmaster.backend.entities.MessageResponse;
 import com.eventmaster.backend.entities.User;
 import com.eventmaster.backend.repositories.ChatRepository;
 import local.variables.LocalizedStringVariables;
@@ -47,13 +48,13 @@ public class ChatService {
     /**
      * Creates a chat with the text and connects it to the user and the event.
      * @param eventId ID of the event which contains the chat.
-     * @param userId ID of the user who sent the chat.
+     * @param emailAdress of the user who sent the chat.
      * @param message Message of the chat.
      * @return String about success or failure.
      */
-    public String sendMessage(long eventId, long userId, String message) {
+    public MessageResponse sendMessage(long eventId, String emailAdress, String message) {
         Event event = eventService.getEventById(eventId);
-        User user = userService.getUserById(userId);
+        User user = userService.getUserByMail(emailAdress);
 
         Chat chat = new Chat();
         chat.setEvent(event);
@@ -61,10 +62,14 @@ public class ChatService {
         chat.setMessage(message);
         try {
             chatRepository.save(chat);
-            return LocalizedStringVariables.CHATSUBMITSUCCESSMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.CHATSUBMITSUCCESSMESSAGE)
+                    .build();
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.CHATSUBMITFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.CHATSUBMITFAILUREMESSAGE)
+                    .build();
         }
     }
 }
