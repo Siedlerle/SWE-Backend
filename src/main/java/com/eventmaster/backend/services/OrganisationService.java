@@ -147,6 +147,7 @@ public class OrganisationService {
 
     /**
      * Gets all groups of an organisation.
+     *
      * @param organisationId ID of the organisation.
      * @return List of groups in the organisation.
      */
@@ -158,6 +159,24 @@ public class OrganisationService {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    /**
+     * Admin Method to change Name and Location of an organisation
+     *
+     * @param organisation The organisation to be changed
+     * @return Success or failure String
+     */
+    public String changeOrganisation(Organisation organisation) {
+        try {
+            Organisation change = this.organisationRepository.findById(organisation.getId());
+            change.setName(organisation.getName());
+            change.setLocation(organisation.getLocation());
+
+            return LocalizedStringVariables.ORGACHANGEDSUCCESSMESSAGE;
+        } catch (Exception e) {
+            return LocalizedStringVariables.ORGACHANGEDFAILUREMESSAGE;
         }
     }
 

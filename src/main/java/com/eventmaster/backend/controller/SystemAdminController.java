@@ -84,7 +84,7 @@ public class SystemAdminController {
     @PostMapping("/user/delete/{emailAdress}/{password}")
     public ResponseEntity<String> deleteUser(@PathVariable String emailAdress,
                                              @PathVariable String password) {
-        return ResponseEntity.ok(userService.deleteUser(emailAdress));
+        return ResponseEntity.ok(userService.deleteUserAdmin(emailAdress));
     }
 
 

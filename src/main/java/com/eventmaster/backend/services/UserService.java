@@ -361,5 +361,16 @@ public class UserService {
         userRepository.save(save);
         return "saved";
     }
+    public String deleteUserAdmin(String emailAdress) {
+        try {
+            User user = userRepository.findByEmailAdress(emailAdress);
+            tokenService.deleteTokens(user.getId());
+            userRepository.delete(user);
 
+            return LocalizedStringVariables.USERDELETEDMESSAGE + user.getFirstname() +" "+user.getLastname();
+        }catch (Exception e) {
+            e.printStackTrace();
+            return LocalizedStringVariables.USERNOTDELETEDMESSAGE;
+        }
+    }
 }
