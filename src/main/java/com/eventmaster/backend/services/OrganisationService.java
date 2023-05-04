@@ -3,16 +3,15 @@ package com.eventmaster.backend.services;
 import com.eventmaster.backend.entities.Group;
 import com.eventmaster.backend.entities.MessageResponse;
 import com.eventmaster.backend.entities.Organisation;
-import com.eventmaster.backend.entities.User;
+
 import com.eventmaster.backend.repositories.OrganisationRepository;
 import local.variables.LocalizedStringVariables;
-import org.aspectj.weaver.ast.Or;
+
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.util.List;
 
 
@@ -28,16 +27,55 @@ public class OrganisationService {
     private final UserInOrgaWithRoleService userInOrgaWithRoleService;
     private final UserService userService;
     private final DocumentService documentService;
+    private final EventService eventService;
+    private final GroupService groupService;
+    private final PresetService presetService;
 
     public OrganisationService(OrganisationRepository organizationRepository,
                                @Lazy UserInOrgaWithRoleService userInOrgaWithRoleService,
-                               UserService userService, DocumentService documentService) {
+                               UserService userService,
+                               DocumentService documentService,
+                               EventService eventService,
+                               GroupService groupService,
+                               PresetService presetService) {
         this.organisationRepository = organizationRepository;
         this.userInOrgaWithRoleService = userInOrgaWithRoleService;
         this.userService = userService;
         this.documentService = documentService;
+        this.eventService =eventService;
+        this.groupService = groupService;
+        this.presetService = presetService;
     }
+    /**
+     * Deletes an organisation in the database.
+     *
+     * @param organisationId ID of the organisation which will be deleted.
+     * @return String if successful or not.
+     */
+    public String deleteOrganisation(long organisationId) {
+        Organisation organisation = this.getOrganisationById(organisationId);
+        organisation.getEvents().forEach(event->{
+            eventService.deleteEvent(event.getId());
+        });
+        organisation.getGroups().forEach(group -> {
+            groupService.deleteGroup(group.getId());
+        });
+        organisation.getPresets().forEach(preset -> {
+            presetService.deletePreset(preset.getId());
+        });
+        organisation.getOrgaUserRoles().forEach(orgaUserRole->{
+            //userInOrgaWithRoleService.
+        });
+        try {
 
+            this.organisationRepository.delete(organisation);
+
+            return LocalizedStringVariables.ORGADELETEDSUCCESSMESSAGE;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return LocalizedStringVariables.ORGADELETEDFAILUREMESSAGE;
+        }
+    }
     /**
      * Saves the organisation in the database.
      *
@@ -127,23 +165,7 @@ public class OrganisationService {
         }
     }
 
-    /**
-     * Deletes an organisation in the database.
-     *
-     * @param organisationId ID of the organisation which will be deleted.
-     * @return String if successful or not.
-     */
-    public String deleteOrganisation(long organisationId) {
-        try {
-            Organisation organisation = this.getOrganisationById(organisationId);
-            this.organisationRepository.deleteById(organisationId);
 
-            return LocalizedStringVariables.ORGADELETEDSUCCESSMESSAGE;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return LocalizedStringVariables.ORGADELETEDFAILUREMESSAGE;
-        }
-    }
 
     /**
      * Gets all groups of an organisation.
@@ -188,6 +210,7 @@ public class OrganisationService {
                     organisation.setGroups(null);
                     organisation.setPresets(null);
                     organisation.setOrgaUserRoles(null);
+                    organisation.setImage(null);
                 })
                 .toList();
     }

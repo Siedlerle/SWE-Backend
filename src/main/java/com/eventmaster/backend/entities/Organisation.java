@@ -96,12 +96,18 @@ public class Organisation {
     public void removeUserInOrgaWithRole(UserInOrgaWithRole userInOrgaWithRole) {
         this.orgaUserRoles.remove(userInOrgaWithRole);
     }
-
+    public Set<UserInOrgaWithRole> getOrgaUserRoles() {
+        return orgaUserRoles;
+    }
     public String getImage() {
         return image;
     }
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public Set<Event> getEvents() {
+        return events;
     }
 }
