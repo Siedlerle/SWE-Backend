@@ -144,26 +144,6 @@ public class UserInGroupService {
                     .stream()
                     .filter(user ->!usersInGroup.contains(user))
                     .toList();
-
-            /*for(User userInOrga : usersInOrga) {
-                System.out.println("X: " +userInOrga.getEmailAdress());
-            }
-
-
-            for (User user : usersInGroup) {
-                System.out.println("Y: " + user.getEmailAdress());
-
-                if (usersInOrga.contains(user)) {
-                    usersInOrga.remove(user);
-                }
-
-            }
-
-            for(User userInOrga : usersInOrga) {
-                System.out.println("Z: " +userInOrga.getEmailAdress());
-            }
-
-            return usersInOrga;*/
         } catch (Exception e) {
             return null;
         }
