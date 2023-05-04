@@ -4,6 +4,7 @@ import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.services.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
@@ -30,9 +31,12 @@ public class AdminController {
     private final GroupService groupService;
     private final UserInGroupService userInGroupService;
 
-    public AdminController(OrganisationService organisationService, EventService eventService,
+    public AdminController(OrganisationService organisationService,
+                           EventService eventService,
                            UserInOrgaWithRoleService userInOrgaWithRoleService,
-                           UserInEventWithRoleService userInEventWithRoleService, GroupService groupService, UserInGroupService userInGroupService) {
+                           UserInEventWithRoleService userInEventWithRoleService,
+                           GroupService groupService,
+                           UserInGroupService userInGroupService) {
         this.organisationService = organisationService;
         this.eventService = eventService;
         this.userInOrgaWithRoleService = userInOrgaWithRoleService;
