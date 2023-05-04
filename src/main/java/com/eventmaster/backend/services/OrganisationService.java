@@ -5,6 +5,7 @@ import com.eventmaster.backend.entities.User;
 import com.eventmaster.backend.entities.UserInOrgaWithRole;
 import com.eventmaster.backend.repositories.OrganisationRepository;
 import local.variables.LocalizedStringVariables;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -120,5 +121,17 @@ public class OrganisationService {
             e.printStackTrace();
             return LocalizedStringVariables.ORGADELETEDFAILUREMESSAGE;
         }
+    }
+
+    public List<Organisation> getAllOrganisationsForAdmin() {
+        return this.organisationRepository.findAll()
+                .stream()
+                .peek(organisation -> {
+                    organisation.setEvents(null);
+                    organisation.setGroups(null);
+                    organisation.setPresets(null);
+                    organisation.setOrgaUserRoles(null);
+                })
+                .toList();
     }
 }

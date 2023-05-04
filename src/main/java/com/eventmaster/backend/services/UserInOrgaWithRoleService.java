@@ -496,14 +496,14 @@ public class UserInOrgaWithRoleService {
     /**
      * Sets a user Admin in an organisation.
      * @param organisationId Organisation.
-     * @param admin Person to be added as an admin
+     * @param adminEmail Person to be added as an admin
      * @return Failure or success.
      */
-    public String setAdminForOrga(long organisationId, long adminId){
+    public String setAdminForOrga(long organisationId, String adminEmail){
         UserInOrgaWithRole adminInOrga = new UserInOrgaWithRole();
         adminInOrga.setOrgaRole(orgaRoleService.findByRole(EnumOrgaRole.ADMIN));
         adminInOrga.setOrganisation(organisationService.getOrganisationById(organisationId));
-        adminInOrga.setUser(userService.getUserById(adminId));
+        adminInOrga.setUser(userService.getUserByMail(adminEmail));
         try {
             userInOrgaWithRoleRepository.save(adminInOrga);
             return LocalizedStringVariables.ORGACREATEDSUCCESSMESSAGE;

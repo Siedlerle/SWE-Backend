@@ -7,6 +7,8 @@ import com.eventmaster.backend.services.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * A class which handles the HTTP-requests for system admin functions.
  *
@@ -100,15 +102,19 @@ public class SystemAdminController {
     /**
      * Endpoint to add an admin to an organisation.
      *
-     * @param userId     User who will be admin.
+     * @param emailAdress     User who will be admin.
      * @param organisationId organisation where user will be admin.
      * @param password Password of the System-Admin to authorize him.
      * @return success message
      */
     @PostMapping("/admin/add/{organisationId}/{userId}/{password}")
     public ResponseEntity<String> addAdminToOrganisation(@PathVariable long organisationId,
-                                                         @PathVariable long userId,
+                                                         @PathVariable String emailAdress,
                                                          @PathVariable String password) {
-        return ResponseEntity.ok(userInOrgaWithRoleService.setAdminForOrga(organisationId,userId));
+        return ResponseEntity.ok(userInOrgaWithRoleService.setAdminForOrga(organisationId,emailAdress));
+    }
+    @PostMapping("/orga/get-all/{password}")
+    public ResponseEntity<List<Organisation>> getAllOrgas(@PathVariable String password){
+        return ResponseEntity.ok(organisationService.getAllOrganisationsForAdmin());
     }
 }
