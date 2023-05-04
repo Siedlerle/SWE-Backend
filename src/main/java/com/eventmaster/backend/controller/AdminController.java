@@ -55,7 +55,7 @@ public class AdminController {
 
     /**
      * Endpoint for the admin of an organisation to change her details.
-     * @param organisation New Organisation object with new data.
+     * @param organisationJson New Organisation object with new data.
      * @return String about success or failure.
      */
     @PostMapping("/orga/change")
@@ -121,7 +121,7 @@ public class AdminController {
      * @return String about success of failure.
      */
     @PostMapping("/orga/{orgaId}/group/add")
-    public ResponseEntity<String> createGroup(@PathVariable long orgaId,
+    public ResponseEntity<MessageResponse> createGroup(@PathVariable long orgaId,
                                               @RequestBody Group group) {
         return ResponseEntity.ok(groupService.createGroup(group, orgaId));
     }
@@ -132,7 +132,7 @@ public class AdminController {
      * @return String about success of failure.
      */
     @PostMapping("/group/change")
-    public ResponseEntity<String> changeGroup(@RequestBody Group group) {
+    public ResponseEntity<MessageResponse> changeGroup(@RequestBody Group group) {
         return ResponseEntity.ok(groupService.changeGroup(group));
     }
 
@@ -142,7 +142,7 @@ public class AdminController {
      * @return String about success or failure.
      */
     @PostMapping("/group/delete")
-    public ResponseEntity<String> deleteGroup(@RequestBody long groupId) {
+    public ResponseEntity<MessageResponse> deleteGroup(@RequestBody long groupId) {
         return ResponseEntity.ok(groupService.deleteGroup(groupId));
     }
 

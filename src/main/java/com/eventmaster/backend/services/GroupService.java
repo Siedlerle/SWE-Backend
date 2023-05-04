@@ -1,6 +1,7 @@
 package com.eventmaster.backend.services;
 
 import com.eventmaster.backend.entities.Group;
+import com.eventmaster.backend.entities.MessageResponse;
 import com.eventmaster.backend.entities.Organisation;
 import com.eventmaster.backend.repositories.GroupRepository;
 import local.variables.LocalizedStringVariables;
@@ -43,17 +44,20 @@ public class GroupService {
      * @param group Group object which will be saved.
      * @return String about success of failure.
      */
-    public String createGroup(Group group, long orgaId) {
+    public MessageResponse createGroup(Group group, long orgaId) {
         Organisation organisation = organisationService.getOrganisationById(orgaId);
         group.setOrganisation(organisation);
-        organisation.addGroup(group);
-        organisationService.saveOrganisation(organisation);
         try {
             this.groupRepository.save(group);
-            return LocalizedStringVariables.GROUPCREATEDSUCCESSMESSAGE;
+            organisation.addGroup(group);
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.GROUPCREATEDSUCCESSMESSAGE)
+                    .build();
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.GROUPCREATEDFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.GROUPCREATEDFAILUREMESSAGE)
+                    .build();
         }
     }
 
@@ -62,7 +66,7 @@ public class GroupService {
      * @param group New Group with another name.
      * @return String about success of failure.
      */
-    public String changeGroup(Group group) {
+    public MessageResponse changeGroup(Group group) {
         try {
             long id = group.getId();
             Group oldGroup = this.groupRepository.findById(id);
@@ -73,10 +77,14 @@ public class GroupService {
 
             this.groupRepository.save(oldGroup);
 
-            return LocalizedStringVariables.GROUPCHANGEDSUCCESSMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.GROUPCHANGEDSUCCESSMESSAGE)
+                    .build();
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.GROUPCHANGEDFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.GROUPCHANGEDFAILUREMESSAGE)
+                    .build();
         }
     }
 
@@ -85,13 +93,17 @@ public class GroupService {
      * @param groupId ID of the group which will be deleted.
      * @return String about success of failure.
      */
-    public String deleteGroup(long groupId) {
+    public MessageResponse deleteGroup(long groupId) {
         try {
             this.groupRepository.deleteById(groupId);
-            return LocalizedStringVariables.GROUPDELETEDSUCCESSMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.GROUPDELETEDSUCCESSMESSAGE)
+                    .build();
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.GROUPDELETEDFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.GROUPDELETEDFAILUREMESSAGE)
+                    .build();
         }
     }
     public List<Group> findByOrganisationId(long organisationId){

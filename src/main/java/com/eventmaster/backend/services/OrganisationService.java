@@ -1,5 +1,6 @@
 package com.eventmaster.backend.services;
 
+import com.eventmaster.backend.entities.Group;
 import com.eventmaster.backend.entities.Organisation;
 import com.eventmaster.backend.entities.User;
 import com.eventmaster.backend.repositories.OrganisationRepository;
@@ -138,6 +139,22 @@ public class OrganisationService {
         } catch (Exception e) {
             e.printStackTrace();
             return LocalizedStringVariables.ORGADELETEDFAILUREMESSAGE;
+        }
+    }
+
+    /**
+     * Gets all groups of an organisation.
+     * @param organisationId ID of the organisation.
+     * @return List of groups in the organisation.
+     */
+    public List<Group> getAllGroupsOfOrganisation(long organisationId) {
+        Organisation organisation = this.getOrganisationById(organisationId);
+        try {
+            List<Group> groups = organisation.getGroups().stream().toList();
+            return groups;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

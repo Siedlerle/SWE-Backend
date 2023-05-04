@@ -464,5 +464,15 @@ public class OrganizerController {
         return ResponseEntity.ok(userInOrgaWithRoleService.getAllUsersInOrga(orgaId));
     }
 
+    /**
+     * Endpoint to retrieve all groups of an organisation.
+     * @param orgaId ID of the organisation.
+     * @return List of groups
+     */
+    @PostMapping("/organisation/{orgaId}/group/get-all")
+    public ResponseEntity<List<Group>> getAllGroupsOfOrganisation(@PathVariable long orgaId) {
+        return ResponseEntity.ok(organisationService.getAllGroupsOfOrganisation(orgaId));
+    }
+
     //endregion
 }
