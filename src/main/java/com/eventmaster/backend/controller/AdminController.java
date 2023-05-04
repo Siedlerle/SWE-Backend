@@ -190,10 +190,20 @@ public class AdminController {
      * @param userMail Mail address of the new organizer.
      * @return String about success or failure.
      */
-    @PostMapping("/event/{eventId}/organizer/change")
+    @PostMapping("/event/{eventId}/organizer/change/{userMail}")
     public ResponseEntity<MessageResponse> changeOrganizerOfEvent(@PathVariable long eventId,
-                                                         @RequestBody String userMail) {
+                                                         @PathVariable String userMail) {
         return ResponseEntity.ok(userInEventWithRoleService.changeOrganizerOfEvent(eventId, userMail));
+    }
+
+    /**
+     * Endpoint to get all organizers of an organisation.
+     * @param orgaId ID of organisation.
+     * @return List of organizers.
+     */
+    @PostMapping("/orga/{orgaId}/organizers/get-all")
+    public ResponseEntity<List<User>> getOrganizersOfOrga(@PathVariable long orgaId) {
+        return ResponseEntity.ok(userInOrgaWithRoleService.getOrganizersOfOrganisation(orgaId));
     }
 
 }

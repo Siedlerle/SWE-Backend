@@ -21,5 +21,5 @@ public interface UserInEventWithRoleRepository extends JpaRepository<UserInEvent
     UserInEventWithRole findByEventAndEventRole(Event event, EventRole eventRole);
     //List<UserInEventWithRole> findByEvent_Id(long eventId);
     Boolean existsByUserAndEvent(User user, Event event);
-
+    Boolean existsByUser_IdAndEvent_Id(long userId, long eventId);
 }

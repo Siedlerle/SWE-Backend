@@ -177,6 +177,21 @@ public class UserInEventWithRoleService {
         }
     }
 
+    /**
+     * Gets the organizer of an event.
+     * @param eventId ID of the event.
+     * @return User who is organizer of the event.
+     */
+    public User getOrganizerOfEvent(long eventId) {
+        Event event = eventService.getEventById(eventId);
+        EventRole organizerRole = eventRoleService.findByRole(EnumEventRole.ORGANIZER);
+
+        UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByEventAndEventRole(event, organizerRole);
+
+        User organizer = userInEventWithRole.getUser();
+
+        return organizer;
+    }
 
     /**
      * Retrieving all events where user is not affiliated in his organisations
@@ -908,7 +923,8 @@ public class UserInEventWithRoleService {
                     .build();
         }
 
-        if (!userInEventWithRoleRepository.existsByUserAndEvent(newOrganizer, event)) {
+        if (!userInEventWithRoleRepository.existsByUser_IdAndEvent_Id(newOrganizer.getId(), eventId)) {
+            System.out.println("XXXX");
             UserInEventWithRole newUserInEventWithRole = new UserInEventWithRole();
             newUserInEventWithRole.setUser(newOrganizer);
             newUserInEventWithRole.setEvent(event);
@@ -922,6 +938,7 @@ public class UserInEventWithRoleService {
                         .build();
             }
         } else {
+            System.out.println("YYYY");
             UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(newOrganizer, event);
             userInEventWithRole.setEventRole(eventRole);
             try {
@@ -929,7 +946,7 @@ public class UserInEventWithRoleService {
             } catch (Exception e) {
                 e.printStackTrace();
                 return MessageResponse.builder()
-                        .message(LocalizedStringVariables.EXISTINGUSERASORGANIZERINEVENTSUCCESSMESSAGE)
+                        .message(LocalizedStringVariables.NEWUSERASORGANIZERINEVENTFAILUREMESSAGE)
                         .build();
             }
         }

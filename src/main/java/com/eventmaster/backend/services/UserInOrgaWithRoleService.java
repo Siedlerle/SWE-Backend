@@ -116,6 +116,28 @@ public class UserInOrgaWithRoleService {
         }
     }
 
+    /**
+     * Gets all organizers of an organisation.
+     * @param organisationId ID of organisation.
+     * @return List of users who are organizer in organisation.
+     */
+    public List<User> getOrganizersOfOrganisation(long organisationId) {
+        Organisation organisation = organisationService.getOrganisationById(organisationId);
+        OrgaRole organizerRole = orgaRoleService.findByRole(EnumOrgaRole.ORGANIZER);
+
+        List<UserInOrgaWithRole> userInOrgaWithRoleList = userInOrgaWithRoleRepository.findByOrganisation_Id(organisationId);
+
+        List<User> organizers = new ArrayList<>();
+
+        for (UserInOrgaWithRole userInOrgaWithRole: userInOrgaWithRoleList) {
+            if (userInOrgaWithRole.getOrgaRole().equals(organizerRole)) {
+                User organizer = userInOrgaWithRole.getUser();
+                organizers.add(organizer);
+            }
+        }
+
+        return organizers;
+    }
 
     /**
      * Retrieves the registered events for a user in an organisation
