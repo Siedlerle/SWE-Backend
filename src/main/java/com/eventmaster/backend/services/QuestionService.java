@@ -75,12 +75,15 @@ public class QuestionService {
      */
     public List<Answer> getAnswersToQuestions(long eventId){
 
-        //TODO Antworten von Fragen in Event holen
         List<Question> questions = questionRepository.findByEventId(eventId);
         List<Answer> answers = new ArrayList<>();
 
-
-
+        for (Question question:questions) {
+            List<Answer> tmp = answerService.findByQuestionId(question.getId());
+            for (Answer answer:tmp) {
+                answers.add(answer);
+            }
+        }
         return answers;
     }
 
@@ -131,6 +134,17 @@ public class QuestionService {
                     .build();
         }
 
+    }
+
+    public List<Question> getAllQuestionsForEvent(long eventId){
+        try {
+
+            List<Question> questions = questionRepository.findByEventId(eventId);
+            return questions;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public Question findById(long questionId) {

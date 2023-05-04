@@ -8,6 +8,7 @@ import com.eventmaster.backend.services.*;
 import org.aspectj.bridge.Message;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -135,6 +136,11 @@ public class TutorController {
     public ResponseEntity<MessageResponse> addQuestion(@PathVariable long eventId,
                                                        @RequestBody List<Question> questions){
         return ResponseEntity.ok(questionService.createQuestion(eventId, questions));
+    }
+
+    @PostMapping("/event/{eventId}/question-all")
+    public ResponseEntity<List<Question>> getAllQuestionsForEvent(@PathVariable long eventId){
+        return ResponseEntity.ok(questionService.getAllQuestionsForEvent(eventId));
     }
 
     @PostMapping("/event/{eventId}/question-answers")
