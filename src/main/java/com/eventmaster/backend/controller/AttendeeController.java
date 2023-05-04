@@ -117,13 +117,15 @@ public class AttendeeController {
      * Endpoint for an attendee to comment on a chat
      * @param chatId Id of the corresponding chat
      * @param text The text of the comment
+     * @param emailAdress email adress of Person who sent comment
      * @return successmessage
      */
-    @PostMapping("/comment-on-chat/{chatId}")
-    public ResponseEntity<String> commentOnChat(
+    @PostMapping("/comment-on-chat/{chatId}/{emailAdress}")
+    public ResponseEntity<MessageResponse> commentOnChat(
             @PathVariable Long chatId,
-            @RequestParam String text){
-        return ResponseEntity.ok(commentService.commentOnChat(chatId, text));
+            @RequestBody String text,
+            @PathVariable String emailAdress){
+        return ResponseEntity.ok(commentService.commentOnChat(chatId, text, emailAdress));
     }
 
 }
