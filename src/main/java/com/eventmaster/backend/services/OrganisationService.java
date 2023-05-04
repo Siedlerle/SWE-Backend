@@ -65,16 +65,13 @@ public class OrganisationService {
      * @param organisation Organisation object which will be saved.
      * @return String if successful or not.
      */
-    public String createOrganisation(Organisation organisation, User admin) {
+    public String createOrganisation(Organisation organisation) {
         try {
-            User orgaAdmin;
-            orgaAdmin = userService.getUserById(admin.getId());
-            if (orgaAdmin == null) {
-                userService.register(admin);
-                orgaAdmin = userService.getUserById(admin.getId());
-            }
-            Organisation orga =organisationRepository.save(organisation);
-            return userInOrgaWithRoleService.setAdminForOrga(orga, orgaAdmin);
+            Organisation save = new Organisation();
+            save.setName(organisation.getName());
+            save.setLocation(organisation.getLocation());
+            organisationRepository.save(save);
+            return LocalizedStringVariables.ORGACREATEDSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
             return LocalizedStringVariables.ORGACREATEDFAILUREMESSAGE;

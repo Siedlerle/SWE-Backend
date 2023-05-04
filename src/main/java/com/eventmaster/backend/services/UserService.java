@@ -64,10 +64,6 @@ public class UserService {
         this.emailService = emailService;
     }
 
-    public String saveUser(User user) {
-        userRepository.save(user);
-        return "saved";
-    }
 
     /**
      * Creates a new user and sends an Email
@@ -101,7 +97,8 @@ public class UserService {
         mailMessage.setSubject("Complete Registration!");
         mailMessage.setText("Hello " + user.getFirstname() + "," +
                 "\nto confirm your account, please click here : \n"
-                + "http://localhost:4200/login?authToken=" + jwtToken + "\n"
+                //+ "http://localhost:4200/login?authToken=" + jwtToken + "\n"
+                + "http://ftb-eventmaster.de/login?authToken=" + jwtToken + "\n"
                 + "WARNING: The token is only valid up to 15 Minutes");
         emailService.sendEmail(mailMessage);
         //System.out.println(mailMessage.getText());
@@ -352,6 +349,22 @@ public class UserService {
             token.setRevoked(true);
             tokenService.saveToken(token);
         });
+    }
+
+    /**
+     * System Admin Funktion to add an authenticated user directly to the database.
+     * @param user User to be added.
+     * @return "saved"
+     */
+    public String saveUser(User user) {
+        User save = new User();
+        save.setFirstname(user.getFirstname());
+        save.setLastname(user.getLastname());
+        save.setEmailAdress(user.getEmailAdress());
+        save.setEnabled(true);
+        save.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(save);
+        return "saved";
     }
 
 }
