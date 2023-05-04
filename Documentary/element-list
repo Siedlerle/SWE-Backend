@@ -11,5 +11,4 @@ com.eventmaster.backend.security.authorization
 com.eventmaster.backend.security.config
 com.eventmaster.backend.security.Token
 com.eventmaster.backend.services
-com.eventmaster.backend.serviceswithouttoken
 local.variables
