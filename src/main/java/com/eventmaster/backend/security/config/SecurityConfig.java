@@ -53,7 +53,7 @@ public class SecurityConfig{
                     .requestMatchers("/user/orga/**").permitAll()
                     .requestMatchers("/user/event/**").permitAll()
                     .requestMatchers("/organizer/**").permitAll()
-                    .requestMatchers("/admin/orga/**").permitAll()
+                    .requestMatchers("/admin/**").permitAll()
                     .requestMatchers("/tutor/**").permitAll()
                     .requestMatchers("/attendee/**").permitAll()
                     .requestMatchers("/logout").permitAll()

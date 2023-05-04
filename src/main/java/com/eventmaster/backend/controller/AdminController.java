@@ -141,8 +141,8 @@ public class AdminController {
      * @param groupId ID of the group which will be deleted.
      * @return String about success or failure.
      */
-    @PostMapping("/group/delete")
-    public ResponseEntity<MessageResponse> deleteGroup(@RequestBody long groupId) {
+    @PostMapping("/group/{groupId}/delete")
+    public ResponseEntity<MessageResponse> deleteGroup(@PathVariable long groupId) {
         return ResponseEntity.ok(groupService.deleteGroup(groupId));
     }
 
@@ -164,9 +164,9 @@ public class AdminController {
      * @param userMail Mail address of the user.
      * @return String about success or failure.
      */
-    @PostMapping("/group/{groupId}/user/remove")
+    @PostMapping("/group/{groupId}/user/{userMail}/remove")
     public ResponseEntity<String> removeUserFromGroup(@PathVariable long groupId,
-                                                      @RequestBody String userMail) {
+                                                      @PathVariable String userMail) {
         return ResponseEntity.ok(userInGroupService.removeUserFromGroup(groupId, userMail));
     }
 

@@ -30,6 +30,7 @@ public class OrganizerController {
     private final UserInEventWithRoleService userInEventWithRoleService;
     private final UserInOrgaWithRoleService userInOrgaWithRoleService;
     private final GroupInEventService groupInEventService;
+    private final UserInGroupService userInGroupService;
 
     public OrganizerController(EventService eventService,
                                EventSeriesService eventSeriesService,
@@ -37,7 +38,8 @@ public class OrganizerController {
                                PresetService presetService,
                                UserInEventWithRoleService userInEventWithRoleService,
                                UserInOrgaWithRoleService userInOrgaWithRoleService,
-                               GroupInEventService groupInEventService) {
+                               GroupInEventService groupInEventService,
+                               UserInGroupService userInGroupService) {
         this.eventService = eventService;
         this.eventSeriesService = eventSeriesService;
         this.organisationService = organisationService;
@@ -45,6 +47,7 @@ public class OrganizerController {
         this.userInEventWithRoleService = userInEventWithRoleService;
         this.userInOrgaWithRoleService = userInOrgaWithRoleService;
         this.groupInEventService = groupInEventService;
+        this.userInGroupService = userInGroupService;
     }
 
     //region Event
@@ -472,6 +475,16 @@ public class OrganizerController {
     @PostMapping("/organisation/{orgaId}/group/get-all")
     public ResponseEntity<List<Group>> getAllGroupsOfOrganisation(@PathVariable long orgaId) {
         return ResponseEntity.ok(organisationService.getAllGroupsOfOrganisation(orgaId));
+    }
+
+    /**
+     * Endpoint to retrieve all users in a group.
+     * @param groupId Id of the group.
+     * @return List of users
+     */
+    @PostMapping("/group/{groupId}/users/get-all")
+    public ResponseEntity<List<User>> getAllUsersInGroup(@PathVariable long groupId) {
+        return ResponseEntity.ok(userInGroupService.getUsersOfGroup(groupId));
     }
 
     //endregion
