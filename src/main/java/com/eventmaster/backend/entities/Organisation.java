@@ -77,6 +77,22 @@ public class Organisation {
         return presets;
     }
 
+    public void setEvents(Set<Event> events) {
+        this.events = events;
+    }
+
+    public void setOrgaUserRoles(Set<UserInOrgaWithRole> orgaUserRoles) {
+        this.orgaUserRoles = orgaUserRoles;
+    }
+
+    public void setGroups(Set<Group> groups) {
+        this.groups = groups;
+    }
+
+    public void setPresets(Set<Preset> presets) {
+        this.presets = presets;
+    }
+
     public void removeUserInOrgaWithRole(UserInOrgaWithRole userInOrgaWithRole) {
         this.orgaUserRoles.remove(userInOrgaWithRole);
     }

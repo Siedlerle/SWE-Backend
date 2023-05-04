@@ -506,15 +506,15 @@ public class UserInOrgaWithRoleService {
     //Sys-Admin
     /**
      * Sets a user Admin in an organisation.
-     * @param organisation Organisation.
-     * @param admin Person to be added as an admin
+     * @param organisationId Organisation.
+     * @param adminEmail Person to be added as an admin
      * @return Failure or success.
      */
-    public String setAdminForOrga(Organisation organisation, User admin){
+    public String setAdminForOrga(long organisationId, String adminEmail){
         UserInOrgaWithRole adminInOrga = new UserInOrgaWithRole();
         adminInOrga.setOrgaRole(orgaRoleService.findByRole(EnumOrgaRole.ADMIN));
-        adminInOrga.setOrganisation(organisation);
-        adminInOrga.setUser(admin);
+        adminInOrga.setOrganisation(organisationService.getOrganisationById(organisationId));
+        adminInOrga.setUser(userService.getUserByMail(adminEmail));
         try {
             userInOrgaWithRoleRepository.save(adminInOrga);
             return LocalizedStringVariables.ORGACREATEDSUCCESSMESSAGE;
