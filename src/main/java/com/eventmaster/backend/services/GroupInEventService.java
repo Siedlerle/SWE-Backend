@@ -46,6 +46,10 @@ public class GroupInEventService {
             for (User user : usersOfGroup) {
                 userInEventWithRoleService.inviteUserToEvent(event.getId(), user.getEmailAdress(), false);
             }
+            GroupInEvent gIE = new GroupInEvent();
+            gIE.setGroup(groupService.getGroupById(groupId));
+            gIE.setEvent(event);
+            this.groupInEventRepository.save(gIE);
             return MessageResponse.builder()
                     .message(LocalizedStringVariables.INVITEDGROUPTOEVENTSUCCESSMESSAGE)
                     .build();
