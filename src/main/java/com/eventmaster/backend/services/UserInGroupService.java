@@ -140,7 +140,12 @@ public class UserInGroupService {
             List<User> usersInOrga = userInOrgaWithRoleService.getAllUsersInOrga(orgaId);
             List<User> usersInGroup = getUsersOfGroup(groupId);
 
-            for(User userInOrga : usersInOrga) {
+            return usersInOrga
+                    .stream()
+                    .filter(user ->!usersInGroup.contains(user))
+                    .toList();
+
+            /*for(User userInOrga : usersInOrga) {
                 System.out.println("X: " +userInOrga.getEmailAdress());
             }
 
@@ -158,7 +163,7 @@ public class UserInGroupService {
                 System.out.println("Z: " +userInOrga.getEmailAdress());
             }
 
-            return usersInOrga;
+            return usersInOrga;*/
         } catch (Exception e) {
             return null;
         }
