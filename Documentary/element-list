@@ -1,0 +1,14 @@
+com.eventmaster.backend
+com.eventmaster.backend.controller
+com.eventmaster.backend.ControllerTests
+com.eventmaster.backend.demo
+com.eventmaster.backend.EmailService
+com.eventmaster.backend.entities
+com.eventmaster.backend.FileService
+com.eventmaster.backend.repositories
+com.eventmaster.backend.security.authentification
+com.eventmaster.backend.security.authorization
+com.eventmaster.backend.security.config
+com.eventmaster.backend.security.Token
+com.eventmaster.backend.services
+local.variables

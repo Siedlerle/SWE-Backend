@@ -345,5 +345,4 @@ public class UserController {
         System.out.println(emailAddress);
         return ResponseEntity.ok(userInEventWithRoleService.getEventInvitationsForUser(emailAddress));
     }
-
 }

@@ -1,4 +1,6 @@
 package com.eventmaster.backend.services;
+
+import com.eventmaster.backend.EmailService.EmailService;
 import com.eventmaster.backend.entities.MessageResponse;
 import com.eventmaster.backend.entities.User;
 import com.eventmaster.backend.repositories.UserRepository;
@@ -42,6 +44,8 @@ public class UserService {
 
     private final AuthenticationManager authenticationManager;
 
+    private final EmailService emailService;
+
     private final SimpleMailMessage mailMessage = new SimpleMailMessage();
 
 
@@ -50,29 +54,28 @@ public class UserService {
             PasswordEncoder passwordEncoder,
             JwtService jwtService,
             TokenService tokenService,
-            AuthenticationManager authenticationManager) {
+            AuthenticationManager authenticationManager,
+            EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.tokenService = tokenService;
         this.authenticationManager = authenticationManager;
+        this.emailService = emailService;
     }
 
-    public String saveUser(User user) {
-        userRepository.save(user);
-        return "saved";
-    }
 
     /**
      * Creates a new user and sends an Email
+     *
      * @param request Userobject
      * @return success message
      */
-    public MessageResponse register(User request){
+    public MessageResponse register(User request) {
 
         User checkUser = request;
 
-        if(userRepository.findByEmailAdress(checkUser.getEmailAdress()) != null){
+        if (userRepository.findByEmailAdress(checkUser.getEmailAdress()) != null) {
             return MessageResponse.builder()
                     .message("Email ist bereits vergeben.")
                     .build();
@@ -93,11 +96,12 @@ public class UserService {
         mailMessage.setTo(user.getEmailAdress());
         mailMessage.setSubject("Complete Registration!");
         mailMessage.setText("Hello " + user.getFirstname() + "," +
-                        "\nto confirm your account, please click here : \n"
-                +"http://localhost:4200/login?authToken=" + jwtToken + "\n"
-                +"WARNING: The token is only valid up to 15 Minutes");
-        //emailService.sendEmail(mailMessage);
-        System.out.println(mailMessage.getText());
+                "\nto confirm your account, please click here : \n"
+                //+ "http://localhost:4200/login?authToken=" + jwtToken + "\n"
+                + "http://ftb-eventmaster.de/login?authToken=" + jwtToken + "\n"
+                + "WARNING: The token is only valid up to 15 Minutes");
+        emailService.sendEmail(mailMessage);
+        //System.out.println(mailMessage.getText());
 
         return MessageResponse.builder()
                 .message("Sie wurden erfolgreich registriert.\nBitte prüfen Sie ihre Mails.")
@@ -106,6 +110,7 @@ public class UserService {
 
     /**
      * Verifying a user after registration
+     *
      * @param authToken jwt Token
      * @return VerificationResponse
      */
@@ -115,8 +120,8 @@ public class UserService {
 
         List<Token> tokens = verifyUser.getTokens();
 
-        for (Token token: tokens) {
-            if(token.getToken().equals(authToken)) {
+        for (Token token : tokens) {
+            if (token.getToken().equals(authToken)) {
                 if (!token.isRevoked() || !token.isExpired()) {
                     verifyUser.setEnabled(true);
                     userRepository.save(verifyUser);
@@ -204,12 +209,12 @@ public class UserService {
             mailMessage.setSubject("Change your Password");
             mailMessage.setText("Hello " + resetUserPwd.getFirstname() + "," +
                     "\nto confirm the password change click the link below : \n"
-                    +"Token to authenticate reset: " + jwtToken + "\n"
-                    +"WARNING: The token is only valid up to 15 Minutes");
-            //emailService.sendEmail(mailMessage);
-            System.out.println(mailMessage.getText());
+                    + "Token to authenticate reset: " + jwtToken + "\n"
+                    + "WARNING: The token is only valid up to 15 Minutes");
+            emailService.sendEmail(mailMessage);
+            //System.out.println(mailMessage.getText());
             return "reset-request sent";
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return "request failed";
         }
@@ -341,4 +346,31 @@ public class UserService {
         });
     }
 
+    /**
+     * System Admin Funktion to add an authenticated user directly to the database.
+     * @param user User to be added.
+     * @return "saved"
+     */
+    public String saveUser(User user) {
+        User save = new User();
+        save.setFirstname(user.getFirstname());
+        save.setLastname(user.getLastname());
+        save.setEmailAdress(user.getEmailAdress());
+        save.setEnabled(true);
+        save.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(save);
+        return "saved";
+    }
+    public String deleteUserAdmin(String emailAdress) {
+        try {
+            User user = userRepository.findByEmailAdress(emailAdress);
+            tokenService.deleteTokens(user.getId());
+            userRepository.delete(user);
+
+            return LocalizedStringVariables.USERDELETEDMESSAGE + user.getFirstname() +" "+user.getLastname();
+        }catch (Exception e) {
+            e.printStackTrace();
+            return LocalizedStringVariables.USERNOTDELETEDMESSAGE;
+        }
+    }
 }

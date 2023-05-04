@@ -99,7 +99,7 @@ public class TutorController {
     @PostMapping("/event/{eventId}/chat/add/{emailAdress}")
     public ResponseEntity<MessageResponse> sendMessage(@PathVariable long eventId,
                                                        @PathVariable String emailAdress,
-                                                       @RequestParam String message) {
+                                                       @RequestBody String message) {
         return ResponseEntity.ok(chatService.sendMessage(eventId,emailAdress,message));
     }
 
