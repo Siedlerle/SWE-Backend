@@ -893,7 +893,7 @@ public class UserInEventWithRoleService {
      * @param userMail Mail address of the new organizer.
      * @return String about success or failure.
      */
-    public String changeOrganizerOfEvent(long eventId, String userMail) {
+    public MessageResponse changeOrganizerOfEvent(long eventId, String userMail) {
         User newOrganizer = userService.getUserByMail(userMail);
         Event event = eventService.getEventById(eventId);
         EventRole eventRole = eventRoleService.findByRole(EnumEventRole.ORGANIZER);
@@ -903,7 +903,9 @@ public class UserInEventWithRoleService {
             userInEventWithRoleRepository.delete(oldUserInEventWithRole);
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.USERINEVENTWITHROLEDELETIONFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.USERINEVENTWITHROLEDELETIONFAILUREMESSAGE)
+                    .build();
         }
 
         if (!userInEventWithRoleRepository.existsByUserAndEvent(newOrganizer, event)) {
@@ -915,7 +917,9 @@ public class UserInEventWithRoleService {
                 userInEventWithRoleRepository.save(newUserInEventWithRole);
             } catch (Exception e) {
                 e.printStackTrace();
-                return LocalizedStringVariables.NEWUSERASORGANIZERINEVENTFAILUREMESSAGE;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.NEWUSERASORGANIZERINEVENTFAILUREMESSAGE)
+                        .build();
             }
         } else {
             UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(newOrganizer, event);
@@ -924,11 +928,15 @@ public class UserInEventWithRoleService {
                 userInEventWithRoleRepository.save(userInEventWithRole);
             } catch (Exception e) {
                 e.printStackTrace();
-                return LocalizedStringVariables.EXISTINGUSERASORGANIZERINEVENTSUCCESSMESSAGE;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.EXISTINGUSERASORGANIZERINEVENTSUCCESSMESSAGE)
+                        .build();
             }
         }
 
-        return LocalizedStringVariables.CHANGEDORGANIZEROFEVENTSUCCESSMESSAGE;
+        return MessageResponse.builder()
+                .message(LocalizedStringVariables.CHANGEDORGANIZEROFEVENTSUCCESSMESSAGE)
+                .build();
     }
 
 

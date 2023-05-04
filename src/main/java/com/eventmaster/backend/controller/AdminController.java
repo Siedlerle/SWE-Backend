@@ -1,13 +1,11 @@
 package com.eventmaster.backend.controller;
 
-import com.eventmaster.backend.entities.Event;
-import com.eventmaster.backend.entities.Group;
-import com.eventmaster.backend.entities.MessageResponse;
-import com.eventmaster.backend.entities.Organisation;
+import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.services.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -153,7 +151,7 @@ public class AdminController {
      * @return String about success or failure.
      */
     @PostMapping("/group/{groupId}/user/add")
-    public ResponseEntity<String> addUserToGroup(@PathVariable long groupId,
+    public ResponseEntity<MessageResponse> addUserToGroup(@PathVariable long groupId,
                                                  @RequestBody String userMail) {
         return ResponseEntity.ok(userInGroupService.addUserToGroup(groupId, userMail));
     }
@@ -165,9 +163,21 @@ public class AdminController {
      * @return String about success or failure.
      */
     @PostMapping("/group/{groupId}/user/{userMail}/remove")
-    public ResponseEntity<String> removeUserFromGroup(@PathVariable long groupId,
+    public ResponseEntity<MessageResponse> removeUserFromGroup(@PathVariable long groupId,
                                                       @PathVariable String userMail) {
         return ResponseEntity.ok(userInGroupService.removeUserFromGroup(groupId, userMail));
+    }
+
+    /**
+     * Endpoint to get users in organisation which are not in the group.
+     * @param orgaId ID of the organisation.
+     * @param groupId ID of the group.
+     * @return List of Users
+     */
+    @PostMapping("/orga/{orgaId}/group/{groupId}/user/get-not-in-group")
+    public ResponseEntity<List<User>> getUsersOfOrganisationAndNotInGroup(@PathVariable long orgaId,
+                                                                          @PathVariable long groupId) {
+        return ResponseEntity.ok(userInGroupService.getUsersOfOrgaNotInGroup(orgaId, groupId));
     }
 
     /**
@@ -177,7 +187,7 @@ public class AdminController {
      * @return String about success or failure.
      */
     @PostMapping("/event/{eventId}/organizer/change")
-    public ResponseEntity<String> changeOrganizerOfEvent(@PathVariable long eventId,
+    public ResponseEntity<MessageResponse> changeOrganizerOfEvent(@PathVariable long eventId,
                                                          @RequestBody String userMail) {
         return ResponseEntity.ok(userInEventWithRoleService.changeOrganizerOfEvent(eventId, userMail));
     }

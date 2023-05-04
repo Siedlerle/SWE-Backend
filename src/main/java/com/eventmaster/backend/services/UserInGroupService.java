@@ -1,10 +1,9 @@
 package com.eventmaster.backend.services;
 
-import com.eventmaster.backend.entities.Group;
-import com.eventmaster.backend.entities.User;
-import com.eventmaster.backend.entities.UserInGroup;
+import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.repositories.UserInGroupRepository;
 import local.variables.LocalizedStringVariables;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,10 +14,13 @@ public class UserInGroupService {
     private final UserInGroupRepository userInGroupRepository;
     private final GroupService groupService;
     private final UserService userService;
-    public UserInGroupService(UserInGroupRepository userInGroupRepository, GroupService groupService, UserService userService) {
+    private final UserInOrgaWithRoleService userInOrgaWithRoleService;
+
+    public UserInGroupService(UserInGroupRepository userInGroupRepository, GroupService groupService, UserService userService, @Lazy UserInOrgaWithRoleService userInOrgaWithRoleService) {
         this.userInGroupRepository = userInGroupRepository;
         this.groupService = groupService;
         this.userService = userService;
+        this.userInOrgaWithRoleService = userInOrgaWithRoleService;
     }
 
     /**
@@ -83,19 +85,22 @@ public class UserInGroupService {
      * @param userMail Mail address of the user who will be added to the group.
      * @return String about success or failure.
      */
-    public String addUserToGroup(long groupId, String userMail) {
+    public MessageResponse addUserToGroup(long groupId, String userMail) {
         Group group = groupService.getGroupById(groupId);
         User user = userService.getUserByMail(userMail);
-        //TODO testen, ob user gleicher organisation angehört wie Gruppe
         UserInGroup userInGroup = new UserInGroup();
         userInGroup.setUser(user);
         userInGroup.setGroup(group);
         try {
             userInGroupRepository.save(userInGroup);
-            return LocalizedStringVariables.ADDEDUSERTOGROUPSUCCESSMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.ADDEDUSERTOGROUPSUCCESSMESSAGE)
+                    .build();
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.ADDEDUSERTOGROUPFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.ADDEDUSERTOGROUPFAILUREMESSAGE)
+                    .build();
         }
     }
 
@@ -105,7 +110,7 @@ public class UserInGroupService {
      * @param userMail Mail of the user who lefts the group.
      * @return String about success or failure.
      */
-    public String removeUserFromGroup(long groupId, String userMail) {
+    public MessageResponse removeUserFromGroup(long groupId, String userMail) {
         Group group = groupService.getGroupById(groupId);
         User user = userService.getUserByMail(userMail);
 
@@ -113,10 +118,51 @@ public class UserInGroupService {
 
         try {
             userInGroupRepository.delete(userInGroup);
-            return LocalizedStringVariables.REMOVEDUSERFROMGROUPSUCCESSMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.REMOVEDUSERFROMGROUPSUCCESSMESSAGE)
+                    .build();
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.REMOVEDUSERFROMGROUPFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.REMOVEDUSERFROMGROUPFAILUREMESSAGE)
+                    .build();
         }
     }
+
+    /**
+     * Gets all users of an organisation which are not in the group.
+     * @param orgaId ID of the organisation.
+     * @param groupId ID of the group.
+     * @return List of users.
+     */
+    public List<User> getUsersOfOrgaNotInGroup(long orgaId, long groupId) {
+        try {
+            List<User> usersInOrga = userInOrgaWithRoleService.getAllUsersInOrga(orgaId);
+            List<User> usersInGroup = getUsersOfGroup(groupId);
+
+            for(User userInOrga : usersInOrga) {
+                System.out.println("X: " +userInOrga.getEmailAdress());
+            }
+
+
+            for (User user : usersInGroup) {
+                System.out.println("Y: " + user.getEmailAdress());
+
+                if (usersInOrga.contains(user)) {
+                    usersInOrga.remove(user);
+                }
+
+            }
+
+            for(User userInOrga : usersInOrga) {
+                System.out.println("Z: " +userInOrga.getEmailAdress());
+            }
+
+            return usersInOrga;
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
 }
