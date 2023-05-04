@@ -91,16 +91,15 @@ public class TutorController {
     /**
      * Endpoint to create a Chat and connect it to its event.
      * @param eventId Id of the event which contains the chat.
+     * @param emailAdress EMail of the corresponding user
      * @param message Text of the chat.
-     * @param authToken AuthToken to identify the user.
      * @return String about success or failure.
      */
-    @PostMapping("/event/{eventId}/chat/add")
-    public ResponseEntity<String> sendMessage(@PathVariable long eventId,
-                                              @RequestParam String message,
-                                              @RequestParam String authToken) {
-        long userId = 0;
-        return ResponseEntity.ok(chatService.sendMessage(eventId, userId, message));
+    @PostMapping("/event/{eventId}/chat/add/{emailAdress}")
+    public ResponseEntity<MessageResponse> sendMessage(@PathVariable long eventId,
+                                                       @PathVariable String emailAdress,
+                                                       @RequestParam String message) {
+        return ResponseEntity.ok(chatService.sendMessage(eventId,emailAdress,message));
     }
 
     /**
