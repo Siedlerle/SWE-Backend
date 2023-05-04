@@ -72,8 +72,8 @@ public class TutorController {
      */
     @PostMapping("/event/{eventId}/attendees/update-status")
     public ResponseEntity<String> updateAttendingStatusForUsers(@PathVariable long eventId,
-                                                                @RequestParam List<Long> userIds,
-                                                                @RequestParam List<Boolean> newStates) {
+                                                                @RequestParam("userIds") List<Long> userIds,
+                                                                @RequestParam("attending") List<Boolean> newStates) {
         return ResponseEntity.ok(userInEventWithRoleService.updateAttendingStatusForUsers(eventId, userIds, newStates));
     }
 
