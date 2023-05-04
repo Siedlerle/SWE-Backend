@@ -59,7 +59,7 @@ public class AdminController {
      * @return String about success or failure.
      */
     @PostMapping("/orga/change")
-    public ResponseEntity<String> changeOrganisationDetails(@RequestParam("organisation") String organisationJson,
+    public ResponseEntity<MessageResponse> changeOrganisationDetails(@RequestParam("organisation") String organisationJson,
                                                             @RequestParam(value = "image", required = false) MultipartFile image) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Organisation organisation = mapper.readValue(organisationJson, Organisation.class);

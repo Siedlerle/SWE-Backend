@@ -6,6 +6,7 @@ import local.variables.LocalizedStringVariables;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.w3c.dom.events.EventTarget;
 
 import java.io.IOException;
 import java.sql.Date;
@@ -215,7 +216,7 @@ public class UserInEventWithRoleService {
 
             for (UserInEventWithRole event: userInEvents) {
                 if(event != null){
-                    if(event.getEventRole().getRole().equals(EnumEventRole.ATTENDEE) || event.getEventRole().getRole().equals(EnumEventRole.GROUPATTENDEE)){
+                    if(event.getEventRole().getRole().equals(EnumEventRole.ATTENDEE) || event.getEventRole().getRole().equals(EnumEventRole.GROUPATTENDEE) || event.getEventRole().getRole().equals(EnumEventRole.TUTOR)){
                         userEvents.add(event.getEvent());
                     }
                 }
@@ -386,10 +387,11 @@ public class UserInEventWithRoleService {
             Set<UserInEventWithRole> userInEventWithRoleList = event.getEventUserRoles();
             EventRole attendeeRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
             EventRole groupAttendeeRole = eventRoleService.findByRole(EnumEventRole.GROUPATTENDEE);
+            EventRole tutorAttendeeRole = eventRoleService.findByRole(EnumEventRole.TUTOR);
             List<User> attendees = new ArrayList<>();
-            for (UserInEventWithRole uer : userInEventWithRoleList) {
-                if (uer.getEventRole().equals(attendeeRole) || uer.getEventRole().equals(groupAttendeeRole)) {
-                    User attendee = uer.getUser();
+            for (UserInEventWithRole user : userInEventWithRoleList) {
+                if (user.getEventRole().equals(attendeeRole) || user.getEventRole().equals(groupAttendeeRole) || user.getEventRole().equals(tutorAttendeeRole)) {
+                    User attendee = user.getUser();
                     attendees.add(attendee);
                 }
                 //TODO: Gruppenhandhabung hinzufügen
@@ -644,7 +646,7 @@ public class UserInEventWithRoleService {
      * @param changeToAttendee Bool if he switches from attendee to tutor or from tutor to attendee.
      * @return String about success or failure.
      */
-    public String changeRoleOfPersonInEvent(long eventId, String userMail, boolean changeToAttendee) {
+    public MessageResponse changeRoleOfPersonInEvent(long eventId, String userMail, boolean changeToAttendee) {
         Event event = eventService.getEventById(eventId);
         User user = userService.getUserByMail(userMail);
         EventRole newRole;
@@ -661,12 +663,18 @@ public class UserInEventWithRoleService {
             userInEventWithRole.setEventRole(newRole);
             try{
                 userInEventWithRoleRepository.save(userInEventWithRole);
-                return LocalizedStringVariables.CHANGEDROLEINEVENTSUCCESSMESSAGE;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.CHANGEDROLEINEVENTSUCCESSMESSAGE)
+                        .build();
             } catch (Exception e) {
-                return LocalizedStringVariables.CHANGEDROLEINEVENTFAILUREMESSAGE;
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.CHANGEDROLEINEVENTFAILUREMESSAGE)
+                        .build();
             }
         } else {
-            return LocalizedStringVariables.CHANGEDROLEINEVENTWITHOUTINVITATIONFAILUREMESSAGE;
+            return MessageResponse.builder()
+                    .message(LocalizedStringVariables.CHANGEDROLEINEVENTWITHOUTINVITATIONFAILUREMESSAGE)
+                    .build();
         }
     }
 

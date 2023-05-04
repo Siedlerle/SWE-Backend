@@ -90,14 +90,14 @@ public class AttendeeController {
     /**
      * Endpoint for an attendee of an event to answer the survey
      * @param answers List of answer objects which store the answers
-     * @param userId Id of the corresponding user
+     * @param emailAdress EMail of the corresponding user
      * @return successmessage
      */
-    @PostMapping("/answer-survey/{userId}")
+    @PostMapping("/answer-survey/{emailAdress}")
     public ResponseEntity<?> answerSurvey(
             @RequestBody List<Answer> answers,
-            @PathVariable long userId){
-        return ResponseEntity.ok(answerService.addAnswer(answers, userId));
+            @PathVariable String emailAdress){
+        return ResponseEntity.ok(answerService.addAnswer(answers, emailAdress));
     }
 
     /**

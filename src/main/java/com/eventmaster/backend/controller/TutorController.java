@@ -1,13 +1,12 @@
 package com.eventmaster.backend.controller;
 
+import com.eventmaster.backend.entities.Answer;
 import com.eventmaster.backend.entities.MessageResponse;
 import com.eventmaster.backend.entities.Question;
 import com.eventmaster.backend.entities.User;
-import com.eventmaster.backend.services.ChatService;
-import com.eventmaster.backend.services.DocumentService;
-import com.eventmaster.backend.services.QuestionService;
-import com.eventmaster.backend.services.UserInEventWithRoleService;
+import com.eventmaster.backend.services.*;
 import org.aspectj.bridge.Message;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,7 +32,8 @@ public class TutorController {
 
     public TutorController(UserInEventWithRoleService userInEventWithRoleService,
                            ChatService chatService,
-                           DocumentService documentService, QuestionService questionService) {
+                           DocumentService documentService,
+                           QuestionService questionService) {
         this.userInEventWithRoleService = userInEventWithRoleService;
         this.chatService = chatService;
         this.documentService = documentService;
@@ -136,5 +136,10 @@ public class TutorController {
     public ResponseEntity<MessageResponse> addQuestion(@PathVariable long eventId,
                                                        @RequestBody List<Question> questions){
         return ResponseEntity.ok(questionService.createQuestion(eventId, questions));
+    }
+
+    @PostMapping("/event/{eventId}/question-answers")
+    public ResponseEntity<List<Answer>> getAllAnswers(@PathVariable long eventId){
+        return ResponseEntity.ok(questionService.getAnswersToQuestions(eventId));
     }
 }

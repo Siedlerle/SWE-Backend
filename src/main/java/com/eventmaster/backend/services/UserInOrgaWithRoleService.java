@@ -125,12 +125,11 @@ public class UserInOrgaWithRoleService {
      */
     public List<Event> getRegisteredEventsForUserInOrganisation(long organisationId, String emailAdress){
         try {
-            User user = userService.getUserByMail(emailAdress);
-
             List<Event> userInEventWithRoles = userInEventWithRoleService.getRegisteredEventsForUser(emailAdress);
 
             List<Event> registeredEventsInOrga = new ArrayList<>();
             for (Event check : userInEventWithRoles) {
+                System.out.println(check.getOrganisation().getId());
                 if(check.getOrganisation().getId() == organisationId){
                     registeredEventsInOrga.add(check);
                 }

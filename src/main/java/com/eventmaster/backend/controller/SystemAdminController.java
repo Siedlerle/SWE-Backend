@@ -50,7 +50,7 @@ public class SystemAdminController {
      * @return success message
      */
     @PostMapping("/organisation/change/{password}")
-    public ResponseEntity<String> changeOrganisation(@RequestBody Organisation organisation,@PathVariable String password){
+    public ResponseEntity<MessageResponse> changeOrganisation(@RequestBody Organisation organisation,@PathVariable String password){
         return ResponseEntity.ok(organisationService.changeOrganisation(organisation, null));
     }
 

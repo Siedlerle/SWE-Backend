@@ -1,6 +1,7 @@
 package com.eventmaster.backend.services;
 
 import com.eventmaster.backend.entities.Answer;
+import com.eventmaster.backend.entities.EnumQuestionType;
 import com.eventmaster.backend.entities.Question;
 import com.eventmaster.backend.entities.QuestionAnsweredByUser;
 import com.eventmaster.backend.repositories.AnswerRepository;
@@ -36,11 +37,11 @@ public class AnswerService {
         multipleChoice
     }
 
-    public List<Answer> addAnswer(List<Answer> answers, long userId){
+    public List<Answer> addAnswer(List<Answer> answers, String emailAdress){
         List<Answer> returns = new ArrayList<Answer>();
         answers.forEach(a -> {
             Question q = a.getQuestion();
-            if (q.getTypeVal().equals(questionType.multipleChoice.toString())) {
+            if (q.getQuestionType().equals(EnumQuestionType.MULTIPLECHOICE)) {
                 List<Answer> ans = this.answerRepository
                         .findByQuestion_idAndText(q.getId(), a.getText());
                 ans.get(0).setAmount(ans.get(0).getAmount() + 1);
@@ -55,7 +56,7 @@ public class AnswerService {
         });
         returns.forEach(r -> {
             QuestionAnsweredByUser qU = new QuestionAnsweredByUser();
-            qU.setUser(userService.getUserById(userId));
+            qU.setUser(userService.getUserByMail(emailAdress));
             qU.setQuestion(r.getQuestion());
             questionAnsweredByUserService.savAnswerByUser(qU);
         });
