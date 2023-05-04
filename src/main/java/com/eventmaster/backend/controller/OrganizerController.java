@@ -85,12 +85,16 @@ public class OrganizerController {
 
     /**
      * Endpoint to change an event.
-     * @param event New Event with the new data.
+     * @param eventJson New Event with the new data.
      * @return String about success or failure.
      */
     @PostMapping("/event/change")
-    public ResponseEntity<MessageResponse> changeEvent(@RequestBody Event event) {
-        return ResponseEntity.ok(eventService.changeEvent(event));
+    public ResponseEntity<MessageResponse> changeEvent(@RequestParam("event") String eventJson,
+                                                       @RequestParam(value = "image", required = false) MultipartFile image) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        Event event = mapper.readValue(eventJson, Event.class);
+
+        return ResponseEntity.ok(eventService.changeEvent(event, image));
     }
 
     /**

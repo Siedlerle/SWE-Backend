@@ -615,6 +615,17 @@ public class UserInEventWithRoleService {
     }
 
     /**
+     *
+     * @param id
+     * @param image
+     * @return
+     * @throws IOException
+     */
+    public String saveEventImage(long id, MultipartFile image) throws IOException {
+        return this.documentService.saveEventImage(id, image);
+    }
+
+    /**
      * Sets a user as organizer for an event.
      * @param userMail ID of the user who will be organizer.
      * @param eventId Id of event where the user will be organizer.
@@ -919,6 +930,8 @@ public class UserInEventWithRoleService {
 
         return LocalizedStringVariables.CHANGEDORGANIZEROFEVENTSUCCESSMESSAGE;
     }
+
+
 
     //endregion
 }

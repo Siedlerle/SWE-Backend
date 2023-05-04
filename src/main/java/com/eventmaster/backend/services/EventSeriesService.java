@@ -99,7 +99,7 @@ public class EventSeriesService {
                     for (Event event : events) {
                         if (!event.getStatus().equals("abgeschlossen")) {
                             event.setStatus(status);
-                            eventService.changeEvent(event);
+                            eventService.changeEvent(event, null);
                         }
                     }
 

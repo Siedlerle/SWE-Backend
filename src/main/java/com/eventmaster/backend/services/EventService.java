@@ -5,7 +5,9 @@ import com.eventmaster.backend.repositories.EventRepository;
 import local.variables.LocalizedStringVariables;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -22,8 +24,7 @@ public class EventService {
     private final UserInEventWithRoleService userInEventWithRoleService;
 
     public EventService(EventRepository eventRepository,
-                        @Lazy UserInEventWithRoleService userInEventWithRoleService
-    ) {
+                        @Lazy UserInEventWithRoleService userInEventWithRoleService) {
         this.eventRepository = eventRepository;
         this.userInEventWithRoleService = userInEventWithRoleService;
     }
@@ -66,7 +67,7 @@ public class EventService {
      * @param event New event with the new data.
      * @return String about success or failure.
      */
-    public MessageResponse changeEvent(Event event) {
+    public MessageResponse changeEvent(Event event, MultipartFile image) {
         try {
             Event updatedEvent = eventRepository.findById(event.getId());
             updatedEvent.setId(event.getId());
@@ -80,11 +81,23 @@ public class EventService {
             updatedEvent.setIsPublic(event.getIsPublic());
             updatedEvent.setStatus(event.getStatus());
             updatedEvent.setType(event.getType());
-            updatedEvent.setImage(event.getImage());
             updatedEvent.setEventSeries(event.getEventSeries());
             updatedEvent.setOrganisation(event.getOrganisation());
-
             eventRepository.save(updatedEvent);
+
+            String oldImageLink = updatedEvent.getImage();
+
+            if (image != null) {
+                File oldfile = new File("src/main/upload" + oldImageLink);
+                if (oldfile.exists()) {
+                    oldfile.delete();
+                }
+                String imageUrl = userInEventWithRoleService.saveEventImage(updatedEvent.getId(), image);
+                updatedEvent.setImage(imageUrl);
+                this.eventRepository.save(updatedEvent);
+            }
+
+
             return MessageResponse.builder()
                     .message(LocalizedStringVariables.EVENTCHANGEDSUCCESSMESSAGE)
                     .build();
