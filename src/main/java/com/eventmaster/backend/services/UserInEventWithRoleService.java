@@ -270,12 +270,36 @@ public class UserInEventWithRoleService {
      * @param emailAdress Id of the user who is about to unregister
      * @return success message
      */
-    public MessageResponse unregisterFromEvent(long eventId,String emailAdress){
+    public MessageResponse unregisterFromEvent(long eventId,String emailAdress, String reason){
         //Todo reason speichern
         try {
 
             User user = userService.getUserByMail(emailAdress);
             Event event = eventService.getEventById(eventId);
+            User organizer = new User();
+            String reasonInMail = "";
+
+            List<UserInEventWithRole> users = userInEventWithRoleRepository.findByEvent_Id(eventId);
+            for (UserInEventWithRole userInEvent :users) {
+                if(userInEvent.getEventRole().equals(EnumEventRole.ORGANIZER)){
+                    organizer = userInEvent.getUser();
+                }
+            }
+
+            if(!reason.equals("{}")){
+                reasonInMail = "Der Grund für die Absage war:\n"+reason;
+            }
+
+            mailMessage.setFrom("ftb-solutions@outlook.de");
+            mailMessage.setTo(organizer.getEmailAdress());
+            mailMessage.setSubject("Absage von Event - "+event.getName());
+            mailMessage.setText("Hallo " + organizer.getFirstname() + ","
+                    + "\nder Benutzer " + user.getFirstname() +" hat sich"
+                    +"\nvon dem Event "+event.getName()+"abgemeldet."
+                    +"\n"+reasonInMail);
+            //emailService.sendEmail(mailMessage);
+            System.out.println(mailMessage.getText());
+
             UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(user, event);
             userInEventWithRoleRepository.delete(userInEventWithRole);
 

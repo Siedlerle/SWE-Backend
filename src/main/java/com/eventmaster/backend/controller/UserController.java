@@ -316,12 +316,15 @@ public class UserController {
      * Endpoint to unregister a user from an event
      * @param eventId Corresponding event for unregistration
      * @param emailAdress Token from user to get further information
+     * @param reason Reason for leaving Event
      * @return success message
      */
     //TODO reason wieder einpflegen
     @PostMapping("/event/{eventId}/unregister/{emailAdress}")
-    public ResponseEntity<MessageResponse> ungregisterFromEvent(@PathVariable long eventId, @PathVariable String emailAdress){
-        return ResponseEntity.ok(userInEventWithRoleService.unregisterFromEvent(eventId,emailAdress));
+    public ResponseEntity<MessageResponse> ungregisterFromEvent(@PathVariable long eventId,
+                                                                @PathVariable String emailAdress,
+                                                                @RequestBody String reason){
+        return ResponseEntity.ok(userInEventWithRoleService.unregisterFromEvent(eventId,emailAdress,reason));
     }
 
 
