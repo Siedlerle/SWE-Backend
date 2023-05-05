@@ -15,7 +15,7 @@ public class Answer {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @ManyToOne(cascade=CascadeType.ALL)
+    @ManyToOne(cascade=CascadeType.PERSIST)
     @JoinColumn(name = "questionId",referencedColumnName = "id")
     private Question question;
 

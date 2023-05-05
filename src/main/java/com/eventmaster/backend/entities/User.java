@@ -42,33 +42,33 @@ public class User implements UserDetails {
     //private Role role;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user",cascade = CascadeType.PERSIST,orphanRemoval = true)
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Token> tokens;
 
     //---------------------------------------------------------------------------
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user",cascade = CascadeType.PERSIST,orphanRemoval = true)
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<UserInEventWithRole> userInEventWithRoles = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user",cascade = CascadeType.PERSIST,orphanRemoval = true)
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<QuestionAnsweredByUser> questionAnsweredByUserSet = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user",cascade = CascadeType.PERSIST,orphanRemoval = true)
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<UserInGroup> userInGroupSet = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user",cascade = CascadeType.PERSIST,orphanRemoval = true,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.EAGER)
     private Set<UserInOrgaWithRole> userInOrgaWithRoleSet = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user",cascade = CascadeType.PERSIST,orphanRemoval = true)
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Chat> chats = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user",cascade = CascadeType.PERSIST,orphanRemoval = true)
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Comment> comments = new HashSet<>();
 
     //---------------------------------------------------------------------------

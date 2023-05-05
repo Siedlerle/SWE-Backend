@@ -19,7 +19,7 @@ public class EventSeries {
     private long id;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "eventSeries", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "eventSeries", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Event> events = new HashSet<>();
 
     private int daysBetweenEvents;

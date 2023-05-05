@@ -15,7 +15,7 @@ public class Document {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @ManyToOne(cascade=CascadeType.ALL)
+    @ManyToOne(cascade=CascadeType.PERSIST)
     @JoinColumn(name ="eventId",referencedColumnName = "id")
     private Event event;
     //---------------------------------------------------------------------------

@@ -15,15 +15,15 @@ public class UserInEventWithRole {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @ManyToOne(cascade=CascadeType.ALL)
+    @ManyToOne(cascade=CascadeType.PERSIST)
     @JoinColumn(name = "userId",referencedColumnName = "id")
     private User user;
 
-    @ManyToOne(cascade=CascadeType.ALL)
+    @ManyToOne(cascade=CascadeType.PERSIST)
     @JoinColumn(name = "eventId",referencedColumnName = "id")
     private Event event;
 
-    @ManyToOne(cascade=CascadeType.ALL)
+    @ManyToOne(cascade=CascadeType.PERSIST)
     @JoinColumn(name = "roleId", referencedColumnName = "id")
     private EventRole eventRole;
     //---------------------------------------------------------------------------

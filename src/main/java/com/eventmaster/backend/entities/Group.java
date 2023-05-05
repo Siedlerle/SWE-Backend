@@ -18,16 +18,16 @@ public class Group {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @ManyToOne(cascade=CascadeType.ALL)
+    @ManyToOne(cascade=CascadeType.PERSIST)
     @JoinColumn(name = "organisationId", referencedColumnName = "id")
     private Organisation organisation;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "group", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<GroupInEvent> groupInEventSet = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "group", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserInGroup> userInGroupSet = new HashSet<>();
 
     private String name;

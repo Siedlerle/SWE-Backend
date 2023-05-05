@@ -22,32 +22,32 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @ManyToOne(cascade=CascadeType.ALL)
+    @ManyToOne(cascade=CascadeType.PERSIST)
     @JoinColumn(name = "organisationId",referencedColumnName = "id")
     private Organisation organisation;
 
-    @ManyToOne(cascade=CascadeType.ALL)
+    @ManyToOne(cascade=CascadeType.PERSIST)
     @JoinColumn(name = "eventSeriesId",referencedColumnName = "id")
     private EventSeries eventSeries;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "event",cascade = CascadeType.PERSIST,orphanRemoval = true)
+    @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Chat> chats = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "event",cascade = CascadeType.PERSIST,orphanRemoval = true)
+    @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Document> documents = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "event",cascade = CascadeType.PERSIST,orphanRemoval = true)
+    @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Question> questions = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "event",cascade = CascadeType.PERSIST,orphanRemoval = true)
+    @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<UserInEventWithRole> eventUserRoles = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "event",cascade = CascadeType.PERSIST,orphanRemoval = true)
+    @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<GroupInEvent> eventGroups = new HashSet<>();
 
     //---------------------------------------------------------------------------
