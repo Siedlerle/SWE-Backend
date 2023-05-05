@@ -200,6 +200,12 @@ public class OrganizerController {
         return ResponseEntity.ok(groupInEventService.inviteGroupToEvent(eventId, groupId));
     }
 
+    @PostMapping("/event/{eventId}/extern/{userMail}/invite")
+    public ResponseEntity<MessageResponse> inviteExternToEvent(@PathVariable long eventId,
+                                                               @PathVariable String userMail){
+        return ResponseEntity.ok(userInEventWithRoleService.inviteExternToEvent(eventId, userMail));
+    }
+
     /**
      * Endpoint to remove a user from an event.
      * @param eventId ID of the event.

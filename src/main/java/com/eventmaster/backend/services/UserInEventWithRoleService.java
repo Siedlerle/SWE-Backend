@@ -746,8 +746,6 @@ public class UserInEventWithRoleService {
                     .message(LocalizedStringVariables.USERALREADYPARTOFEVENTMESSAGE)
                     .build();
         } else {
-            //TODO Einladungsmail senden
-
             UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
             userInEventWithRole.setUser(user);
             userInEventWithRole.setEvent(event);
@@ -766,6 +764,47 @@ public class UserInEventWithRoleService {
                         .build();
             }
         }
+    }
+
+
+    public MessageResponse inviteExternToEvent(long eventId, String userMail){
+        Event event = eventService.getEventById(eventId);
+
+        if(userService.getUserByMail(userMail) == null){
+            try {
+
+                mailMessage.setFrom("ftb-solutions@outlook.de");
+                mailMessage.setTo(userMail);
+                mailMessage.setSubject("Eventeinladung - "+event.getName());
+                mailMessage.setText("Hallo,"
+                        +"\nSie wurden zu dem Event "+ event.getName() +"eingeladen."
+                        +"\nFalls Sie interesse haben, registrieren Sie sich unter:"
+                        +"\n\t\t\tftb-eventmaster.de"
+                        +"\nAnschließend können Sie sich zu unserer Organisation"
+                        +"\n\t\t\t\t"+event.getOrganisation().getName()
+                        +"\nregistrieren und sich für das Event anmelden."
+                        +"\n"
+                        +"\nWir freuen uns auf Ihre Teilnahme."
+                        +"\nIhr "+event.getOrganisation().getName()+" - Team"
+                        );
+                emailService.sendEmail(mailMessage);
+                //System.out.println(mailMessage.getText());
+
+
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.INVITEUSERTOEVENTSUCCESSMESSAGE)
+                        .build();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.INVITEUSERTOEVENTFAILUREMESSAGE)
+                        .build();
+            }
+        }
+        return MessageResponse.builder()
+                .message(LocalizedStringVariables.INVITEUSERTOEVENTFAILUREMESSAGE)
+                .build();
     }
 
     /**
