@@ -648,16 +648,7 @@ public class UserInEventWithRoleService {
         }
     }
 
-    /**
-     *
-     * @param id
-     * @param image
-     * @return
-     * @throws IOException
-     */
-    public String saveEventImage(long id, MultipartFile image) throws IOException {
-        return this.documentService.saveEventImage(id, image);
-    }
+
 
     /**
      * Sets a user as organizer for an event.

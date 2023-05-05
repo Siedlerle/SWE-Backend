@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 
@@ -53,26 +54,19 @@ public class OrganisationService {
      * @return String if successful or not.
      */
     public String deleteOrganisation(long organisationId) {
-        Organisation organisation = this.getOrganisationById(organisationId);
-        organisation.getEvents().forEach(event->{
-            eventService.deleteEvent(event.getId());
+        Organisation toDelete = this.organisationRepository.findById(organisationId);
+        if(toDelete == null)return "The chosen organisation doesn't exist.";
+        toDelete.getEvents().forEach(event -> {
+            documentService.deleteDocumentsForEvent(event);
+            documentService.deleteEventImageForEvent(event);
         });
-        organisation.getGroups().forEach(group -> {
-            groupService.deleteGroup(group.getId());
-        });
-        organisation.getPresets().forEach(preset -> {
-            presetService.deletePreset(preset.getId());
-        });
-        organisation.getOrgaUserRoles().forEach(orgaUserRole->{
-            //userInOrgaWithRoleService.
-        });
+        documentService.deleteImageForOrganisation(toDelete);
+        documentService.deletePresetsImagesForOrganisation(toDelete);
+        toDelete = this.organisationRepository.findById(toDelete.getId());
         try {
-
-            this.organisationRepository.delete(organisation);
-
+            this.organisationRepository.delete(toDelete);
             return LocalizedStringVariables.ORGADELETEDSUCCESSMESSAGE;
-        } catch (Exception e) {
-            e.printStackTrace();
+        }catch (Exception e){
             return LocalizedStringVariables.ORGADELETEDFAILUREMESSAGE;
         }
     }
