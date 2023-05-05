@@ -70,7 +70,6 @@ public class EventService {
     public MessageResponse changeEvent(Event event, MultipartFile image) {
         try {
             Event updatedEvent = eventRepository.findById(event.getId());
-            updatedEvent.setId(event.getId());
             updatedEvent.setName(event.getName());
             updatedEvent.setDescription(event.getDescription());
             updatedEvent.setStartDate(event.getStartDate());
@@ -81,8 +80,6 @@ public class EventService {
             updatedEvent.setIsPublic(event.getIsPublic());
             updatedEvent.setStatus(event.getStatus());
             updatedEvent.setType(event.getType());
-            updatedEvent.setEventSeries(event.getEventSeries());
-            updatedEvent.setOrganisation(event.getOrganisation());
             eventRepository.save(updatedEvent);
 
             String oldImageLink = updatedEvent.getImage();
