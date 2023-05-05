@@ -35,9 +35,9 @@ public class OrganisationService {
                                @Lazy UserInOrgaWithRoleService userInOrgaWithRoleService,
                                UserService userService,
                                DocumentService documentService,
-                               EventService eventService,
-                               GroupService groupService,
-                               PresetService presetService) {
+                               @Lazy EventService eventService,
+                               @Lazy GroupService groupService,
+                               @Lazy PresetService presetService) {
         this.organisationRepository = organizationRepository;
         this.userInOrgaWithRoleService = userInOrgaWithRoleService;
         this.userService = userService;

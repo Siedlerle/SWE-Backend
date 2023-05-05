@@ -342,7 +342,16 @@ public class UserController {
      */
     @PostMapping("/event/get-invitations/{emailAddress}")
     public ResponseEntity<List<Event>> getAllEventInvitationsForUser(@PathVariable String emailAddress) {
-        System.out.println(emailAddress);
         return ResponseEntity.ok(userInEventWithRoleService.getEventInvitationsForUser(emailAddress));
+    }
+
+    /**
+     * Endpoint to get the organizer of an event.
+     * @param eventId ID of the event.
+     * @return User who is organizer of the event.
+     */
+    @PostMapping("/event/{eventId}/get-organizer")
+    public ResponseEntity<User> getOrganizerOfEvent(@PathVariable long eventId) {
+        return ResponseEntity.ok(userInEventWithRoleService.getOrganizerOfEvent(eventId));
     }
 }
