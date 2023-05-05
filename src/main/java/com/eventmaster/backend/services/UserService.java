@@ -100,8 +100,8 @@ public class UserService {
                 + "http://localhost:4200/login?authToken=" + jwtToken + "\n"
                 //+ "http://ftb-eventmaster.de/login?authToken=" + jwtToken + "\n"
                 + "WARNING: The token is only valid up to 15 Minutes");
-        emailService.sendEmail(mailMessage);
-        //System.out.println(mailMessage.getText());
+        //emailService.sendEmail(mailMessage);
+        System.out.println(mailMessage.getText());
 
         return MessageResponse.builder()
                 .message("Sie wurden erfolgreich registriert.\nBitte prüfen Sie ihre Mails.")

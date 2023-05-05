@@ -106,8 +106,8 @@ public class UserInEventWithRoleService {
                         +"\nBegin: "+event.getStartDate()
                         +"\nBeschreibung: "+event.getDescription()
                         );
-                emailService.sendEmail(mailMessage);
-
+                //emailService.sendEmail(mailMessage);
+                System.out.println(mailMessage);
                 return MessageResponse.builder()
                         .message(LocalizedStringVariables.USERREGISTERESFOREVENTSUCCESSMESSAGE)
                         .build();
