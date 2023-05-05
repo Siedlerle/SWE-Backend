@@ -1,9 +1,11 @@
 package com.eventmaster.backend.services;
 
+import com.eventmaster.backend.EmailService.EmailService;
 import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.repositories.UserInEventWithRoleRepository;
 import local.variables.LocalizedStringVariables;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.w3c.dom.events.EventTarget;
@@ -31,7 +33,10 @@ public class UserInEventWithRoleService {
     private final EventRoleService eventRoleService;
     private final UserInOrgaWithRoleService userInOrgaWithRoleService;
     private final DocumentService documentService;
+    private final EmailService emailService;
 
+
+    private final SimpleMailMessage mailMessage = new SimpleMailMessage();
 
     public UserInEventWithRoleService(
             UserInEventWithRoleRepository userInEventWithRoleRepository,
@@ -41,7 +46,8 @@ public class UserInEventWithRoleService {
             EventSeriesService eventSeriesService,
             EventRoleService eventRoleService,
             DocumentService documentService,
-            @Lazy UserInOrgaWithRoleService userInOrgaWithRoleService) {
+            @Lazy UserInOrgaWithRoleService userInOrgaWithRoleService,
+            EmailService emailService) {
         this.userInEventWithRoleRepository = userInEventWithRoleRepository;
         this.eventService = eventService;
         this.userService = userService;
@@ -50,6 +56,7 @@ public class UserInEventWithRoleService {
         this.eventRoleService = eventRoleService;
         this.userInOrgaWithRoleService = userInOrgaWithRoleService;
         this.documentService = documentService;
+        this.emailService = emailService;
     }
 
 
@@ -88,6 +95,18 @@ public class UserInEventWithRoleService {
                 userInEventWithRole.setUser(userService.getUserByMail(emailAddress));
                 userInEventWithRole.setEventRole(eventRole);
                 userInEventWithRoleRepository.save(userInEventWithRole);
+
+                mailMessage.setFrom("ftb-solutions@outlook.de");
+                mailMessage.setTo(user.getEmailAdress());
+                mailMessage.setSubject("Eventregistrierung - "+event.getName());
+                mailMessage.setText("Hallo " + user.getFirstname() + "," +
+                        "\nDu hast dich zu folgendem Event angemeldet"
+                        +"\nName: "+event.getName()
+                        +"\nOrt: "+event.getLocation()
+                        +"\nBegin: "+event.getStartDate()
+                        +"\nBeschreibung: "+event.getDescription()
+                        );
+                emailService.sendEmail(mailMessage);
 
                 return MessageResponse.builder()
                         .message(LocalizedStringVariables.USERREGISTERESFOREVENTSUCCESSMESSAGE)

@@ -97,8 +97,8 @@ public class UserService {
         mailMessage.setSubject("Complete Registration!");
         mailMessage.setText("Hello " + user.getFirstname() + "," +
                 "\nto confirm your account, please click here : \n"
-                //+ "http://localhost:4200/login?authToken=" + jwtToken + "\n"
-                + "http://ftb-eventmaster.de/login?authToken=" + jwtToken + "\n"
+                + "http://localhost:4200/login?authToken=" + jwtToken + "\n"
+                //+ "http://ftb-eventmaster.de/login?authToken=" + jwtToken + "\n"
                 + "WARNING: The token is only valid up to 15 Minutes");
         emailService.sendEmail(mailMessage);
         //System.out.println(mailMessage.getText());
