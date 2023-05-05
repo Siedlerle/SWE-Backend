@@ -562,7 +562,6 @@ public class UserInEventWithRoleService {
      * @return String about success or failure.
      */
     public String createEventSeriesWithOrganizer(Event startEvent, EventSeries eventSeries, String userMail, long orgaId, MultipartFile image) throws IOException {
-        int intervalInMilliseconds = eventSeries.getDaysBetweenEvents() * 86400000;
         Organisation organisation = organisationService.getOrganisationById(orgaId);
 
 
@@ -837,17 +836,24 @@ public class UserInEventWithRoleService {
 
         if (userInEventWithRoleRepository.existsByUserAndEvent(user, event)) {
             UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(user, event);
-            try {
-                userInEventWithRoleRepository.delete(userInEventWithRole);
-                //TODO Mail mit reason senden
+            EventRole organizerRole = eventRoleService.findByRole(EnumEventRole.ORGANIZER);
+            if (userInEventWithRole.getEventRole().equals(organizerRole))
+            {
                 return MessageResponse.builder()
-                        .message(LocalizedStringVariables.REMOVEUSERFROMEVENTSUCCESSMESSAGE)
+                        .message(LocalizedStringVariables.REMOVEORGANIZERFROMEVENTNOTPOSSIBLE)
                         .build();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return MessageResponse.builder()
-                        .message(LocalizedStringVariables.REMOVEUSERFROMEVENTFAILUREMESSAGE)
-                        .build();
+            } else {
+                try {
+                    userInEventWithRoleRepository.delete(userInEventWithRole);
+                    return MessageResponse.builder()
+                            .message(LocalizedStringVariables.REMOVEUSERFROMEVENTSUCCESSMESSAGE)
+                            .build();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return MessageResponse.builder()
+                            .message(LocalizedStringVariables.REMOVEUSERFROMEVENTFAILUREMESSAGE)
+                            .build();
+                }
             }
         } else {
             return MessageResponse.builder()

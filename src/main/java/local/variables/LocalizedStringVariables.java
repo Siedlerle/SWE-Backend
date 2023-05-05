@@ -124,6 +124,7 @@ public final class LocalizedStringVariables {
         public static final String INVITETUTORTOEVENTFAILUREMESSAGE = "Invited tutor to event not successfully";
         public static final String INVITEUSERTOFIRSTEVENTOFSERIESSUCCESSMESSAGE = "Invited user to first event of series successfully";
         public static final String INVITEUSERTOFIRSTEVENTOFSERIESFAILUREMESSAGE = "Invited user to first event of series not successfully";
+        public static final String REMOVEORGANIZERFROMEVENTNOTPOSSIBLE = "Can not remove organizer from event";
         public static final String REMOVEUSERFROMEVENTSUCCESSMESSAGE = "Removed user from event successfully";
         public static final String REMOVEUSERFROMEVENTFAILUREMESSAGE = "Removed user from event not successfully";
         public static final String USERNOTATTENDINGATEVENTMESSAGE = "User is not invited or attending to event";
