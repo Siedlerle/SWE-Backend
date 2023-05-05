@@ -1,9 +1,11 @@
 package com.eventmaster.backend.services;
 
+import com.eventmaster.backend.EmailService.EmailService;
 import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.repositories.UserInEventWithRoleRepository;
 import local.variables.LocalizedStringVariables;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.w3c.dom.events.EventTarget;
@@ -31,7 +33,10 @@ public class UserInEventWithRoleService {
     private final EventRoleService eventRoleService;
     private final UserInOrgaWithRoleService userInOrgaWithRoleService;
     private final DocumentService documentService;
+    private final EmailService emailService;
 
+
+    private final SimpleMailMessage mailMessage = new SimpleMailMessage();
 
     public UserInEventWithRoleService(
             UserInEventWithRoleRepository userInEventWithRoleRepository,
@@ -41,7 +46,8 @@ public class UserInEventWithRoleService {
             EventSeriesService eventSeriesService,
             EventRoleService eventRoleService,
             DocumentService documentService,
-            @Lazy UserInOrgaWithRoleService userInOrgaWithRoleService) {
+            @Lazy UserInOrgaWithRoleService userInOrgaWithRoleService,
+            EmailService emailService) {
         this.userInEventWithRoleRepository = userInEventWithRoleRepository;
         this.eventService = eventService;
         this.userService = userService;
@@ -50,6 +56,7 @@ public class UserInEventWithRoleService {
         this.eventRoleService = eventRoleService;
         this.userInOrgaWithRoleService = userInOrgaWithRoleService;
         this.documentService = documentService;
+        this.emailService = emailService;
     }
 
 
@@ -89,6 +96,18 @@ public class UserInEventWithRoleService {
                 userInEventWithRole.setEventRole(eventRole);
                 userInEventWithRoleRepository.save(userInEventWithRole);
 
+                mailMessage.setFrom("ftb-solutions@outlook.de");
+                mailMessage.setTo(user.getEmailAdress());
+                mailMessage.setSubject("Eventregistrierung - "+event.getName());
+                mailMessage.setText("Hallo " + user.getFirstname() + "," +
+                        "\nDu hast dich zu folgendem Event angemeldet"
+                        +"\nName: "+event.getName()
+                        +"\nOrt: "+event.getLocation()
+                        +"\nBegin: "+event.getStartDate()
+                        +"\nBeschreibung: "+event.getDescription()
+                        );
+                //emailService.sendEmail(mailMessage);
+                System.out.println(mailMessage);
                 return MessageResponse.builder()
                         .message(LocalizedStringVariables.USERREGISTERESFOREVENTSUCCESSMESSAGE)
                         .build();
@@ -251,12 +270,35 @@ public class UserInEventWithRoleService {
      * @param emailAdress Id of the user who is about to unregister
      * @return success message
      */
-    public MessageResponse unregisterFromEvent(long eventId,String emailAdress){
-        //Todo reason speichern
+    public MessageResponse unregisterFromEvent(long eventId,String emailAdress, String reason){
         try {
 
             User user = userService.getUserByMail(emailAdress);
             Event event = eventService.getEventById(eventId);
+            User organizer = new User();
+            String reasonInMail = "";
+
+            List<UserInEventWithRole> users = userInEventWithRoleRepository.findByEvent_Id(eventId);
+            for (UserInEventWithRole userInEvent :users) {
+                if(userInEvent.getEventRole().equals(EnumEventRole.ORGANIZER)){
+                    organizer = userInEvent.getUser();
+                }
+            }
+
+            if(!reason.equals("{}")){
+                reasonInMail = "Der Grund für die Absage war:\n"+reason;
+            }
+
+            mailMessage.setFrom("ftb-solutions@outlook.de");
+            mailMessage.setTo(organizer.getEmailAdress());
+            mailMessage.setSubject("Absage von Event - "+event.getName());
+            mailMessage.setText("Hallo " + organizer.getFirstname() + ","
+                    + "\nder Benutzer " + user.getFirstname() +" hat sich"
+                    +"\nvon dem Event "+event.getName()+"abgemeldet."
+                    +"\n"+reasonInMail);
+            //emailService.sendEmail(mailMessage);
+            System.out.println(mailMessage.getText());
+
             UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(user, event);
             userInEventWithRoleRepository.delete(userInEventWithRole);
 
@@ -726,8 +768,6 @@ public class UserInEventWithRoleService {
                     .message(LocalizedStringVariables.USERALREADYPARTOFEVENTMESSAGE)
                     .build();
         } else {
-            //TODO Einladungsmail senden
-
             UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
             userInEventWithRole.setUser(user);
             userInEventWithRole.setEvent(event);
@@ -746,6 +786,47 @@ public class UserInEventWithRoleService {
                         .build();
             }
         }
+    }
+
+
+    public MessageResponse inviteExternToEvent(long eventId, String userMail){
+        Event event = eventService.getEventById(eventId);
+
+        if(userService.getUserByMail(userMail) == null){
+            try {
+
+                mailMessage.setFrom("ftb-solutions@outlook.de");
+                mailMessage.setTo(userMail);
+                mailMessage.setSubject("Eventeinladung - "+event.getName());
+                mailMessage.setText("Hallo,"
+                        +"\nSie wurden zu dem Event "+ event.getName() +"eingeladen."
+                        +"\nFalls Sie interesse haben, registrieren Sie sich unter:"
+                        +"\n\t\t\tftb-eventmaster.de"
+                        +"\nAnschließend können Sie sich zu unserer Organisation"
+                        +"\n\t\t\t\t"+event.getOrganisation().getName()
+                        +"\nregistrieren und sich für das Event anmelden."
+                        +"\n"
+                        +"\nWir freuen uns auf Ihre Teilnahme."
+                        +"\nIhr "+event.getOrganisation().getName()+" - Team"
+                        );
+                emailService.sendEmail(mailMessage);
+                //System.out.println(mailMessage.getText());
+
+
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.INVITEUSERTOEVENTSUCCESSMESSAGE)
+                        .build();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return MessageResponse.builder()
+                        .message(LocalizedStringVariables.INVITEUSERTOEVENTFAILUREMESSAGE)
+                        .build();
+            }
+        }
+        return MessageResponse.builder()
+                .message(LocalizedStringVariables.INVITEUSERTOEVENTFAILUREMESSAGE)
+                .build();
     }
 
     /**

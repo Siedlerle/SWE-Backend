@@ -195,6 +195,7 @@ public class OrganisationService {
             Organisation change = this.organisationRepository.findById(organisation.getId());
             change.setName(organisation.getName());
             change.setLocation(organisation.getLocation());
+            this.organisationRepository.save(change);
 
             return LocalizedStringVariables.ORGACHANGEDSUCCESSMESSAGE;
         } catch (Exception e) {

@@ -42,7 +42,7 @@ public class User implements UserDetails {
     //private Role role;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Token> tokens;
 
     //---------------------------------------------------------------------------
