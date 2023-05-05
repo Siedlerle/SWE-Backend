@@ -151,7 +151,6 @@ public class UserInOrgaWithRoleService {
 
             List<Event> registeredEventsInOrga = new ArrayList<>();
             for (Event check : userInEventWithRoles) {
-                System.out.println(check.getOrganisation().getId());
                 if(check.getOrganisation().getId() == organisationId){
                     registeredEventsInOrga.add(check);
                 }
@@ -324,7 +323,6 @@ public class UserInOrgaWithRoleService {
                 organisation.removeUserInOrgaWithRole(userInOrgaWithRole);
                 orgaRole.removeUserInOrgaWithRole(userInOrgaWithRole);
 
-                //System.out.println(userInOrgaWithRole.getUser().getEmailAdress() + "||" + userInOrgaWithRole.getOrganisation().getName());
                 userInOrgaWithRoleRepository.deleteById(userInOrgaWithRole.getId());
                 return MessageResponse.builder()
                         .message(LocalizedStringVariables.REMOVEDUSERFROMORGASUCCESSMESSAGE)

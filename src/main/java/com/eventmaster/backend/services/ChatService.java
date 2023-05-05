@@ -55,7 +55,6 @@ public class ChatService {
     public MessageResponse sendMessage(long eventId, String emailAdress, String message) {
         Event event = eventService.getEventById(eventId);
         User user = userService.getUserByMail(emailAdress);
-        System.out.println("in sendchatmessageservice");
         Chat chat = new Chat();
         chat.setEvent(event);
         chat.setUser(user);

@@ -94,7 +94,6 @@ public class CompleteTest {
         @Test
         public void testCreateGroup() throws Exception {
             long id = adminControllerTest.testCreateGroup(testOrganisation, testGroup);
-            System.out.println(testGroup.getId()+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
             testGroup.setId(id);
         }
         @Order(1)
