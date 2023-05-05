@@ -271,7 +271,6 @@ public class UserInEventWithRoleService {
      * @return success message
      */
     public MessageResponse unregisterFromEvent(long eventId,String emailAdress, String reason){
-        //Todo reason speichern
         try {
 
             User user = userService.getUserByMail(emailAdress);

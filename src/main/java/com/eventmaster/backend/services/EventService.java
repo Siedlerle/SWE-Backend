@@ -1,9 +1,11 @@
 package com.eventmaster.backend.services;
 
+import com.eventmaster.backend.EmailService.EmailService;
 import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.repositories.EventRepository;
 import local.variables.LocalizedStringVariables;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,11 +24,17 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final UserInEventWithRoleService userInEventWithRoleService;
+    private final EmailService emailService;
+
+    private final SimpleMailMessage mailMessage = new SimpleMailMessage();
+
 
     public EventService(EventRepository eventRepository,
+                        EmailService emailService,
                         @Lazy UserInEventWithRoleService userInEventWithRoleService) {
         this.eventRepository = eventRepository;
         this.userInEventWithRoleService = userInEventWithRoleService;
+        this.emailService = emailService;
     }
 
     /**
@@ -189,13 +197,26 @@ public class EventService {
      * @return String about success or failure.
      */
     public MessageResponse cancelEvent(long eventId, String reason) {
-        Event event = getEventById(eventId);
-        event.setStatus(EnumEventStatus.CANCELLED);
-
-
         try {
+            Event event = getEventById(eventId);
+            event.setStatus(EnumEventStatus.CANCELLED);
             eventRepository.save(event);
-            //TODO Mail an alle Teilnehmer und Eingeladene senden.
+
+            List<User> attendees = userInEventWithRoleService.getAttendeesForEvent(eventId);
+
+            for (User user:attendees) {
+                mailMessage.setFrom("ftb-solutions@outlook.de");
+                mailMessage.setTo(user.getEmailAdress());
+                mailMessage.setSubject("Eventabsage - "+event.getName());
+                mailMessage.setText("Hallo " + user.getFirstname() + ","
+                                +"\ndas Event: "+event.getName()
+                                +"\nwelches am "+event.getStartDate()+" stattfinden sollte,"
+                                +"\nwurde abgesagt. Grund hierfür ist:"
+                                +"\n"+reason);
+                //emailService.sendEmail(mailMessage);
+                System.out.println(mailMessage.getText());
+            }
+
             return MessageResponse.builder()
                     .message(LocalizedStringVariables.EVENTCANCELLEDSUCCESSMESSAGE)
                     .build();
