@@ -20,7 +20,7 @@ public class OrgaRole {
     private EnumOrgaRole role;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "orgaRole",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "orgaRole",cascade = CascadeType.PERSIST,orphanRemoval = true)
     private Set<UserInOrgaWithRole> userInOrgaWithRoles  = new HashSet<>();
 
     public long getId() {

@@ -18,16 +18,16 @@ public class Chat {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "eventId",referencedColumnName = "id")
     private Event event;
 
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "userId",referencedColumnName = "id")
     private User user;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "chat",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "chat",cascade = CascadeType.PERSIST,orphanRemoval = true)
     private Set<Comment> comments = new HashSet<>();
 
     //---------------------------------------------------------------------------

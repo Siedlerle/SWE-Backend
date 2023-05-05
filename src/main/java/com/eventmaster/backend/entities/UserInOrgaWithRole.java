@@ -14,15 +14,15 @@ public class UserInOrgaWithRole {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "userId",referencedColumnName = "id")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "organisationId",referencedColumnName = "id")
     private Organisation organisation;
 
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "roleId",referencedColumnName = "id")
     private OrgaRole orgaRole;
     //---------------------------------------------------------------------------

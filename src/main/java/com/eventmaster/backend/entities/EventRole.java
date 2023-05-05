@@ -23,7 +23,7 @@ public class EventRole {
     private EnumEventRole role;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "eventRole",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "eventRole",cascade = CascadeType.PERSIST,orphanRemoval = true)
     private Set<UserInEventWithRole> userInEventWithRoles  = new HashSet<>();
 
     //---------------------------------------------------------------------------

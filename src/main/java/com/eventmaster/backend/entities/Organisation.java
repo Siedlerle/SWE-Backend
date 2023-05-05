@@ -20,19 +20,19 @@ public class Organisation {
     private long id;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "organisation",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "organisation",cascade = CascadeType.PERSIST,orphanRemoval = true)
     private Set<Event> events = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "organisation",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "organisation",cascade = CascadeType.PERSIST,orphanRemoval = true)
     private Set<UserInOrgaWithRole> orgaUserRoles = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "organisation",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "organisation",cascade = CascadeType.PERSIST,orphanRemoval = true)
     private Set<Group> groups = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "organisation",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "organisation",cascade = CascadeType.PERSIST,orphanRemoval = true)
     private Set<Preset> presets = new HashSet<>();
 
     private String name;
