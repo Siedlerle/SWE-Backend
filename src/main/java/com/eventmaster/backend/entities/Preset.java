@@ -19,7 +19,7 @@ public class Preset {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @ManyToOne(cascade=CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "organisationId", referencedColumnName = "id")
     private Organisation organisation;
 

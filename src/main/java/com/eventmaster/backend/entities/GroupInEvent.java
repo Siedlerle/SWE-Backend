@@ -13,11 +13,11 @@ public class GroupInEvent {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @ManyToOne(cascade=CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "eventId", referencedColumnName = "id")
     private Event event;
 
-    @ManyToOne(cascade=CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "groupId", referencedColumnName = "id")
     private Group group;
 

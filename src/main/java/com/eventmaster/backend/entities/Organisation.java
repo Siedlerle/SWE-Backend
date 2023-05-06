@@ -2,6 +2,9 @@ package com.eventmaster.backend.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,24 +17,29 @@ import java.util.Set;
  * @author Fabian Unger
  */
 @Entity
+
 public class Organisation {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "organisation",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Event> events = new HashSet<>();
 
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "organisation",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<UserInOrgaWithRole> orgaUserRoles = new HashSet<>();
 
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "organisation",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Group> groups = new HashSet<>();
 
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "organisation",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Preset> presets = new HashSet<>();
 

@@ -2,6 +2,8 @@ package com.eventmaster.backend.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,15 +21,17 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @ManyToOne(cascade=CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "eventId",referencedColumnName = "id")
     private Event event;
 
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "question",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Answer> answers = new HashSet<>();
 
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "question",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<QuestionAnsweredByUser> questionUsers = new HashSet<>();
 

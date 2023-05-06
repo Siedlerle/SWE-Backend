@@ -2,6 +2,8 @@ package com.eventmaster.backend.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.io.File;
 import java.sql.Date;
@@ -22,31 +24,36 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @ManyToOne(cascade=CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "organisationId",referencedColumnName = "id")
     private Organisation organisation;
 
-    @ManyToOne(cascade=CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "eventSeriesId",referencedColumnName = "id")
     private EventSeries eventSeries;
 
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Chat> chats = new HashSet<>();
 
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Document> documents = new HashSet<>();
 
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Question> questions = new HashSet<>();
 
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<UserInEventWithRole> eventUserRoles = new HashSet<>();
 
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<GroupInEvent> eventGroups = new HashSet<>();
 
