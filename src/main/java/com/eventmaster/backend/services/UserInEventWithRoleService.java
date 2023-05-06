@@ -129,9 +129,37 @@ public class UserInEventWithRoleService {
     public MessageResponse acceptEventInvitation(long eventId, String emailAdress){
         try {
             User user = userService.getUserByMail(emailAdress);
-            EventRole eventRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
-
             UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUser_IdAndEvent_Id(user.getId(), eventId);
+
+            EnumEventRole userRole = userInEventWithRole.getEventRole().getRole();
+
+            EventRole eventRole = new EventRole();
+
+            switch (userRole) {
+                case INVITED:
+                    eventRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
+                    break;
+                case SERIESINVITED:
+                    eventRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
+                    break;
+                case TUTORINVITED:
+                    eventRole = eventRoleService.findByRole(EnumEventRole.TUTOR);
+                    break;
+                case TUTORSERIESINVITED:
+                    eventRole = eventRoleService.findByRole(EnumEventRole.TUTOR);
+                    break;
+                case GROUPINVITED:
+                    eventRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
+                    break;
+                case GROUPSERIESINVITED:
+                    eventRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
+                    break;
+                default:
+                    eventRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
+                    break;
+            }
+
+            System.out.println(eventRole.getRole());
 
             userInEventWithRole.setEvent(eventService.getEventById(eventId));
             userInEventWithRole.setUser(userService.getUserByMail(emailAdress));
