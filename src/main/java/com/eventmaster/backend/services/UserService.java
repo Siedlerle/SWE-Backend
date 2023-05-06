@@ -212,7 +212,6 @@ public class UserService {
                     + "Token to authenticate reset: " + jwtToken + "\n"
                     + "WARNING: The token is only valid up to 15 Minutes");
             emailService.sendEmail(mailMessage);
-            //System.out.println(mailMessage.getText());
             return "reset-request sent";
         } catch (Exception e) {
             e.printStackTrace();

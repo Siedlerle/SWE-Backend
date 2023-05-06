@@ -1,6 +1,7 @@
 package com.eventmaster.backend.services;
 
 import com.eventmaster.backend.entities.*;
+import com.eventmaster.backend.repositories.UserInEventWithRoleRepository;
 import com.eventmaster.backend.repositories.UserInOrgaWithRoleRepository;
 import local.variables.LocalizedStringVariables;
 import org.aspectj.bridge.Message;
@@ -151,7 +152,6 @@ public class UserInOrgaWithRoleService {
 
             List<Event> registeredEventsInOrga = new ArrayList<>();
             for (Event check : userInEventWithRoles) {
-                System.out.println(check.getOrganisation().getId());
                 if(check.getOrganisation().getId() == organisationId){
                     registeredEventsInOrga.add(check);
                 }
@@ -283,9 +283,24 @@ public class UserInOrgaWithRoleService {
                 UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId);
                 OrgaRole orgaRole = userInOrgaWithRole.getOrgaRole();
 
+                List<Event> orgaEvents = eventService.getEventsOfOrganisation(organisationId);
+
+                List<UserInEventWithRole> userEvents = userInEventWithRoleService.getEventsForUser(user.getId());
+
+                for (Event event: orgaEvents) {
+                    for (UserInEventWithRole userEventRole:userEvents) {
+                        if(event.getId() == userEventRole.getEvent().getId()){
+                            userInEventWithRoleService.deleteUserInEventWithRole(userEventRole);
+                        }
+                    }
+                }
+
+
                 user.removeUserInOrgaWithRole(userInOrgaWithRole);
                 organisation.removeUserInOrgaWithRole(userInOrgaWithRole);
                 orgaRole.removeUserInOrgaWithRole(userInOrgaWithRole);
+
+
 
                 userInOrgaWithRoleRepository.deleteById(userInOrgaWithRole.getId());
                 return MessageResponse.builder()
@@ -324,7 +339,6 @@ public class UserInOrgaWithRoleService {
                 organisation.removeUserInOrgaWithRole(userInOrgaWithRole);
                 orgaRole.removeUserInOrgaWithRole(userInOrgaWithRole);
 
-                //System.out.println(userInOrgaWithRole.getUser().getEmailAdress() + "||" + userInOrgaWithRole.getOrganisation().getName());
                 userInOrgaWithRoleRepository.deleteById(userInOrgaWithRole.getId());
                 return MessageResponse.builder()
                         .message(LocalizedStringVariables.REMOVEDUSERFROMORGASUCCESSMESSAGE)

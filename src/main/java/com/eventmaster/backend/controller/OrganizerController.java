@@ -184,7 +184,6 @@ public class OrganizerController {
     @PostMapping("/event/{eventId}/tutor/{userMail}/invite")
     public ResponseEntity<MessageResponse> inviteTutorToEvent(@PathVariable long eventId,
                                                      @PathVariable String userMail) {
-        System.out.println(userMail);
         return ResponseEntity.ok(userInEventWithRoleService.inviteTutorToEvent(eventId, userMail));
     }
 
@@ -198,6 +197,12 @@ public class OrganizerController {
     public ResponseEntity<MessageResponse> inviteGroupToEvent(@PathVariable long eventId,
                                                      @PathVariable long groupId) {
         return ResponseEntity.ok(groupInEventService.inviteGroupToEvent(eventId, groupId));
+    }
+
+    @PostMapping("/event/{eventId}/extern/{userMail}/invite")
+    public ResponseEntity<MessageResponse> inviteExternToEvent(@PathVariable long eventId,
+                                                               @PathVariable String userMail){
+        return ResponseEntity.ok(userInEventWithRoleService.inviteExternToEvent(eventId, userMail));
     }
 
     /**
