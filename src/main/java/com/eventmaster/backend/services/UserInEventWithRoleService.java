@@ -354,6 +354,14 @@ public class UserInEventWithRoleService {
         return userInEventWithRoleRepository.findByEvent_Id(evenId);
     }
 
+    /**
+     * Retrieves all the Events of a user
+     * @param userId Id of the corresponding user
+     * @return List of userineventwithrole
+     */
+    public List<UserInEventWithRole> getEventsForUser(long userId){
+        return userInEventWithRoleRepository.findByUser_Id(userId);
+    }
 
     /**
      * Deletes a specific UserInEventWithRole
@@ -419,16 +427,6 @@ public class UserInEventWithRoleService {
             return null;
         }
     }
-
-/*
-    public List<Event> getAllEventsForUser(long userId){
-       //Todo implementieren der inneren Login
-    }
-
- */
-
-
-
     //endregion
 
     //region TutorMethods
@@ -746,7 +744,7 @@ public class UserInEventWithRoleService {
     }
 
     /**
-     * Invites a user to an event and sends an email.
+     * Invites a user to an event.
      * @param eventId ID of the event.
      * @param userMail Mail of the user who will be invited.
      * @param single Boolean if invitation is just for him or because his group was invited.
@@ -788,7 +786,12 @@ public class UserInEventWithRoleService {
         }
     }
 
-
+    /**
+     * Invites a user extern to an event and sends an email
+     * @param eventId Id of the corresponding event
+     * @param userMail EMail of the corresponding user
+     * @return success message
+     */
     public MessageResponse inviteExternToEvent(long eventId, String userMail){
         Event event = eventService.getEventById(eventId);
 
