@@ -159,7 +159,6 @@ public class UserInEventWithRoleService {
                     break;
             }
 
-            System.out.println(eventRole.getRole());
 
             userInEventWithRole.setEvent(eventService.getEventById(eventId));
             userInEventWithRole.setUser(userService.getUserByMail(emailAdress));
