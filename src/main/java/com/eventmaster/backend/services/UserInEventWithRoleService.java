@@ -320,16 +320,11 @@ public class UserInEventWithRoleService {
      * @return List of events.
      */
     public List<Event> getEventInvitationsForUser(String userMail) {
-        User user = userService.getUserByMail(userMail);
-
-        List<Event> eventInvitations = new ArrayList<>();
-
-        EventRole invitedRole = eventRoleService.findByRole(EnumEventRole.INVITED);
-        EventRole seriesInvitedRole = eventRoleService.findByRole(EnumEventRole.SERIESINVITED);
-        EventRole groupInvitedRole = eventRoleService.findByRole(EnumEventRole.GROUPINVITED);
-        EventRole groupSeriesInvitedRole = eventRoleService.findByRole(EnumEventRole.GROUPSERIESINVITED);
-
         try {
+            User user = userService.getUserByMail(userMail);
+
+            List<Event> eventInvitations = new ArrayList<>();
+
             List<UserInEventWithRole> userInEventWithRoleList = userInEventWithRoleRepository.findByUser_Id(user.getId());
             for (UserInEventWithRole userInEventWithRole : userInEventWithRoleList) {
                 Event event = userInEventWithRole.getEvent();
@@ -382,13 +377,16 @@ public class UserInEventWithRoleService {
         User user = userService.getUserByMail(userMail);
         EventRole invitedSingleRole = eventRoleService.findByRole(EnumEventRole.INVITED);
         EventRole invitedGroupRole = eventRoleService.findByRole(EnumEventRole.GROUPINVITED);
+        EventRole invitedSeriesGroupRole = eventRoleService.findByRole(EnumEventRole.GROUPSERIESINVITED);
         EventRole invitedSeriesRole = eventRoleService.findByRole(EnumEventRole.SERIESINVITED);
+        EventRole invitedTutorRole = eventRoleService.findByRole(EnumEventRole.TUTORINVITED);
+        EventRole invitedTutorSeriesRole = eventRoleService.findByRole(EnumEventRole.TUTORSERIESINVITED);
 
         try {
             if (userInEventWithRoleRepository.existsByUserAndEvent(user, event)) {
                 UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(user, event);
                 EventRole roleOfUser = userInEventWithRole.getEventRole();
-                if (roleOfUser.equals(invitedSingleRole) || roleOfUser.equals(invitedGroupRole) || roleOfUser.equals(invitedSeriesRole)) {
+                if (roleOfUser.equals(invitedSingleRole) || roleOfUser.equals(invitedGroupRole) || roleOfUser.equals(invitedSeriesRole) || roleOfUser.equals(invitedTutorRole) || roleOfUser.equals(invitedSeriesGroupRole) || roleOfUser.equals(invitedTutorSeriesRole)) {
                     return true;
                 }
             }
