@@ -874,8 +874,6 @@ public class UserInEventWithRoleService {
                     .message(LocalizedStringVariables.USERALREADYPARTOFEVENTMESSAGE)
                     .build();
         } else {
-            //TODO Einladungsmail senden
-
             UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
             userInEventWithRole.setUser(tutor);
             userInEventWithRole.setEvent(event);
@@ -1070,6 +1068,30 @@ public class UserInEventWithRoleService {
                 .build();
     }
 
+    public List<Event> getEventInvitationsForUserInOrga(long orgaId, String emailAdress) {
+        try {
+            User user = userService.getUserByMail(emailAdress);
+            List<UserInEventWithRole> userInEventWithRoleList = userInEventWithRoleRepository.findByUser_Id(user.getId());
+
+            List<Event> eventsOfOrganisation = eventService.getEventsOfOrganisation(orgaId);
+
+            List<Event> eventInvites = new ArrayList<>();
+
+            for(Event event: eventsOfOrganisation){
+                for(UserInEventWithRole userInEventWithRole: userInEventWithRoleList){
+                    if(userInEventWithRole.getEvent().getId() == event.getId()){
+                        if (isUserInvitedToEvent(event.getId(), emailAdress)) {
+                            eventInvites.add(event);
+                        }
+                    }
+                }
+            }
+            return eventInvites;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 
     //endregion
