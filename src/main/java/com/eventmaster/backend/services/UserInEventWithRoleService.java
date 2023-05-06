@@ -629,7 +629,7 @@ public class UserInEventWithRoleService {
      */
     public String createEventSeriesWithOrganizer(Event startEvent, EventSeries eventSeries, String userMail, long orgaId, MultipartFile image) throws IOException {
         Organisation organisation = organisationService.getOrganisationById(orgaId);
-
+        eventSeries.setOrganisation(organisation);
 
         eventSeriesService.saveEventSeries(eventSeries);
 

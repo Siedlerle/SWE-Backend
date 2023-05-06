@@ -20,6 +20,10 @@ public class EventSeries {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @ManyToOne
+    @JoinColumn(name = "organisationId",referencedColumnName = "id")
+    private Organisation organisation;
+
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "eventSeries", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -60,5 +64,13 @@ public class EventSeries {
 
     public void setAmount(int amount) {
         this.amount = amount;
+    }
+
+    public Organisation getOrganisation() {
+        return organisation;
+    }
+
+    public void setOrganisation(Organisation organisation) {
+        this.organisation = organisation;
     }
 }

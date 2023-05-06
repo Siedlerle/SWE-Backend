@@ -43,6 +43,11 @@ public class Organisation {
     @OneToMany(mappedBy = "organisation",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Preset> presets = new HashSet<>();
 
+    @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToMany(mappedBy = "organisation",cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<EventSeries> eventSeries = new HashSet<>();
+
     private String name;
 
     private String location;
@@ -117,5 +122,13 @@ public class Organisation {
 
     public Set<Event> getEvents() {
         return events;
+    }
+
+    public Set<EventSeries> getEventSeries() {
+        return eventSeries;
+    }
+
+    public void setEventSeries(Set<EventSeries> eventSeries) {
+        this.eventSeries = eventSeries;
     }
 }
