@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -42,32 +44,39 @@ public class User implements UserDetails {
     //private Role role;
 
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Token> tokens;
 
     //---------------------------------------------------------------------------
 
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<UserInEventWithRole> userInEventWithRoles = new HashSet<>();
 
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<QuestionAnsweredByUser> questionAnsweredByUserSet = new HashSet<>();
 
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<UserInGroup> userInGroupSet = new HashSet<>();
 
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.EAGER)
     private Set<UserInOrgaWithRole> userInOrgaWithRoleSet = new HashSet<>();
 
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Chat> chats = new HashSet<>();
 
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Comment> comments = new HashSet<>();
 

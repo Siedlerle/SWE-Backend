@@ -108,7 +108,7 @@ public class SystemAdminController {
      * @param password Password of the System-Admin to authorize him.
      * @return success message
      */
-    @PostMapping("/admin/add/{organisationId}/{userId}/{password}")
+    @PostMapping("/admin/add/{organisationId}/{emailAdress}/{password}")
     public ResponseEntity<String> addAdminToOrganisation(@PathVariable long organisationId,
                                                          @PathVariable String emailAdress,
                                                          @PathVariable String password) {

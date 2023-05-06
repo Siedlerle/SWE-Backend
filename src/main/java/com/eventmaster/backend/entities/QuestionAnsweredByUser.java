@@ -13,11 +13,11 @@ public class QuestionAnsweredByUser {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @ManyToOne(cascade=CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "questionId",referencedColumnName = "id")
     private Question question;
 
-    @ManyToOne(cascade=CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "userId",referencedColumnName = "id")
     private User user;
     //---------------------------------------------------------------------------

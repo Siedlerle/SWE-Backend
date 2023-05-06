@@ -553,10 +553,10 @@ public class UserInOrgaWithRoleService {
         adminInOrga.setUser(userService.getUserByMail(adminEmail));
         try {
             userInOrgaWithRoleRepository.save(adminInOrga);
-            return LocalizedStringVariables.ORGACREATEDSUCCESSMESSAGE;
+            return LocalizedStringVariables.SETPERSONADMININORGASUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();
-            return LocalizedStringVariables.ORGACREATEDFAILUREMESSAGE;
+            return LocalizedStringVariables.SETPERSONADMININORGAFAILUREMESSAGE;
         }
     }
 }

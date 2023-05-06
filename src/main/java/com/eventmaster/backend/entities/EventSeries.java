@@ -2,6 +2,8 @@ package com.eventmaster.backend.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.sql.Date;
 import java.util.HashSet;
@@ -19,6 +21,7 @@ public class EventSeries {
     private long id;
 
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "eventSeries", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Event> events = new HashSet<>();
 

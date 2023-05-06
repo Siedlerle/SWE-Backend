@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -24,16 +25,19 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final UserInEventWithRoleService userInEventWithRoleService;
+    private final DocumentService documentService;
     private final EmailService emailService;
 
     private final SimpleMailMessage mailMessage = new SimpleMailMessage();
 
 
     public EventService(EventRepository eventRepository,
-                        EmailService emailService,
-                        @Lazy UserInEventWithRoleService userInEventWithRoleService) {
+                        @Lazy UserInEventWithRoleService userInEventWithRoleService,
+                        DocumentService documentService,
+                        EmailService emailService){
         this.eventRepository = eventRepository;
         this.userInEventWithRoleService = userInEventWithRoleService;
+        this.documentService = documentService;
         this.emailService = emailService;
     }
 
@@ -97,7 +101,7 @@ public class EventService {
                 if (oldfile.exists()) {
                     oldfile.delete();
                 }
-                String imageUrl = userInEventWithRoleService.saveEventImage(updatedEvent.getId(), image);
+                String imageUrl = documentService.saveEventImage(updatedEvent.getId(), image);
                 updatedEvent.setImage(imageUrl);
                 this.eventRepository.save(updatedEvent);
             }
@@ -113,7 +117,6 @@ public class EventService {
                     .build();
         }
     }
-
     /**
      * Changing the status of an event.
      * @param eventId ID of the event from which the status will be changed.
