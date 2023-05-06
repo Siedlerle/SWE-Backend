@@ -33,7 +33,7 @@ public class EventService {
 
     public EventService(EventRepository eventRepository,
                         @Lazy UserInEventWithRoleService userInEventWithRoleService,
-                        DocumentService documentService) {
+                        DocumentService documentService,
                         EmailService emailService){
         this.eventRepository = eventRepository;
         this.userInEventWithRoleService = userInEventWithRoleService;
