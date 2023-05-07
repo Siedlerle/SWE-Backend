@@ -283,6 +283,13 @@ public class UserInOrgaWithRoleService {
             User user = userService.getUserByMail(emailAdress);
             UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), orgaId);
             if(userInOrgaWithRole.getOrgaRole().getRole().equals(EnumOrgaRole.REQUESTED)){
+
+                user.removeUserInOrgaWithRole(userInOrgaWithRole);
+                Organisation organisation = userInOrgaWithRole.getOrganisation();
+                organisation.removeUserInOrgaWithRole(userInOrgaWithRole);
+                OrgaRole role = userInOrgaWithRole.getOrgaRole();
+                role.removeUserInOrgaWithRole(userInOrgaWithRole);
+
                 userInOrgaWithRoleRepository.delete(userInOrgaWithRole);
                 return MessageResponse.builder().message(LocalizedStringVariables.ACCEPTUSERJOINREQUESTSUCCESS).build();
             }
