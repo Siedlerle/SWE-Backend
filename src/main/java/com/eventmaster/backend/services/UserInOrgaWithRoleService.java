@@ -291,13 +291,13 @@ public class UserInOrgaWithRoleService {
                 role.removeUserInOrgaWithRole(userInOrgaWithRole);
 
                 userInOrgaWithRoleRepository.delete(userInOrgaWithRole);
-                return MessageResponse.builder().message(LocalizedStringVariables.ACCEPTUSERJOINREQUESTSUCCESS).build();
+                return MessageResponse.builder().message(LocalizedStringVariables.DECLINEUSERJOINREQUESTSUCCESS).build();
             }
         }catch (Exception e){
             e.printStackTrace();
-            return MessageResponse.builder().message(LocalizedStringVariables.ACCEPTUSERJOINREQUESTFAILURE).build();
+            return MessageResponse.builder().message(LocalizedStringVariables.DECLINEUSERJOINREQUESTFAILURE).build();
         }
-        return MessageResponse.builder().message(LocalizedStringVariables.ACCEPTUSERJOINREQUESTFAILURE).build();
+        return MessageResponse.builder().message(LocalizedStringVariables.DECLINEUSERJOINREQUESTFAILURE).build();
     }
 
 
