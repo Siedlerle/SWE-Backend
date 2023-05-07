@@ -57,7 +57,7 @@ public class EventService {
      */
     public List<Event> getEventsOfOrganisation(long orgaId){
         List<Event> events = eventRepository.findByOrganisationId(orgaId);
-        events.sort(Comparator.comparing(Event::getStartDate).reversed());
+        events.sort(Comparator.comparing(Event::getStartDate));
         return events;
     }
 
