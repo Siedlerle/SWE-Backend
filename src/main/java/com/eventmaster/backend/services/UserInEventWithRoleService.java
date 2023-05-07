@@ -69,12 +69,17 @@ public class UserInEventWithRoleService {
      * @return success message
      */
     public MessageResponse registerForEvent(long eventId, String emailAddress){
+
         User user = userService.getUserByMail(emailAddress);
         Event event = eventService.getEventById(eventId);
+
         if(userInEventWithRoleRepository.existsByUserAndEvent(user, event)) {
+
             UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(user, event);
+
             EventRole attendeeRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
             EventRole groupAttendeeRole = eventRoleService.findByRole(EnumEventRole.GROUPATTENDEE);
+
             if (userInEventWithRole.getEventRole().equals(attendeeRole) || userInEventWithRole.getEventRole().equals(groupAttendeeRole)) {
                 return MessageResponse.builder()
                         .message(LocalizedStringVariables.USERALREADYATTENDTINGTOEVENT)
@@ -88,13 +93,28 @@ public class UserInEventWithRoleService {
         } else {
             try {
 
+                long orgaId = event.getOrganisation().getId();
                 EventRole eventRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
 
-                UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
-                userInEventWithRole.setEvent(eventService.getEventById(eventId));
-                userInEventWithRole.setUser(userService.getUserByMail(emailAddress));
-                userInEventWithRole.setEventRole(eventRole);
-                userInEventWithRoleRepository.save(userInEventWithRole);
+                List<Event> eventsInOrga = eventService.getEventsOfOrganisation(orgaId);
+
+                if(event.getEventSeries().getId() == event.getEventSeries().getId()){
+                    for (Event userInEvent: eventsInOrga) {
+                        if(userInEvent.getName().equals(event.getName())){
+                            UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
+                            userInEventWithRole.setEvent(eventService.getEventById(userInEvent.getId()));
+                            userInEventWithRole.setUser(userService.getUserByMail(emailAddress));
+                            userInEventWithRole.setEventRole(eventRole);
+                            userInEventWithRoleRepository.save(userInEventWithRole);
+                        }
+                    }
+                }else{
+                    UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
+                    userInEventWithRole.setEvent(eventService.getEventById(eventId));
+                    userInEventWithRole.setUser(userService.getUserByMail(emailAddress));
+                    userInEventWithRole.setEventRole(eventRole);
+                    userInEventWithRoleRepository.save(userInEventWithRole);
+                }
 
                 mailMessage.setFrom("ftb-solutions@outlook.de");
                 mailMessage.setTo(user.getEmailAdress());
@@ -321,7 +341,7 @@ public class UserInEventWithRoleService {
             mailMessage.setSubject("Absage von Event - "+event.getName());
             mailMessage.setText("Hallo " + organizer.getFirstname() + ","
                     + "\nder Benutzer " + user.getFirstname() +" hat sich"
-                    +"\nvon dem Event "+event.getName()+"abgemeldet."
+                    +"\nvon dem Event "+event.getName()+" abgemeldet."
                     +"\n"+reasonInMail);
             //emailService.sendEmail(mailMessage);
             System.out.println(mailMessage.getText());
