@@ -284,13 +284,13 @@ public class UserInOrgaWithRoleService {
             UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), orgaId);
             if(userInOrgaWithRole.getOrgaRole().getRole().equals(EnumOrgaRole.REQUESTED)){
                 userInOrgaWithRoleRepository.delete(userInOrgaWithRole);
-                return MessageResponse.builder().message(LocalizedStringVariables.ACCEPTUSERJOINREQUESTSUCCESS).build();
+                return MessageResponse.builder().message(LocalizedStringVariables.DECLINEUSERJOINREQUESTSUCCESS).build();
             }
         }catch (Exception e){
             e.printStackTrace();
-            return MessageResponse.builder().message(LocalizedStringVariables.ACCEPTUSERJOINREQUESTFAILURE).build();
+            return MessageResponse.builder().message(LocalizedStringVariables.DECLINEUSERJOINREQUESTFAILURE).build();
         }
-        return MessageResponse.builder().message(LocalizedStringVariables.ACCEPTUSERJOINREQUESTFAILURE).build();
+        return MessageResponse.builder().message(LocalizedStringVariables.DECLINEUSERJOINREQUESTFAILURE).build();
     }
 
 

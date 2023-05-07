@@ -24,7 +24,8 @@ public final class LocalizedStringVariables {
         //ADMIN
         public static final String ACCEPTUSERJOINREQUESTSUCCESS = "Anfrage wurde erfolgreich angenommen";
         public static final String ACCEPTUSERJOINREQUESTFAILURE = "Anfrage konnte nicht angenommen werden";
-        public static final String ACCEPTUSERJOINREQUEST = "Anfrage konnte nicht abgelehnt werden";
+        public static final String DECLINEUSERJOINREQUESTSUCCESS = "Anfrage wurde erfolgreich abgelehnt";
+        public static final String DECLINEUSERJOINREQUESTFAILURE = "Anfrage konnte nicht abgelehnt werden";
 
 
 
