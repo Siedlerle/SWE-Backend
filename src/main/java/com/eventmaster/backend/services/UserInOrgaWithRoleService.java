@@ -7,8 +7,9 @@ import local.variables.LocalizedStringVariables;
 import org.aspectj.bridge.Message;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
 
 /**
  * A class which receives and processes the requests of multiple controllers concerning the management of the connection between users and organisations witch specific roles.
@@ -101,9 +102,39 @@ public class UserInOrgaWithRoleService {
      */
     public List<Event> getAllVisibleEventsOfOrganisationForUser(long organisationId, String userMail){
         List<Event> organisationEvents = eventService.getEventsOfOrganisation(organisationId);
+
+        Map<Long, Event> nextEventInSeries = new HashMap<>();
+        Set<Event> nonSeriesEvents = new HashSet<>();
+        for (Event event : organisationEvents) {
+
+            if (event.getEventSeries() != null) {
+                long seriesId = event.getEventSeries().getId();
+                Event nextEvent = nextEventInSeries.get(seriesId);
+                if ((nextEvent == null
+                        || event.getStartDate().toLocalDate().isBefore(nextEvent.getStartDate().toLocalDate()))
+                        && event.getStartDate().toLocalDate().isAfter(LocalDate.now())) {
+                    nextEventInSeries.put(seriesId, event);
+                }
+            } else {
+                if (event.getStartDate().toLocalDate().isEqual(LocalDate.now())
+                        || event.getStartDate().toLocalDate().isAfter(LocalDate.now())) {
+                    nonSeriesEvents.add(event);
+                }
+            }
+        }
+
+
+        List<Event> filteredEvents = new ArrayList<>(nextEventInSeries.values());
+        for (Event event : nonSeriesEvents) {
+            filteredEvents.add(event);
+        }
+
+        filteredEvents.sort(Comparator.comparing(Event::getStartDate));
+
         List<Event> visibleEventsForUser = new ArrayList<>();
+
         try {
-            for (Event organisationEvent : organisationEvents) {
+            for (Event organisationEvent : filteredEvents) {
                 if (organisationEvent.getIsPublic()) {
                     if (!userInEventWithRoleService.isUserRegisteredToEvent(organisationEvent.getId(), userMail)) {
                         visibleEventsForUser.add(organisationEvent);
@@ -156,7 +187,7 @@ public class UserInOrgaWithRoleService {
                     registeredEventsInOrga.add(check);
                 }
             }
-
+            registeredEventsInOrga.sort(Comparator.comparing(Event::getStartDate));
             return registeredEventsInOrga;
         }catch (Exception e) {
             e.printStackTrace();
@@ -175,7 +206,7 @@ public class UserInOrgaWithRoleService {
         try {
             User user = userService.getUserByMail(userMail);
             Organisation organisation = organisationService.getOrganisationById(organisationId);
-            OrgaRole requestRole = orgaRoleService.findByRole(EnumOrgaRole.USER);//@TODO Lösung finden, ob Organisator anfrage annehmen muss oder direkt beigetreten wird, public boolean für Orgas
+            OrgaRole requestRole = orgaRoleService.findByRole(EnumOrgaRole.REQUESTED);//@TODO Lösung finden, ob Organisator anfrage annehmen muss oder direkt beigetreten wird, public boolean für Orgas
 
             if(userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId) == null){
                 UserInOrgaWithRole userInOrgaWithRole = new UserInOrgaWithRole();
@@ -197,6 +228,69 @@ public class UserInOrgaWithRoleService {
                     .message(LocalizedStringVariables.REQUESTORGAJOINFAILUREMESSAGE)
                     .build();
         }
+    }
+
+    public List<User> getRequestingUsers(long orgaId){
+
+        try {
+            List<UserInOrgaWithRole> userInOrgaWithRoles = userInOrgaWithRoleRepository.findByOrganisation_Id(orgaId);
+
+            List<User> users = new ArrayList<>();
+
+            for (UserInOrgaWithRole user: userInOrgaWithRoles) {
+                if(user.getOrgaRole().getRole().equals(EnumOrgaRole.REQUESTED)){
+                    users.add(user.getUser());
+                }
+            }
+            return users;
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * The admin can accept a request to join his organisation
+     * @param orgaId Id of the corresponding organisation
+     * @param emailAdress Email of the corresponding user
+     * @return success message
+     */
+    public MessageResponse acceptJoinRequest(long orgaId, String emailAdress){
+        try {
+            User user = userService.getUserByMail(emailAdress);
+            UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), orgaId);
+            OrgaRole accept = orgaRoleService.findByRole(EnumOrgaRole.USER);
+            if(userInOrgaWithRole.getOrgaRole().getRole().equals(EnumOrgaRole.REQUESTED)){
+                userInOrgaWithRole.setOrgaRole(accept);
+                userInOrgaWithRoleRepository.save(userInOrgaWithRole);
+                return MessageResponse.builder().message(LocalizedStringVariables.ACCEPTUSERJOINREQUESTSUCCESS).build();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return MessageResponse.builder().message(LocalizedStringVariables.ACCEPTUSERJOINREQUESTFAILURE).build();
+        }
+        return MessageResponse.builder().message(LocalizedStringVariables.ACCEPTUSERJOINREQUESTFAILURE).build();
+    }
+
+    /**
+     * The admin can decline a request to join his organisation
+     * @param orgaId Id of the corresponding organisation
+     * @param emailAdress Email of the corresponding user
+     * @return success message
+     */
+    public MessageResponse declineJoinRequest(long orgaId, String emailAdress){
+        try {
+            User user = userService.getUserByMail(emailAdress);
+            UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), orgaId);
+            if(userInOrgaWithRole.getOrgaRole().getRole().equals(EnumOrgaRole.REQUESTED)){
+                userInOrgaWithRoleRepository.delete(userInOrgaWithRole);
+                return MessageResponse.builder().message(LocalizedStringVariables.DECLINEUSERJOINREQUESTSUCCESS).build();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return MessageResponse.builder().message(LocalizedStringVariables.DECLINEUSERJOINREQUESTFAILURE).build();
+        }
+        return MessageResponse.builder().message(LocalizedStringVariables.DECLINEUSERJOINREQUESTFAILURE).build();
     }
 
 
@@ -328,6 +422,7 @@ public class UserInOrgaWithRoleService {
      */
     public MessageResponse removeUserFromOrganisation(long organisationId, String userMail) {
         try {
+
             User user = userService.getUserByMail(userMail);
             Organisation organisation = organisationService.getOrganisationById(organisationId);
 
@@ -335,9 +430,24 @@ public class UserInOrgaWithRoleService {
                 UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId);
                 OrgaRole orgaRole = userInOrgaWithRole.getOrgaRole();
 
+                List<Event> orgaEvents = eventService.getEventsOfOrganisation(organisationId);
+
+                List<UserInEventWithRole> userEvents = userInEventWithRoleService.getEventsForUser(user.getId());
+
+                for (Event event: orgaEvents) {
+                    for (UserInEventWithRole userEventRole:userEvents) {
+                        if(event.getId() == userEventRole.getEvent().getId()){
+                            userInEventWithRoleService.deleteUserInEventWithRole(userEventRole);
+                        }
+                    }
+                }
+
+
                 user.removeUserInOrgaWithRole(userInOrgaWithRole);
                 organisation.removeUserInOrgaWithRole(userInOrgaWithRole);
                 orgaRole.removeUserInOrgaWithRole(userInOrgaWithRole);
+
+
 
                 userInOrgaWithRoleRepository.deleteById(userInOrgaWithRole.getId());
                 return MessageResponse.builder()

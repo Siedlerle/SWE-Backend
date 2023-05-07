@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -55,7 +56,9 @@ public class EventService {
      * @return List of events
      */
     public List<Event> getEventsOfOrganisation(long orgaId){
-        return eventRepository.findByOrganisationId(orgaId);
+        List<Event> events = eventRepository.findByOrganisationId(orgaId);
+        events.sort(Comparator.comparing(Event::getStartDate));
+        return events;
     }
 
 

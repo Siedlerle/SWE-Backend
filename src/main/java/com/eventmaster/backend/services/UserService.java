@@ -94,12 +94,12 @@ public class UserService {
 
         mailMessage.setFrom("ftb-solutions@outlook.de");
         mailMessage.setTo(user.getEmailAdress());
-        mailMessage.setSubject("Complete Registration!");
-        mailMessage.setText("Hello " + user.getFirstname() + "," +
-                "\nto confirm your account, please click here : \n"
+        mailMessage.setSubject("Schließe deine Registrierung ab!");
+        mailMessage.setText("Hallo " + user.getFirstname() + "," +
+                "\num deinen Account zu verifizieren, klicke hier : \n"
                 + "http://localhost:4200/login?authToken=" + jwtToken + "\n"
                 //+ "http://ftb-eventmaster.de/login?authToken=" + jwtToken + "\n"
-                + "WARNING: The token is only valid up to 15 Minutes");
+                + "ACHTUNG: Der Token zur verifizierung ist nur 15 Minuten gültig.");
         //emailService.sendEmail(mailMessage);
         System.out.println(mailMessage.getText());
 

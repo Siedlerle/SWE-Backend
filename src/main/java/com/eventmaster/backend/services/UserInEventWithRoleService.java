@@ -12,6 +12,7 @@ import org.w3c.dom.events.EventTarget;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -69,12 +70,17 @@ public class UserInEventWithRoleService {
      * @return success message
      */
     public MessageResponse registerForEvent(long eventId, String emailAddress){
+
         User user = userService.getUserByMail(emailAddress);
         Event event = eventService.getEventById(eventId);
+
         if(userInEventWithRoleRepository.existsByUserAndEvent(user, event)) {
+
             UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(user, event);
+
             EventRole attendeeRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
             EventRole groupAttendeeRole = eventRoleService.findByRole(EnumEventRole.GROUPATTENDEE);
+
             if (userInEventWithRole.getEventRole().equals(attendeeRole) || userInEventWithRole.getEventRole().equals(groupAttendeeRole)) {
                 return MessageResponse.builder()
                         .message(LocalizedStringVariables.USERALREADYATTENDTINGTOEVENT)
@@ -88,13 +94,30 @@ public class UserInEventWithRoleService {
         } else {
             try {
 
+                long orgaId = event.getOrganisation().getId();
                 EventRole eventRole = eventRoleService.findByRole(EnumEventRole.ATTENDEE);
 
-                UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
-                userInEventWithRole.setEvent(eventService.getEventById(eventId));
-                userInEventWithRole.setUser(userService.getUserByMail(emailAddress));
-                userInEventWithRole.setEventRole(eventRole);
-                userInEventWithRoleRepository.save(userInEventWithRole);
+                List<Event> eventsInOrga = eventService.getEventsOfOrganisation(orgaId);
+
+                if(event.getEventSeries() != null){
+                    if(event.getEventSeries().getId() == event.getEventSeries().getId()){
+                        for (Event userInEvent: eventsInOrga) {
+                            if(userInEvent.getName().equals(event.getName())){
+                                UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
+                                userInEventWithRole.setEvent(eventService.getEventById(userInEvent.getId()));
+                                userInEventWithRole.setUser(userService.getUserByMail(emailAddress));
+                                userInEventWithRole.setEventRole(eventRole);
+                                userInEventWithRoleRepository.save(userInEventWithRole);
+                            }
+                        }
+                    }
+                }else{
+                    UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
+                    userInEventWithRole.setEvent(eventService.getEventById(eventId));
+                    userInEventWithRole.setUser(userService.getUserByMail(emailAddress));
+                    userInEventWithRole.setEventRole(eventRole);
+                    userInEventWithRoleRepository.save(userInEventWithRole);
+                }
 
                 mailMessage.setFrom("ftb-solutions@outlook.de");
                 mailMessage.setTo(user.getEmailAdress());
@@ -129,11 +152,14 @@ public class UserInEventWithRoleService {
     public MessageResponse acceptEventInvitation(long eventId, String emailAdress){
         try {
             User user = userService.getUserByMail(emailAdress);
+
+            Event event = eventService.getEventById(eventId);
+
             UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUser_IdAndEvent_Id(user.getId(), eventId);
 
             EnumEventRole userRole = userInEventWithRole.getEventRole().getRole();
 
-            EventRole eventRole = new EventRole();
+            EventRole eventRole;
 
             switch (userRole) {
                 case INVITED:
@@ -159,12 +185,29 @@ public class UserInEventWithRoleService {
                     break;
             }
 
-            System.out.println(eventRole.getRole());
 
-            userInEventWithRole.setEvent(eventService.getEventById(eventId));
-            userInEventWithRole.setUser(userService.getUserByMail(emailAdress));
-            userInEventWithRole.setEventRole(eventRole);
-            userInEventWithRoleRepository.save(userInEventWithRole);
+            if(event.getEventSeries() != null){
+                EventSeries series = event.getEventSeries();
+                Set<Event> seriesEvents = series.getEvents();
+                for (Event seriesEvent : seriesEvents) {
+                    if (userInEventWithRoleRepository.existsByUser_IdAndEvent_Id(user.getId(), seriesEvent.getId())) {
+                        UserInEventWithRole uer = userInEventWithRoleRepository.findByUser_IdAndEvent_Id(user.getId(), seriesEvent.getId());
+                        uer.setEventRole(eventRole);
+                        userInEventWithRoleRepository.save(uer);
+                    } else {
+                        UserInEventWithRole uer = new UserInEventWithRole();
+                        uer.setUser(user);
+                        uer.setEvent(seriesEvent);
+                        uer.setEventRole(eventRole);
+                        userInEventWithRoleRepository.save(uer);
+                    }
+                }
+            }else{
+                userInEventWithRole.setEvent(event);
+                userInEventWithRole.setUser(user);
+                userInEventWithRole.setEventRole(eventRole);
+                userInEventWithRoleRepository.save(userInEventWithRole);
+            }
 
             return MessageResponse.builder()
                     .message(LocalizedStringVariables.EVENTINVITATIONACCEPTEDSUCCESSMESSAGE)
@@ -253,13 +296,43 @@ public class UserInEventWithRoleService {
                 .map(UserInEventWithRole::getEvent)
                 .toList();
         List<Organisation> organisation = userInOrgaWithRoleService.getOrgasForUser(user.getEmailAdress());
-        return organisation
+        List<Event> allEvents = organisation
                 .stream()
                 .map(orga->eventService.getEventsOfOrganisation(orga.getId()))
                 .flatMap(List::stream)
                 .filter(Event::getIsPublic)
                 .filter(event->!userEvents.contains(event))
                 .toList();
+
+        Map<Long, Event> nextEventInSeries = new HashMap<>();
+        Set<Event> nonSeriesEvents = new HashSet<>();
+        for (Event event : allEvents) {
+
+            if (event.getEventSeries() != null) {
+                long seriesId = event.getEventSeries().getId();
+                Event nextEvent = nextEventInSeries.get(seriesId);
+                if ((nextEvent == null
+                        || event.getStartDate().toLocalDate().isBefore(nextEvent.getStartDate().toLocalDate()))
+                        && event.getStartDate().toLocalDate().isAfter(LocalDate.now())) {
+                    nextEventInSeries.put(seriesId, event);
+                }
+            } else {
+                if (event.getStartDate().toLocalDate().isEqual(LocalDate.now())
+                        || event.getStartDate().toLocalDate().isAfter(LocalDate.now())) {
+                    nonSeriesEvents.add(event);
+                }
+            }
+        }
+
+
+        List<Event> filteredEvents = new ArrayList<>(nextEventInSeries.values());
+        for (Event event : nonSeriesEvents) {
+            filteredEvents.add(event);
+        }
+
+        filteredEvents.sort(Comparator.comparing(Event::getStartDate));
+
+        return filteredEvents;
     }
 
 
@@ -283,7 +356,7 @@ public class UserInEventWithRoleService {
                     }
                 }
             }
-
+            userEvents.sort(Comparator.comparing(Event::getStartDate));
 
             return userEvents;
         }catch (Exception e) {
@@ -308,7 +381,7 @@ public class UserInEventWithRoleService {
 
             List<UserInEventWithRole> users = userInEventWithRoleRepository.findByEvent_Id(eventId);
             for (UserInEventWithRole userInEvent :users) {
-                if(userInEvent.getEventRole().equals(EnumEventRole.ORGANIZER)){
+                if(userInEvent.getEventRole().getRole().equals(EnumEventRole.ORGANIZER)){
                     organizer = userInEvent.getUser();
                 }
             }
@@ -317,12 +390,13 @@ public class UserInEventWithRoleService {
                 reasonInMail = "Der Grund für die Absage war:\n"+reason;
             }
 
+
             mailMessage.setFrom("ftb-solutions@outlook.de");
             mailMessage.setTo(organizer.getEmailAdress());
             mailMessage.setSubject("Absage von Event - "+event.getName());
             mailMessage.setText("Hallo " + organizer.getFirstname() + ","
                     + "\nder Benutzer " + user.getFirstname() +" hat sich"
-                    +"\nvon dem Event "+event.getName()+"abgemeldet."
+                    +"\nvon dem Event "+event.getName()+" abgemeldet."
                     +"\n"+reasonInMail);
             //emailService.sendEmail(mailMessage);
             System.out.println(mailMessage.getText());
@@ -581,6 +655,7 @@ public class UserInEventWithRoleService {
                     }
                 }
             }
+            managingEvents.sort(Comparator.comparing(Event::getStartDate));
             return managingEvents;
         } catch (Exception e) {
             e.printStackTrace();
@@ -675,6 +750,7 @@ public class UserInEventWithRoleService {
             event.setStartTime(startEvent.getStartTime());
             event.setEndDate(newEndDate);
             event.setEndTime(startEvent.getEndTime());
+            event.setIsPublic(startEvent.getIsPublic());
 
             event.setOrganisation(organisation);
             event.setEventSeries(eventSeries);
