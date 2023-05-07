@@ -109,7 +109,7 @@ public class AdminController {
      * @param emailAdress EMail of the corresponding user
      * @return success message
      */
-    @PostMapping("/orga/{orgaId}/user/{emailAdress}/accept")
+    @PostMapping("/orga/{orgaId}/user/{emailAdress}/decline")
     public ResponseEntity<MessageResponse> declineJoinRequest(@PathVariable long orgaId,
                                                               @PathVariable String emailAdress){
         return ResponseEntity.ok(userInOrgaWithRoleService.declineJoinRequest(orgaId, emailAdress));
