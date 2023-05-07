@@ -97,11 +97,11 @@ public class UserService {
         mailMessage.setSubject("Schließe deine Registrierung ab!");
         mailMessage.setText("Hallo " + user.getFirstname() + "," +
                 "\num deinen Account zu verifizieren, klicke hier : \n"
-                + "http://localhost:4200/login?authToken=" + jwtToken + "\n"
-                //+ "http://ftb-eventmaster.de/login?authToken=" + jwtToken + "\n"
+                //+ "http://localhost:4200/login?authToken=" + jwtToken + "\n"
+                + "http://ftb-eventmaster.de/login?authToken=" + jwtToken + "\n"
                 + "ACHTUNG: Der Token zur verifizierung ist nur 15 Minuten gültig.");
-        //emailService.sendEmail(mailMessage);
-        System.out.println(mailMessage.getText());
+        emailService.sendEmail(mailMessage);
+        //System.out.println(mailMessage.getText());
 
         return MessageResponse.builder()
                 .message("Sie wurden erfolgreich registriert.\nBitte prüfen Sie ihre Mails.")
@@ -186,7 +186,6 @@ public class UserService {
         tokenService.saveToken(token);
     }
 
-    //Todo Link für Änderungsfeld anpassen
 
     /**
      * Sends a mail to user to verify password reset request

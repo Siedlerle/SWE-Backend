@@ -184,17 +184,6 @@ public class EventService {
         }
     }
 
-    /**
-     * An event corresponding to the eventId is being searched to return its participants
-     * @param eventId ID of the event which will be updated.
-     * @return List of participants
-     */
-    public List<User> getParticipants(Long eventId){
-        //Todo Implemetieren, dass entsprechende User gefunden werden und zurückgegeben werden
-        List<User> participants = null;
-        return participants;
-    }
-
 
     /**
      * Sets the status of the event to cancelled and sends the attendees and invitees a mail.
@@ -219,8 +208,8 @@ public class EventService {
                                 +"\nwelches am "+event.getStartDate()+" stattfinden sollte,"
                                 +"\nwurde abgesagt. Grund hierfür ist:"
                                 +"\n"+reason);
-                //emailService.sendEmail(mailMessage);
-                System.out.println(mailMessage.getText());
+                emailService.sendEmail(mailMessage);
+                //System.out.println(mailMessage.getText());
             }
 
             return MessageResponse.builder()

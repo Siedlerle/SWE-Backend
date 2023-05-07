@@ -129,8 +129,8 @@ public class UserInEventWithRoleService {
                         +"\nBegin: "+event.getStartDate()
                         +"\nBeschreibung: "+event.getDescription()
                         );
-                //emailService.sendEmail(mailMessage);
-                System.out.println(mailMessage);
+                emailService.sendEmail(mailMessage);
+                //System.out.println(mailMessage);
                 return MessageResponse.builder()
                         .message(LocalizedStringVariables.USERREGISTERESFOREVENTSUCCESSMESSAGE)
                         .build();
@@ -398,8 +398,8 @@ public class UserInEventWithRoleService {
                     + "\nder Benutzer " + user.getFirstname() +" hat sich"
                     +"\nvon dem Event "+event.getName()+" abgemeldet."
                     +"\n"+reasonInMail);
-            //emailService.sendEmail(mailMessage);
-            System.out.println(mailMessage.getText());
+            emailService.sendEmail(mailMessage);
+            //System.out.println(mailMessage.getText());
 
             UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(user, event);
             userInEventWithRoleRepository.delete(userInEventWithRole);
@@ -549,7 +549,6 @@ public class UserInEventWithRoleService {
                     User attendee = user.getUser();
                     attendees.add(attendee);
                 }
-                //TODO: Gruppenhandhabung hinzufügen
             }
             return attendees;
         } catch (Exception e) {
@@ -990,7 +989,7 @@ public class UserInEventWithRoleService {
 
             try {
                 userInEventWithRoleRepository.save(userInEventWithRole);
-                //TODO Einladungsmail senden mit Anmerkung zu Series
+
                 return LocalizedStringVariables.INVITEUSERTOFIRSTEVENTOFSERIESSUCCESSMESSAGE;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -1056,12 +1055,12 @@ public class UserInEventWithRoleService {
                 if (userInEventWithRoleRepository.existsByUserAndEvent(user, event)) {
                     UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(user, event);
                     if (userInEventWithRole.getEventRole().equals(groupAttending)) {
-                        //TODO reason senden weil als gruppenmitglied teilnehmer
+
                         userInEventWithRoleRepository.delete(userInEventWithRole);
                     } else if (userInEventWithRole.getEventRole().equals(groupInvited)) {
-                        //TODO reason senden weil als gruppenmitglied eingeladen worden
+
                     } else if (userInEventWithRole.getEventRole().equals(groupSeriesInvited)) {
-                        //TODO reason senden weil als gruppenmitgied zu serie eingeladen worden
+
                     }
                     userInEventWithRoleRepository.delete(userInEventWithRole);
                 }

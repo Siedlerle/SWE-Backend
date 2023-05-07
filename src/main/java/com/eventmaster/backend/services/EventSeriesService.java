@@ -293,7 +293,6 @@ public class EventSeriesService {
                 }
             }
             saveEventSeries(eventSeries);
-            //TODO Benachrichtigungsmail senden
             return LocalizedStringVariables.EVENTSERIESCANCELLEDSUCCESSMESSAGE;
         } catch (Exception e) {
             e.printStackTrace();

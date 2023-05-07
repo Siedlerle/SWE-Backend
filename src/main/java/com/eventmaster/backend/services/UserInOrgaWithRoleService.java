@@ -206,7 +206,7 @@ public class UserInOrgaWithRoleService {
         try {
             User user = userService.getUserByMail(userMail);
             Organisation organisation = organisationService.getOrganisationById(organisationId);
-            OrgaRole requestRole = orgaRoleService.findByRole(EnumOrgaRole.REQUESTED);//@TODO Lösung finden, ob Organisator anfrage annehmen muss oder direkt beigetreten wird, public boolean für Orgas
+            OrgaRole requestRole = orgaRoleService.findByRole(EnumOrgaRole.REQUESTED);
 
             if(userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId) == null){
                 UserInOrgaWithRole userInOrgaWithRole = new UserInOrgaWithRole();
@@ -374,7 +374,6 @@ public class UserInOrgaWithRoleService {
      * @param userMail Mail of the user who will leave the organisatione.
      * @return String about success or failure.
      */
-    //Todo reason per mail an den admin o.ä. der Organisation
     public MessageResponse leaveOrganisation(long organisationId, String userMail){
         try {
             User user = userService.getUserByMail(userMail);
@@ -564,7 +563,6 @@ public class UserInOrgaWithRoleService {
                     .message(LocalizedStringVariables.INVITEDUSERALREADYPARTOFORGANISATIONMESSAGE)
                     .build();
         } else {
-            //TODO Einladungsmail an user senden.
 
             try {
                 UserInOrgaWithRole userInOrgaWithRole = new UserInOrgaWithRole();

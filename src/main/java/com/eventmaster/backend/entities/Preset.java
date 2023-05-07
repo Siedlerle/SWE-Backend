@@ -28,7 +28,6 @@ public class Preset {
     String type;
     String description;
     String image;
-    //@TODO brauchen wir hier eine Adress Tabelle oder wollen wir location als String speichern? (Falls ja, kann man auch jeder Organiazion Adresse(n) zuweisen)
     String location;
     Date startDate;
     Date endDate;
