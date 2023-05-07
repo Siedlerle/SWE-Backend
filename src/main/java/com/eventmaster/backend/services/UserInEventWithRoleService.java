@@ -12,6 +12,7 @@ import org.w3c.dom.events.EventTarget;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -294,13 +295,43 @@ public class UserInEventWithRoleService {
                 .map(UserInEventWithRole::getEvent)
                 .toList();
         List<Organisation> organisation = userInOrgaWithRoleService.getOrgasForUser(user.getEmailAdress());
-        return organisation
+        List<Event> allEvents = organisation
                 .stream()
                 .map(orga->eventService.getEventsOfOrganisation(orga.getId()))
                 .flatMap(List::stream)
                 .filter(Event::getIsPublic)
                 .filter(event->!userEvents.contains(event))
                 .toList();
+
+        Map<Long, Event> nextEventInSeries = new HashMap<>();
+        Set<Event> nonSeriesEvents = new HashSet<>();
+        for (Event event : allEvents) {
+
+            if (event.getEventSeries() != null) {
+                long seriesId = event.getEventSeries().getId();
+                Event nextEvent = nextEventInSeries.get(seriesId);
+                if ((nextEvent == null
+                        || event.getStartDate().toLocalDate().isBefore(nextEvent.getStartDate().toLocalDate()))
+                        && event.getStartDate().toLocalDate().isAfter(LocalDate.now())) {
+                    nextEventInSeries.put(seriesId, event);
+                }
+            } else {
+                if (event.getStartDate().toLocalDate().isEqual(LocalDate.now())
+                        || event.getStartDate().toLocalDate().isAfter(LocalDate.now())) {
+                    nonSeriesEvents.add(event);
+                }
+            }
+        }
+
+
+        List<Event> filteredEvents = new ArrayList<>(nextEventInSeries.values());
+        for (Event event : nonSeriesEvents) {
+            filteredEvents.add(event);
+        }
+
+        filteredEvents.sort(Comparator.comparing(Event::getStartDate));
+
+        return filteredEvents;
     }
 
 
