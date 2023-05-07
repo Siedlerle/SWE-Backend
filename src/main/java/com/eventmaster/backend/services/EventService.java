@@ -219,8 +219,8 @@ public class EventService {
                                 +"\nwelches am "+event.getStartDate()+" stattfinden sollte,"
                                 +"\nwurde abgesagt. Grund hierfür ist:"
                                 +"\n"+reason);
-                //emailService.sendEmail(mailMessage);
-                System.out.println(mailMessage.getText());
+                emailService.sendEmail(mailMessage);
+                //System.out.println(mailMessage.getText());
             }
 
             return MessageResponse.builder()

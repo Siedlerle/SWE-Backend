@@ -129,8 +129,8 @@ public class UserInEventWithRoleService {
                         +"\nBegin: "+event.getStartDate()
                         +"\nBeschreibung: "+event.getDescription()
                         );
-                //emailService.sendEmail(mailMessage);
-                System.out.println(mailMessage);
+                emailService.sendEmail(mailMessage);
+                //System.out.println(mailMessage);
                 return MessageResponse.builder()
                         .message(LocalizedStringVariables.USERREGISTERESFOREVENTSUCCESSMESSAGE)
                         .build();
@@ -398,8 +398,8 @@ public class UserInEventWithRoleService {
                     + "\nder Benutzer " + user.getFirstname() +" hat sich"
                     +"\nvon dem Event "+event.getName()+" abgemeldet."
                     +"\n"+reasonInMail);
-            //emailService.sendEmail(mailMessage);
-            System.out.println(mailMessage.getText());
+            emailService.sendEmail(mailMessage);
+            //System.out.println(mailMessage.getText());
 
             UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUserAndEvent(user, event);
             userInEventWithRoleRepository.delete(userInEventWithRole);
