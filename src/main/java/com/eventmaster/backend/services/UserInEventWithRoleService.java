@@ -655,7 +655,7 @@ public class UserInEventWithRoleService {
                     }
                 }
             }
-            managingEvents.sort(Comparator.comparing(Event::getStartDate).reversed());
+            managingEvents.sort(Comparator.comparing(Event::getStartDate));
             return managingEvents;
         } catch (Exception e) {
             e.printStackTrace();
