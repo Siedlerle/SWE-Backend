@@ -1,6 +1,5 @@
 package com.eventmaster.backend.controller;
 
-//Todo import explizit definieren
 import com.eventmaster.backend.entities.*;
 import com.eventmaster.backend.services.UserService;
 import com.eventmaster.backend.security.authentification.VerificationResponse;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-//Todo Version der ersten Erstellung und der letzten Änderung hinzufügen
 /**
  * A class which handles the HTTP-requests for user functions.
  *
@@ -25,7 +23,6 @@ import java.util.List;
  * @since 1.0
  */
 
-//Todo CORS und CrossOrigin anhand von Artikel überdenken
 @RestController
 @CrossOrigin
 @RequestMapping("/user")
@@ -331,7 +328,6 @@ public class UserController {
      * @param reason Reason for leaving Event
      * @return success message
      */
-    //TODO reason wieder einpflegen
     @PostMapping("/event/{eventId}/unregister/{emailAdress}")
     public ResponseEntity<MessageResponse> ungregisterFromEvent(@PathVariable long eventId,
                                                                 @PathVariable String emailAdress,

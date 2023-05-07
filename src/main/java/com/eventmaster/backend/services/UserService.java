@@ -186,7 +186,6 @@ public class UserService {
         tokenService.saveToken(token);
     }
 
-    //Todo Link für Änderungsfeld anpassen
 
     /**
      * Sends a mail to user to verify password reset request
