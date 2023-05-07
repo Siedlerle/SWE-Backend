@@ -7,8 +7,9 @@ import local.variables.LocalizedStringVariables;
 import org.aspectj.bridge.Message;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
 
 /**
  * A class which receives and processes the requests of multiple controllers concerning the management of the connection between users and organisations witch specific roles.
@@ -101,9 +102,39 @@ public class UserInOrgaWithRoleService {
      */
     public List<Event> getAllVisibleEventsOfOrganisationForUser(long organisationId, String userMail){
         List<Event> organisationEvents = eventService.getEventsOfOrganisation(organisationId);
+
+        Map<Long, Event> nextEventInSeries = new HashMap<>();
+        Set<Event> nonSeriesEvents = new HashSet<>();
+        for (Event event : organisationEvents) {
+
+            if (event.getEventSeries() != null) {
+                long seriesId = event.getEventSeries().getId();
+                Event nextEvent = nextEventInSeries.get(seriesId);
+                if ((nextEvent == null
+                        || event.getStartDate().toLocalDate().isBefore(nextEvent.getStartDate().toLocalDate()))
+                        && event.getStartDate().toLocalDate().isAfter(LocalDate.now())) {
+                    nextEventInSeries.put(seriesId, event);
+                }
+            } else {
+                if (event.getStartDate().toLocalDate().isEqual(LocalDate.now())
+                        || event.getStartDate().toLocalDate().isAfter(LocalDate.now())) {
+                    nonSeriesEvents.add(event);
+                }
+            }
+        }
+
+
+        List<Event> filteredEvents = new ArrayList<>(nextEventInSeries.values());
+        for (Event event : nonSeriesEvents) {
+            filteredEvents.add(event);
+        }
+
+        filteredEvents.sort(Comparator.comparing(Event::getStartDate));
+
         List<Event> visibleEventsForUser = new ArrayList<>();
+
         try {
-            for (Event organisationEvent : organisationEvents) {
+            for (Event organisationEvent : filteredEvents) {
                 if (organisationEvent.getIsPublic()) {
                     if (!userInEventWithRoleService.isUserRegisteredToEvent(organisationEvent.getId(), userMail)) {
                         visibleEventsForUser.add(organisationEvent);

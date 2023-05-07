@@ -717,6 +717,7 @@ public class UserInEventWithRoleService {
             event.setStartTime(startEvent.getStartTime());
             event.setEndDate(newEndDate);
             event.setEndTime(startEvent.getEndTime());
+            event.setIsPublic(startEvent.getIsPublic());
 
             event.setOrganisation(organisation);
             event.setEventSeries(eventSeries);
