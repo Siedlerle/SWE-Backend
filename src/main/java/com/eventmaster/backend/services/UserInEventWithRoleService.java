@@ -98,14 +98,16 @@ public class UserInEventWithRoleService {
 
                 List<Event> eventsInOrga = eventService.getEventsOfOrganisation(orgaId);
 
-                if(event.getEventSeries().getId() == event.getEventSeries().getId()){
-                    for (Event userInEvent: eventsInOrga) {
-                        if(userInEvent.getName().equals(event.getName())){
-                            UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
-                            userInEventWithRole.setEvent(eventService.getEventById(userInEvent.getId()));
-                            userInEventWithRole.setUser(userService.getUserByMail(emailAddress));
-                            userInEventWithRole.setEventRole(eventRole);
-                            userInEventWithRoleRepository.save(userInEventWithRole);
+                if(event.getEventSeries() != null){
+                    if(event.getEventSeries().getId() == event.getEventSeries().getId()){
+                        for (Event userInEvent: eventsInOrga) {
+                            if(userInEvent.getName().equals(event.getName())){
+                                UserInEventWithRole userInEventWithRole = new UserInEventWithRole();
+                                userInEventWithRole.setEvent(eventService.getEventById(userInEvent.getId()));
+                                userInEventWithRole.setUser(userService.getUserByMail(emailAddress));
+                                userInEventWithRole.setEventRole(eventRole);
+                                userInEventWithRoleRepository.save(userInEventWithRole);
+                            }
                         }
                     }
                 }else{
@@ -327,7 +329,7 @@ public class UserInEventWithRoleService {
 
             List<UserInEventWithRole> users = userInEventWithRoleRepository.findByEvent_Id(eventId);
             for (UserInEventWithRole userInEvent :users) {
-                if(userInEvent.getEventRole().equals(EnumEventRole.ORGANIZER)){
+                if(userInEvent.getEventRole().getRole().equals(EnumEventRole.ORGANIZER)){
                     organizer = userInEvent.getUser();
                 }
             }
@@ -335,6 +337,7 @@ public class UserInEventWithRoleService {
             if(!reason.equals("{}")){
                 reasonInMail = "Der Grund für die Absage war:\n"+reason;
             }
+
 
             mailMessage.setFrom("ftb-solutions@outlook.de");
             mailMessage.setTo(organizer.getEmailAdress());
