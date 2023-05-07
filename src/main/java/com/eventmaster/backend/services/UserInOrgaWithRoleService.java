@@ -187,7 +187,7 @@ public class UserInOrgaWithRoleService {
                     registeredEventsInOrga.add(check);
                 }
             }
-
+            registeredEventsInOrga.sort(Comparator.comparing(Event::getStartDate));
             return registeredEventsInOrga;
         }catch (Exception e) {
             e.printStackTrace();

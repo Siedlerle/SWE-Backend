@@ -185,25 +185,27 @@ public class UserInEventWithRoleService {
                     break;
             }
 
-            List<Event> allEvents = eventService.getAllEvents();
 
             if(event.getEventSeries() != null){
-                if(event.getEventSeries().getId() == event.getEventSeries().getId()){
-                    for (Event userInEvent: allEvents) {
-                        if(userInEvent.getName().equals(event.getName())){
-                            System.out.println(event.getName());
-                            UserInEventWithRole userInEventSerie = new UserInEventWithRole();
-                            userInEventSerie.setEvent(eventService.getEventById(userInEvent.getId()));
-                            userInEventSerie.setUser(userService.getUserByMail(emailAdress));
-                            userInEventSerie.setEventRole(eventRole);
-                            userInEventWithRoleRepository.save(userInEventSerie);
-                        }
+                EventSeries series = event.getEventSeries();
+                Set<Event> seriesEvents = series.getEvents();
+                for (Event seriesEvent : seriesEvents) {
+                    if (userInEventWithRoleRepository.existsByUser_IdAndEvent_Id(user.getId(), seriesEvent.getId())) {
+                        UserInEventWithRole uer = userInEventWithRoleRepository.findByUser_IdAndEvent_Id(user.getId(), seriesEvent.getId());
+                        uer.setEventRole(eventRole);
+                        userInEventWithRoleRepository.save(uer);
+                    } else {
+                        UserInEventWithRole uer = new UserInEventWithRole();
+                        uer.setUser(user);
+                        uer.setEvent(seriesEvent);
+                        uer.setEventRole(eventRole);
+                        userInEventWithRoleRepository.save(uer);
                     }
                 }
             }else{
                 UserInEventWithRole userInEvent = new UserInEventWithRole();
-                userInEvent.setEvent(eventService.getEventById(eventId));
-                userInEvent.setUser(userService.getUserByMail(emailAdress));
+                userInEvent.setEvent(event);
+                userInEvent.setUser(user);
                 userInEvent.setEventRole(eventRole);
                 userInEventWithRoleRepository.save(userInEvent);
             }
@@ -355,7 +357,7 @@ public class UserInEventWithRoleService {
                     }
                 }
             }
-
+            userEvents.sort(Comparator.comparing(Event::getStartDate));
 
             return userEvents;
         }catch (Exception e) {
@@ -654,6 +656,7 @@ public class UserInEventWithRoleService {
                     }
                 }
             }
+            managingEvents.sort(Comparator.comparing(Event::getStartDate).reversed());
             return managingEvents;
         } catch (Exception e) {
             e.printStackTrace();
