@@ -82,6 +82,40 @@ public class AdminController {
     }
 
     /**
+     * Endpoint for a amdin to load all requests to join his organisation
+     * @param orgaId Id of the corresponding organisation
+     * @return list of users
+     */
+    @PostMapping("/orga/{orgaId}/get-requests")
+    public ResponseEntity<List<User>> getJoinRequests(@PathVariable long orgaId){
+       return ResponseEntity.ok(userInOrgaWithRoleService.getRequestingUsers(orgaId));
+    }
+
+    /**
+     * Endpoint for an admin to accept join request
+     * @param orgaId Id of the corresponding organisation
+     * @param emailAdress EMail of the corresponding user
+     * @return success message
+     */
+    @PostMapping("/orga/{orgaId}/user/{emailAdress}/accept")
+    public ResponseEntity<MessageResponse> acceptJoinRequest(@PathVariable long orgaId,
+                                                             @PathVariable String emailAdress){
+        return ResponseEntity.ok(userInOrgaWithRoleService.acceptJoinRequest(orgaId, emailAdress));
+    }
+
+    /**
+     * Endpoint for an admin to decline join request
+     * @param orgaId Id of the corresponding organisation
+     * @param emailAdress EMail of the corresponding user
+     * @return success message
+     */
+    @PostMapping("/orga/{orgaId}/user/{emailAdress}/accept")
+    public ResponseEntity<MessageResponse> declineJoinRequest(@PathVariable long orgaId,
+                                                              @PathVariable String emailAdress){
+        return ResponseEntity.ok(userInOrgaWithRoleService.declineJoinRequest(orgaId, emailAdress));
+    }
+
+    /**
      * Endpoint to set the role of a user in an organisation to admin.
      * @param orgaId ID of the organisation.
      * @param userMail Mail of the user who will be admin.

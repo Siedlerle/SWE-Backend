@@ -206,7 +206,7 @@ public class UserInOrgaWithRoleService {
         try {
             User user = userService.getUserByMail(userMail);
             Organisation organisation = organisationService.getOrganisationById(organisationId);
-            OrgaRole requestRole = orgaRoleService.findByRole(EnumOrgaRole.USER);//@TODO Lösung finden, ob Organisator anfrage annehmen muss oder direkt beigetreten wird, public boolean für Orgas
+            OrgaRole requestRole = orgaRoleService.findByRole(EnumOrgaRole.REQUESTED);//@TODO Lösung finden, ob Organisator anfrage annehmen muss oder direkt beigetreten wird, public boolean für Orgas
 
             if(userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), organisationId) == null){
                 UserInOrgaWithRole userInOrgaWithRole = new UserInOrgaWithRole();
@@ -228,6 +228,69 @@ public class UserInOrgaWithRoleService {
                     .message(LocalizedStringVariables.REQUESTORGAJOINFAILUREMESSAGE)
                     .build();
         }
+    }
+
+    public List<User> getRequestingUsers(long orgaId){
+
+        try {
+            List<UserInOrgaWithRole> userInOrgaWithRoles = userInOrgaWithRoleRepository.findByOrganisation_Id(orgaId);
+
+            List<User> users = new ArrayList<>();
+
+            for (UserInOrgaWithRole user: userInOrgaWithRoles) {
+                if(user.getOrgaRole().getRole().equals(EnumOrgaRole.REQUESTED)){
+                    users.add(user.getUser());
+                }
+            }
+            return users;
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * The admin can accept a request to join his organisation
+     * @param orgaId Id of the corresponding organisation
+     * @param emailAdress Email of the corresponding user
+     * @return success message
+     */
+    public MessageResponse acceptJoinRequest(long orgaId, String emailAdress){
+        try {
+            User user = userService.getUserByMail(emailAdress);
+            UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), orgaId);
+            OrgaRole accept = orgaRoleService.findByRole(EnumOrgaRole.USER);
+            if(userInOrgaWithRole.getOrgaRole().getRole().equals(EnumOrgaRole.REQUESTED)){
+                userInOrgaWithRole.setOrgaRole(accept);
+                userInOrgaWithRoleRepository.save(userInOrgaWithRole);
+                return MessageResponse.builder().message(LocalizedStringVariables.ACCEPTUSERJOINREQUESTSUCCESS).build();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return MessageResponse.builder().message(LocalizedStringVariables.ACCEPTUSERJOINREQUESTFAILURE).build();
+        }
+        return MessageResponse.builder().message(LocalizedStringVariables.ACCEPTUSERJOINREQUESTFAILURE).build();
+    }
+
+    /**
+     * The admin can decline a request to join his organisation
+     * @param orgaId Id of the corresponding organisation
+     * @param emailAdress Email of the corresponding user
+     * @return success message
+     */
+    public MessageResponse declineJoinRequest(long orgaId, String emailAdress){
+        try {
+            User user = userService.getUserByMail(emailAdress);
+            UserInOrgaWithRole userInOrgaWithRole = userInOrgaWithRoleRepository.findByUser_IdAndOrganisation_Id(user.getId(), orgaId);
+            if(userInOrgaWithRole.getOrgaRole().getRole().equals(EnumOrgaRole.REQUESTED)){
+                userInOrgaWithRoleRepository.delete(userInOrgaWithRole);
+                return MessageResponse.builder().message(LocalizedStringVariables.ACCEPTUSERJOINREQUESTSUCCESS).build();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return MessageResponse.builder().message(LocalizedStringVariables.ACCEPTUSERJOINREQUESTFAILURE).build();
+        }
+        return MessageResponse.builder().message(LocalizedStringVariables.ACCEPTUSERJOINREQUESTFAILURE).build();
     }
 
 

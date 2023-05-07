@@ -21,6 +21,12 @@ public final class LocalizedStringVariables {
         public static final String ORGANISATIONINVITEDECLINEFAILURE = "Anfrage konnte nicht abgelehnt werden";
 
 
+        //ADMIN
+        public static final String ACCEPTUSERJOINREQUESTSUCCESS = "Anfrage wurde erfolgreich angenommen";
+        public static final String ACCEPTUSERJOINREQUESTFAILURE = "Anfrage konnte nicht angenommen werden";
+        public static final String ACCEPTUSERJOINREQUEST = "Anfrage konnte nicht abgelehnt werden";
+
+
 
         //EVENTSERIES
         public static final String EVENTSERIESDELETEDSUCCESSMESSAGE = "Eventseries deleted successfully";
