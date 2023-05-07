@@ -151,11 +151,14 @@ public class UserInEventWithRoleService {
     public MessageResponse acceptEventInvitation(long eventId, String emailAdress){
         try {
             User user = userService.getUserByMail(emailAdress);
+
+            Event event = eventService.getEventById(eventId);
+
             UserInEventWithRole userInEventWithRole = userInEventWithRoleRepository.findByUser_IdAndEvent_Id(user.getId(), eventId);
 
             EnumEventRole userRole = userInEventWithRole.getEventRole().getRole();
 
-            EventRole eventRole = new EventRole();
+            EventRole eventRole;
 
             switch (userRole) {
                 case INVITED:
@@ -181,11 +184,28 @@ public class UserInEventWithRoleService {
                     break;
             }
 
+            List<Event> allEvents = eventService.getAllEvents();
 
-            userInEventWithRole.setEvent(eventService.getEventById(eventId));
-            userInEventWithRole.setUser(userService.getUserByMail(emailAdress));
-            userInEventWithRole.setEventRole(eventRole);
-            userInEventWithRoleRepository.save(userInEventWithRole);
+            if(event.getEventSeries() != null){
+                if(event.getEventSeries().getId() == event.getEventSeries().getId()){
+                    for (Event userInEvent: allEvents) {
+                        if(userInEvent.getName().equals(event.getName())){
+                            System.out.println(event.getName());
+                            UserInEventWithRole userInEventSerie = new UserInEventWithRole();
+                            userInEventSerie.setEvent(eventService.getEventById(userInEvent.getId()));
+                            userInEventSerie.setUser(userService.getUserByMail(emailAdress));
+                            userInEventSerie.setEventRole(eventRole);
+                            userInEventWithRoleRepository.save(userInEventSerie);
+                        }
+                    }
+                }
+            }else{
+                UserInEventWithRole userInEvent = new UserInEventWithRole();
+                userInEvent.setEvent(eventService.getEventById(eventId));
+                userInEvent.setUser(userService.getUserByMail(emailAdress));
+                userInEvent.setEventRole(eventRole);
+                userInEventWithRoleRepository.save(userInEvent);
+            }
 
             return MessageResponse.builder()
                     .message(LocalizedStringVariables.EVENTINVITATIONACCEPTEDSUCCESSMESSAGE)
