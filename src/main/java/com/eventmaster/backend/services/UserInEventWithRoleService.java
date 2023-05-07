@@ -203,11 +203,10 @@ public class UserInEventWithRoleService {
                     }
                 }
             }else{
-                UserInEventWithRole userInEvent = new UserInEventWithRole();
-                userInEvent.setEvent(event);
-                userInEvent.setUser(user);
-                userInEvent.setEventRole(eventRole);
-                userInEventWithRoleRepository.save(userInEvent);
+                userInEventWithRole.setEvent(event);
+                userInEventWithRole.setUser(user);
+                userInEventWithRole.setEventRole(eventRole);
+                userInEventWithRoleRepository.save(userInEventWithRole);
             }
 
             return MessageResponse.builder()
