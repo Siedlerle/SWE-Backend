@@ -386,7 +386,7 @@ public class UserInEventWithRoleService {
                 }
             }
 
-            if(!reason.equals("{}")){
+            if(reason != null){
                 reasonInMail = "Der Grund für die Absage war:\n"+reason;
             }
 

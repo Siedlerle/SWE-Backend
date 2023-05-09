@@ -331,7 +331,7 @@ public class UserController {
     @PostMapping("/event/{eventId}/unregister/{emailAdress}")
     public ResponseEntity<MessageResponse> ungregisterFromEvent(@PathVariable long eventId,
                                                                 @PathVariable String emailAdress,
-                                                                @RequestBody String reason){
+                                                                @RequestBody(required = false) String reason){
         return ResponseEntity.ok(userInEventWithRoleService.unregisterFromEvent(eventId,emailAdress,reason));
     }
 
